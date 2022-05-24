@@ -304,8 +304,8 @@ namespace Riten.Windinator
         /// </summary>
         public void SetBasicAnimation()
         {
-            FadeIn = SlideFromTop;
-            FadeOut = SlideToTop;
+            FadeIn = FadeInSin;
+            FadeOut = FadeOutSin;
         }
 
         /// <summary>
