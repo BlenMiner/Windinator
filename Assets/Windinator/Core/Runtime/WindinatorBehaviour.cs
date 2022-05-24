@@ -149,6 +149,8 @@ namespace Riten.Windinator
                 );
             }
 
+            Canvas.overrideSorting = true;
+
             CanExitWindow = m_windowSettings.WindowFlowSettings.CanCloseWindow;
 
             if (AnimatedByDefault)

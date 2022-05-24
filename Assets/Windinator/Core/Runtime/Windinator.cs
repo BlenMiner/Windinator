@@ -64,9 +64,21 @@ namespace Riten.Windinator
 
         public static void SetupCanvas(Canvas canvas, CanvasScaler scaler)
         {
-            canvas.pixelPerfect = Instance.m_windinatorConfig.CanvasSettings.PixelPerfect;
+            if (!Application.isPlaying && WindinatorConfig == null) return;
 
-            var scalerSettings = Instance.m_windinatorConfig.ScalerSettings;
+            RectTransform transform = canvas.transform as RectTransform;
+
+            transform.anchorMin = Vector2.zero;
+            transform.anchorMax = Vector2.one;
+            transform.anchoredPosition = Vector2.zero;
+            transform.sizeDelta = Vector2.zero;
+            transform.localScale = Vector3.one;
+
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = WindinatorConfig.StartingCanvasLayer;
+            canvas.pixelPerfect = WindinatorConfig.CanvasSettings.PixelPerfect;
+
+            var scalerSettings = WindinatorConfig.ScalerSettings;
             scaler.uiScaleMode = scalerSettings.UIScaleMode;
             scaler.referenceResolution = scalerSettings.ReferenceResolution;
             scaler.screenMatchMode = scalerSettings.ScreenMatchMode;
