@@ -338,13 +338,14 @@ public class {0} : LayoutBaker
 
             GameObject window = new GameObject($"[W] {className}",
                 typeof(Canvas),
-                typeof(CanvasScaler),
+                typeof(UnityEngine.UI.CanvasScaler),
                 typeof(GraphicRaycaster)
             );
 
             var c = window.GetComponent<Canvas>();
+            var cs = window.GetComponent<CanvasScaler>();
 
-            c.renderMode = RenderMode.ScreenSpaceOverlay;
+            Windinator.SetupCanvas(c, cs);
 
             string prefab = $"{fileInfo.Directory.FullName}/[W] {className}.prefab";
             PrefabUtility.SaveAsPrefabAsset(window, prefab);

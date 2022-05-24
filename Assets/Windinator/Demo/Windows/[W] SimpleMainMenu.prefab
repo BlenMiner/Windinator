@@ -83,7 +83,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -141,6 +141,8 @@ MonoBehaviour:
     AnimationSettings:
       AnimatedByDefault: 0
       TransitionAnimDuration: 0
+    OptimizationSettings:
+      WarmupCount: 0
 --- !u!1 &8949157220651085457
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,6 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 757d35f76c48326429835a90b2ccef7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_loginForm: {fileID: 0}
 --- !u!222 &3435578822347451376
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -214,7 +217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.10980393, g: 0.10588236, b: 0.11764707, a: 1}
+  m_Color: {r: 1, g: 0.9843138, b: 0.9960785, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -246,6 +249,7 @@ MonoBehaviour:
   m_targetGraphic: {fileID: 5645603306368644587}
   m_color: 8
   m_onColor: 0
+  m_alpha: 1
 --- !u!1001 &1262985290081723189
 PrefabInstance:
   m_ObjectHideFlags: 0

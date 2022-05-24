@@ -69,6 +69,18 @@ namespace Riten.Windinator
             }
         }
 
+        private CanvasScaler _canvasScaler;
+
+        public CanvasScaler CanvasScaler
+        {
+            get
+            {
+                if (_canvasScaler == null)
+                    _canvasScaler = GetComponent<CanvasScaler>();
+                return _canvasScaler;
+            }
+        }
+
         private CanvasGroup _canvasGroup;
 
         public CanvasGroup CanvasGroup
@@ -106,6 +118,11 @@ namespace Riten.Windinator
         public virtual void OnSafeEnable() { }
 
         public virtual void OnSafeDisable() { }
+        
+        private void OnValidate()
+        {
+            Windinator.SetupCanvas(Canvas, CanvasScaler);
+        }
 
         private void Reset()
         {

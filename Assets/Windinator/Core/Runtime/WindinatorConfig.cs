@@ -1,11 +1,45 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using Riten.Windinator.LayoutBuilder;
 
 namespace Riten.Windinator
 {
+    [System.Serializable]
+    public struct CanvasPreset
+    {
+        public bool PixelPerfect;
+    }
+
+    [System.Serializable]
+    public class CanvasScalerPreset
+    {
+        public UnityEngine.UI.CanvasScaler.ScaleMode UIScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ConstantPixelSize;
+
+        public Vector2 ReferenceResolution = new Vector2(800, 600);
+
+        public UnityEngine.UI.CanvasScaler.ScreenMatchMode ScreenMatchMode = UnityEngine.UI.CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+
+        public float Match = 0.5f;
+
+        public UnityEngine.UI.CanvasScaler.Unit Physicalunit = UnityEngine.UI.CanvasScaler.Unit.Points;
+
+        public float FallBackScreenDPI = 96f;
+
+        public float DefaultSpriteDPI = 96f;
+
+        public float ScaleFactor = 1f;
+
+        public float ReferencePixelsPerUnit = 100f;
+    }
+
     public class WindinatorConfig : ScriptableObject
     {
+        [Header("Canvas Settings")]
+        public CanvasPreset CanvasSettings;
+
+        public CanvasScalerPreset ScalerSettings;
+
         [Header("General Settings")]
         [Tooltip("Where does sorting order start for new canvases")]
         public int StartingCanvasLayer = 1;

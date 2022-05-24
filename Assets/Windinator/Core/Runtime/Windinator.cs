@@ -2,6 +2,7 @@ using Riten;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Riten.Windinator
 {
@@ -61,9 +62,30 @@ namespace Riten.Windinator
             return Instance != null;
         }
 
+        public static void SetupCanvas(Canvas canvas, CanvasScaler scaler)
+        {
+            canvas.pixelPerfect = Instance.m_windinatorConfig.CanvasSettings.PixelPerfect;
+
+            var scalerSettings = Instance.m_windinatorConfig.ScalerSettings;
+            scaler.uiScaleMode = scalerSettings.UIScaleMode;
+            scaler.referenceResolution = scalerSettings.ReferenceResolution;
+            scaler.screenMatchMode = scalerSettings.ScreenMatchMode;
+            scaler.matchWidthOrHeight = scalerSettings.Match;
+            scaler.physicalUnit = scalerSettings.Physicalunit;
+            scaler.fallbackScreenDPI = scalerSettings.FallBackScreenDPI;
+            scaler.defaultSpriteDPI = scalerSettings.DefaultSpriteDPI;
+            scaler.scaleFactor = scalerSettings.ScaleFactor;
+            scaler.referencePixelsPerUnit = scalerSettings.ReferencePixelsPerUnit;
+        }
+
         public void Bootstrap()
         {
             m_windowPool = new WindinatorPool(m_windinatorConfig.OptimizePooling);
+
+            var canvas = gameObject.AddComponent<Canvas>();
+            var scaler = gameObject.AddComponent<CanvasScaler>();
+
+            SetupCanvas(canvas, scaler);
 
             foreach(var window in m_windinatorConfig.Windows)
             {
