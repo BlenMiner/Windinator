@@ -26,6 +26,31 @@ namespace Riten.Windinator
             public Color BackgroundColor;
         }
 
+        /// <summary>
+        /// Resets alpha to 0 & the rect transform's position to take all the screen
+        /// </summary>
+        internal void ResetAnimationState()
+        {
+            RectTransform.anchorMin = Vector2.zero;
+            RectTransform.anchorMax = Vector2.one;
+            RectTransform.sizeDelta = Vector2.zero;
+            RectTransform.anchoredPosition = Vector2.zero;
+            RectTransform.localScale = Vector3.one;
+            CanvasGroup.alpha = 1f;
+
+            if (GeneratedBackground != null)
+            {
+                var back = GeneratedBackground.transform as RectTransform;
+
+                back.anchorMin = Vector2.zero;
+                back.anchorMax = Vector2.one;
+                back.sizeDelta = Vector2.zero;
+                back.anchoredPosition = Vector2.zero;
+                back.localScale = Vector3.one;
+                GeneratedBackgroundGroup.alpha = m_windowSettings.BackgroundSettings.BackgroundColor.a;
+            }
+        }
+
         [Serializable]
         public struct AnimationSettings
         {
@@ -93,6 +118,18 @@ namespace Riten.Windinator
             }
         }
 
+        private RectTransform _rectTransform;
+
+        public RectTransform RectTransform
+        {
+            get
+            {
+                if (_rectTransform == null)
+                    _rectTransform = transform as RectTransform;
+                return _rectTransform;
+            }
+        }
+
         protected bool CanExitWindow { get; private set; } = true;
 
         public AnimationDelegade FadeIn { get; private set; }
@@ -112,6 +149,12 @@ namespace Riten.Windinator
         public OptimizationSettings GetOptimizationSettings() => m_windowSettings.OptimizationSettings;
 
         private GameObject m_generatedBackground;
+
+        private CanvasGroup m_generatedBackgroundcanvasGroup;
+
+        public GameObject GeneratedBackground => m_generatedBackground;
+
+        public CanvasGroup GeneratedBackgroundGroup => m_generatedBackgroundcanvasGroup;
 
         internal void OnWindowClosedEvent() => onWindowClosed?.Invoke();
 
@@ -198,9 +241,9 @@ namespace Riten.Windinator
             btn.onClick.AddListener(() => onBackgroundClicked?.Invoke());
 
             var layout = background.GetComponent<LayoutElement>();
-
             layout.ignoreLayout = true;
 
+            m_generatedBackgroundcanvasGroup = background.AddComponent<CanvasGroup>();
             m_generatedBackground = background;
         }
 
@@ -261,8 +304,8 @@ namespace Riten.Windinator
         /// </summary>
         public void SetBasicAnimation()
         {
-            FadeIn = FadeInSin;
-            FadeOut = FadeOutSin;
+            FadeIn = SlideFromTop;
+            FadeOut = SlideToTop;
         }
 
         /// <summary>

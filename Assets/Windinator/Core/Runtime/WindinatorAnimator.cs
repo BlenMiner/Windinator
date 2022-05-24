@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Riten.Windinator
 {
@@ -28,24 +29,37 @@ namespace Riten.Windinator
             });
         }
 
+        void ResetBackgroundPos(WindinatorBehaviour window)
+        {
+            if (window.GeneratedBackground == null) return;
+
+            var backRect = window.GeneratedBackground.transform as RectTransform;
+            var rect = window.RectTransform;
+            backRect.anchoredPosition = -rect.anchoredPosition;
+        }
+
         public void Update(float delta)
         {
             for (int i = 0; i < m_instances.Count; ++i)
             {
                 var state = m_instances[i];
 
+                if (state.time == 0f)
+                    state.window.ResetAnimationState();
+
                 state.time += delta / state.window.AnimationDuration;
 
                 if (state.time > 1f)
                 {
                     state.time = 1f;
-                    state.anim(state.window, state.time);
+                    state.window.ResetAnimationState();
                     state.onDone?.Invoke();
                     m_instances.RemoveAt(i--);
                 }
                 else
                 {
                     state.anim(state.window, state.time);
+                    ResetBackgroundPos(state.window);
                     m_instances[i] = state;
                 }
             }
