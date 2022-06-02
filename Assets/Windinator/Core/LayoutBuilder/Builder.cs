@@ -4,6 +4,21 @@ using UnityEngine;
 
 namespace Riten.Windinator.LayoutBuilder
 {
+    public static class LayoutPrefabs
+    {
+        private static GameObject _ScrollView;
+
+        public static GameObject ScrollView
+        {
+            get
+            {
+                if (_ScrollView == null)
+                    _ScrollView = Resources.Load<GameObject>("Windinator.Presets/Scroll View");
+                return _ScrollView;
+            }
+        }
+    }
+
     public static class Layout
     {
         [System.Serializable]
@@ -70,12 +85,15 @@ namespace Riten.Windinator.LayoutBuilder
         }
 
         [System.Serializable]
-        public class Rectangle : Element
+        public class Container : Element
         {
+            Element m_child;
+
             Vector2 m_size;
 
-            public Rectangle(Vector2 size) : base()
+            public Container(Element child, Vector2 size) : base()
             {
+                m_child = child;
                 m_size = size;
             }
 
@@ -83,6 +101,14 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 var transform = Create("#Layout-Rectangle", parent);
                 transform.sizeDelta = m_size;
+
+                var layout = transform.gameObject.AddComponent<LayoutElement>();
+
+                layout.preferredWidth = m_size.x;
+                layout.preferredHeight = m_size.y;
+
+                m_child?.Build(transform);
+
                 return transform;
             }
         }
@@ -147,7 +173,6 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
 
-
         [System.Serializable]
         public class Horizontal : Element
         {
@@ -207,6 +232,34 @@ namespace Riten.Windinator.LayoutBuilder
                 var layoutElement = transform.gameObject.AddComponent<LayoutElement>();
                 layoutElement.flexibleWidth = m_weight;
                 layoutElement.flexibleHeight = m_weight;
+                return transform;
+            }
+        }
+
+        public class ScrollView : PrefabRef<ScrollRect>
+        {
+            Element m_child;
+
+            public ScrollView(Element child) : base(LayoutPrefabs.ScrollView)
+            {
+                m_child = child;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var transform = base.Build(parent);
+
+                transform.anchorMin = Vector2.zero;
+                transform.anchorMax = Vector2.one;
+                transform.anchoredPosition = Vector2.zero;
+                transform.sizeDelta = Vector2.zero;
+
+                m_reference = new Reference<ScrollRect>(transform.GetComponent<ScrollRect>());
+
+                var nextParent = m_reference.Value.content;
+
+                m_child?.Build(nextParent);
+
                 return transform;
             }
         }

@@ -178,10 +178,6 @@ Shader "Unlit/RectangleRenderer"
 
                 effects = lerp(effects, _CircleColor, circleAASDF * _CircleAlpha * graphicAlpha);
 
-                //half4 effects = half4(_GraphicColor.rgb, graphicAlpha);
-                //half4 effects = half4(_OutlineColor.rgb, outlineAlpha);
-                //half4 effects = half4(_ShadowColor.rgb, shadowAlpha);
-                
                 // Unity stuff
                 #ifdef UNITY_UI_CLIP_RECT
                 effects.a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);

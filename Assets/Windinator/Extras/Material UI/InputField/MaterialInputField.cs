@@ -68,7 +68,7 @@ public class MaterialInputField : MonoBehaviour
 
     [SerializeField] RectTransform m_inputArea;
 
-    ColorAssigner m_palette => Windinator.WindinatorConfig.ColorPalette;
+    ColorAssigner m_palette => Windinator.WindinatorConfig == null ? null : Windinator.WindinatorConfig.ColorPalette;
 
     public TMP_InputField.ContentType ContentType { get => m_contentType; set { m_contentType = value; } }
 
@@ -177,6 +177,8 @@ public class MaterialInputField : MonoBehaviour
 
     private void OnUpdated(bool snap = false)
     {
+        if (m_palette == null) return;
+
         m_textField.contentType = m_contentType;
         bool selected = m_selected;
         bool emptyText = string.IsNullOrEmpty(m_textField.text);

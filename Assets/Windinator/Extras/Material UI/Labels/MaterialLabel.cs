@@ -28,7 +28,8 @@ public class MaterialLabel : MonoBehaviour
     [SerializeField, Header("References")]
 
     TMP_Text m_text;
-    ColorAssigner m_palette => Windinator.WindinatorConfig.ColorPalette;
+
+    ColorAssigner m_palette => Windinator.WindinatorConfig == null ? null : Windinator.WindinatorConfig.ColorPalette;
 
     private void OnValidate()
     {
@@ -41,7 +42,9 @@ public class MaterialLabel : MonoBehaviour
     {
         m_text.text = Text;
         m_text.fontSize = (int)Style;
-        m_text.color = m_palette[Color];
+
+        if (m_palette != null) m_text.color = m_palette[Color];
+
         m_text.fontStyle = FontStyle;
     }
 }

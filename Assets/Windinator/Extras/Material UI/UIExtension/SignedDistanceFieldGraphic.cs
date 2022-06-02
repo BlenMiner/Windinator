@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SignedDistanceFieldGraphic : Graphic
+public class SignedDistanceFieldGraphic : MaskableGraphic
 {
     [Header("Graphic")]
 
