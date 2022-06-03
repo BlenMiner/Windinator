@@ -191,6 +191,29 @@ namespace Riten.Windinator
         }
 
         /// <summary>
+        /// Returns the baked prefab of an element.
+        /// </summary>
+        /// <typeparam name="T">Element's type</typeparam>
+        /// <returns>The element or NULL if not found.</returns>
+        internal static GameObject GetElementPrefab<T>()
+        {
+            var instance = Instance;
+            var config = instance.m_windinatorConfig;
+
+            foreach (var p in config.Prefabs)
+            {
+                if (p == null) continue;
+
+                if (p is T)
+                {
+                    return p.gameObject;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Replace the top most window with new window
         /// </summary>
         /// <typeparam name="T">New window</typeparam>

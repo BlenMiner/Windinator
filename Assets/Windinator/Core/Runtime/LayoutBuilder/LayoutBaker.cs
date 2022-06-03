@@ -12,7 +12,7 @@ namespace Riten.Windinator.LayoutBuilder
 
         public RectTransform Build()
         {
-            return new Layout.Builder(transform as RectTransform, child: Bake()).Build();
+            return new Builder(transform as RectTransform, child: Bake()).Build();
         }
 
         public abstract Layout.Element Bake();

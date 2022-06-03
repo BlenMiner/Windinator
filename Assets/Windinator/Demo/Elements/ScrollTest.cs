@@ -1,42 +1,23 @@
 using UnityEngine;
-using System.Collections.Generic;
 using Riten.Windinator;
 using Riten.Windinator.LayoutBuilder;
-using Riten.Windinator.Material;
+using System.Collections.ObjectModel;
 
 using static Riten.Windinator.LayoutBuilder.Layout;
 using static Riten.Windinator.LayoutBuilder.LayoutMaterial;
 
-public struct SomeDataExample
-{
-    public string Content;
-}
-
 public class ScrollTest : LayoutBaker
 {
-    List<SomeDataExample> m_data = new List<SomeDataExample>(); 
+    ObservableCollection<int> m_data = new ObservableCollection<int>();
+
+    public Reference<ScrollViewDynamicRuntime> Scrollview;
 
     public override Element Bake()
     {
         return new Vertical(
             new Element[] {
                 new Container(
-                    new ScrollView(
-                        new Vertical(
-                            new Element[]
-                            {
-                                new Button("Hello"),
-                                new Button("World"),
-                                new Button("1"),
-                                new Button("2"),
-                                new Button("3"),
-                                new Button("4"),
-                                new Button("5"),
-                                new Button("6"),
-                            },
-                            spacing: 10
-                        )
-                    ),
+                    new ScrollViewDynamic().GetReference(out Scrollview),
                     new Vector2(300, 200)
                 )
             },
@@ -46,9 +27,23 @@ public class ScrollTest : LayoutBaker
 
     private void Awake()
     {
-        m_data.Add(new SomeDataExample
+        for (int i = 0; i < 70; ++i)
+            m_data.Add(i);
+
+        Scrollview.Value.Setup<SimpleButton, int>(m_data, 40f, UpdateCell);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            Content = "Some stuff"
-        });
+            m_data.Add(69);
+            Scrollview.Value.SetDirty();
+        }
+    }
+
+    private void UpdateCell(SimpleButton instance, int data)
+    {
+        instance.ButtonReference.Value.SetText($"I'm the button {data}");
     }
 }

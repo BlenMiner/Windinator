@@ -17,23 +17,60 @@ namespace Riten.Windinator.LayoutBuilder
                 return _ScrollView;
             }
         }
+
+        private static GameObject _ScrollViewD;
+
+        public static GameObject ScrollViewDynamic
+        {
+            get
+            {
+                if (_ScrollViewD == null)
+                    _ScrollViewD = Resources.Load<GameObject>("Windinator.Presets/Scroll View Dynamic");
+                return _ScrollViewD;
+            }
+        }
     }
+
+    public class Builder : Layout.Element
+    {
+        RectTransform m_root;
+
+        Layout.Element m_child;
+
+        public Builder(RectTransform root, Layout.Element child = null) : base(default)
+        {
+            m_root = root;
+            m_child = child;
+        }
+
+        public RectTransform Build()
+        {
+            return Build(m_root);
+        }
+
+        public override RectTransform Build(RectTransform parent)
+        {
+            return new Layout.Horizontal(children: new Layout.Element[1] { m_child }).Build(parent);
+        }
+    }
+
+
+    [System.Serializable]
+    public class Reference<T> where T : Component
+    {
+        public T Value;
+
+        public Reference(T Value)
+        {
+            this.Value = Value;
+        }
+
+        public Reference() { }
+    }
+
 
     public static class Layout
     {
-        [System.Serializable]
-        public class Reference<T> where T : Component
-        {
-            public T Value;
-
-            public Reference(T Value)
-            {
-                this.Value = Value;
-            }
-
-            public Reference() { }
-        }
-
         [System.Serializable]
         public class Element
         {
@@ -244,6 +281,29 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 m_child = child;
             }
+             
+            public override RectTransform Build(RectTransform parent)
+            {
+                var transform = base.Build(parent);
+
+                transform.anchorMin = Vector2.zero;
+                transform.anchorMax = Vector2.one;
+                transform.anchoredPosition = Vector2.zero;
+                transform.sizeDelta = Vector2.zero;
+
+                m_reference.Value = transform.GetComponent<ScrollRect>();
+
+                var nextParent = m_reference.Value.content;
+
+                m_child?.Build(nextParent);
+
+                return transform;
+            }
+        }
+
+        public class ScrollViewDynamic : PrefabRef<ScrollViewDynamicRuntime>
+        {
+            public ScrollViewDynamic() : base(LayoutPrefabs.ScrollViewDynamic) { }
 
             public override RectTransform Build(RectTransform parent)
             {
@@ -254,11 +314,7 @@ namespace Riten.Windinator.LayoutBuilder
                 transform.anchoredPosition = Vector2.zero;
                 transform.sizeDelta = Vector2.zero;
 
-                m_reference = new Reference<ScrollRect>(transform.GetComponent<ScrollRect>());
-
-                var nextParent = m_reference.Value.content;
-
-                m_child?.Build(nextParent);
+                m_reference.Value = transform.GetComponent<ScrollViewDynamicRuntime>();
 
                 return transform;
             }
@@ -370,29 +426,6 @@ namespace Riten.Windinator.LayoutBuilder
                 layout.preferredHeight = m_space;
 
                 return element;
-            }
-        }
-
-        public class Builder : Element
-        {
-            RectTransform m_root;
-
-            Element m_child;
-
-            public Builder(RectTransform root, Element child = null) : base(default)
-            {
-                m_root = root;
-                m_child = child;
-            }
-
-            public RectTransform Build()
-            {
-                return Build(m_root);
-            }
-
-            public override RectTransform Build(RectTransform parent)
-            {
-                return new Horizontal(children: new Element[1] { m_child }).Build(parent);
             }
         }
     }

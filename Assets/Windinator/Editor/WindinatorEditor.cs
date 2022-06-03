@@ -167,18 +167,18 @@ public class {0} : LayoutBaker
         }
 
         [UnityEditor.Callbacks.DidReloadScripts]
-        static async void OnScriptsReloaded()
+        static void OnScriptsReloaded()
         {
-            await Task.Delay(1000);
+            // await Task.Delay(1000);
 
-            await LoadWindow();
+            LoadWindow();
 
-            await LoadElement();
+            LoadElement();
 
             RefreshPrefabs();
         }
 
-        private static async Task LoadElement()
+        private static void LoadElement()
         {
             string prefabToAdd = EditorPrefs.GetString("Windinator.Element", null);
             string className = EditorPrefs.GetString("Windinator.Element.Class", null);
@@ -197,7 +197,7 @@ public class {0} : LayoutBaker
 
                     AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
-                    await Task.Delay(100);
+                    // await Task.Delay(100);
 
                     GameObject reloadedGo = AssetDatabase.LoadAssetAtPath<GameObject>(prefabToAdd);
                     var prefab = reloadedGo.GetComponent<LayoutBaker>();
@@ -215,7 +215,7 @@ public class {0} : LayoutBaker
             EditorPrefs.DeleteKey("Windinator.Element.Class");
         }
 
-        private static async Task LoadWindow()
+        private static void LoadWindow()
         {
             string prefabToAdd = EditorPrefs.GetString("Windinator.Window", null);
             string className = EditorPrefs.GetString("Windinator.Class", null);
@@ -234,7 +234,7 @@ public class {0} : LayoutBaker
 
                     AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
-                    await Task.Delay(100);
+                    //await Task.Delay(100);
 
                     GameObject reloadedGo = AssetDatabase.LoadAssetAtPath<GameObject>(prefabToAdd);
                     var window = reloadedGo.GetComponent<WindinatorBehaviour>();
@@ -292,7 +292,11 @@ public class {0} : LayoutBaker
                 }
 
                 AssetDatabase.Refresh(); 
-            } 
+            }
+
+            EditorUtility.SetDirty(config);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
         [MenuItem("Windinator/Re-bake Elements")]

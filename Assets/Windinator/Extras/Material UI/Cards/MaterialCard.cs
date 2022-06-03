@@ -48,7 +48,8 @@ public class MaterialCard : MonoBehaviour
         {
             MaterialCardStyle.Outlined => Pallete[OutlinedColor],
             MaterialCardStyle.Filled => Pallete[FilledColor],
-            MaterialCardStyle.Elevated=> Pallete[ElevatedColor]
+            MaterialCardStyle.Elevated=> Pallete[ElevatedColor],
+            _ => Pallete[FilledColor]
         } ;
     }
 }

@@ -96,4 +96,68 @@ namespace Riten.Windinator
             }
         }
     }
+
+    public class GameObjectPool<T> where T : MonoBehaviour
+    {
+        Queue<T> m_instances;
+
+        GameObject m_prefab;
+
+        public GameObjectPool(GameObject prefab)
+        {
+            m_instances = new Queue<T>();
+            m_prefab = prefab;
+        }
+
+        /// <summary>
+        /// Mark window free for reuse later.
+        /// </summary>
+        /// <param name="instance">Window instance</param>
+        public void Free(T instance)
+        {
+            m_instances.Enqueue(instance);
+            Deactivate(instance);
+        }
+
+        public T Allocate(Transform parent)
+        {
+            if (m_instances.Count > 0)
+            {
+                var result = m_instances.Dequeue();
+
+                if (result.transform.parent != parent)
+                    result.transform.SetParent(parent, false);
+
+                Activate(result);
+                return result;
+            }
+            else
+            {
+                return GameObject.Instantiate(m_prefab, parent).GetComponent<T>();
+            }
+        }
+
+        public T PreAllocate(Transform parent)
+        {
+            var instance = GameObject.Instantiate(m_prefab, parent).GetComponent<T>();
+            Free(instance);
+            return instance;
+        }
+
+        public void Activate(T instance)
+        {
+            instance.gameObject.SetActive(true);
+        }
+
+        public void Deactivate(T instance)
+        {
+            instance.gameObject.SetActive(false);
+        }
+
+        internal void DestroyAllFree()
+        {
+            foreach (var go in m_instances)
+                GameObject.Destroy(go.gameObject);
+        }
+    }
 }

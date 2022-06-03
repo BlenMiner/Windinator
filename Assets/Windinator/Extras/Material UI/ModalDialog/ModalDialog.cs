@@ -15,7 +15,7 @@ namespace Riten.Windinator.Material
                 Destroy(m_parent.GetChild(i).gameObject);
         }
 
-        public void Setup(Layout.Builder layout)
+        public void Setup(Builder layout)
         {
             Clear();
             layout.Build(m_parent);
