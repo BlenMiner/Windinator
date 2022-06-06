@@ -4,7 +4,7 @@ using Riten.Windinator.LayoutBuilder;
 using System.Collections.ObjectModel;
 
 using static Riten.Windinator.LayoutBuilder.Layout;
-using static Riten.Windinator.LayoutBuilder.LayoutMaterial;
+using static Riten.Windinator.LayoutBuilder.MaterialLayout;
 
 public class ScrollTest : LayoutBaker
 {

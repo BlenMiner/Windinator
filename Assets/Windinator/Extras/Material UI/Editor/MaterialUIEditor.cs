@@ -9,6 +9,12 @@ public static class MaterialUIEditor
 		CreateShapeGO("Card", "Material Card", menuCommand);
 	}
 
+	[MenuItem("GameObject/UI/Material/Icon", false, 1)]
+	public static void AddIcon(MenuCommand menuCommand)
+	{
+		CreateShapeGO("Icon", "Material Icon", menuCommand);
+	}
+
 	[MenuItem("GameObject/UI/Material/Action Button", false, 1)]
 	public static void AddActionutton(MenuCommand menuCommand)
 	{

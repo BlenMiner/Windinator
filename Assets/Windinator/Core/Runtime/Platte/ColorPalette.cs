@@ -8,7 +8,7 @@ namespace Riten.Windinator
     {
         [SerializeField] Graphic m_targetGraphic;
 
-        [SerializeField] ColorAssigner.ColorType m_color;
+        [SerializeField] ColorType m_color;
 
         [SerializeField] bool m_onColor;
 
@@ -20,7 +20,7 @@ namespace Riten.Windinator
             set { m_onColor = value; UpdateColor(); }
         }
 
-        public ColorAssigner.ColorType ColorType
+        public ColorType ColorType
         {
             get { return m_color; }
             set { m_color = value; UpdateColor(); }

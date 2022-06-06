@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+using Riten.Windinator;
 
 [ExecuteAlways]
 public class MaterialIcon : MonoBehaviour
@@ -8,6 +9,8 @@ public class MaterialIcon : MonoBehaviour
     [SerializeField, HideInInspector] TMP_Text m_text;
 
     [SerializeField, Searchable] MaterialIcons m_icon = MaterialIcons.plus;
+
+    [SerializeField] AllColorType m_color = AllColorType.OnBackground;
 
     TMP_FontAsset m_mdiFont;
 
@@ -6748,7 +6751,13 @@ public class MaterialIcon : MonoBehaviour
     {
         InitializeTMP();
 
-        UpdateIcon(m_icon);
+        UpdateIcon(m_icon, m_color);
+    }
+
+    public void UpdateIcon(MaterialIcons icon, AllColorType color)
+    {
+        m_text.color = Windinator.WindinatorConfig.ColorPalette[color];
+        UpdateIcon(icon);
     }
 
     public void UpdateIcon(MaterialIcons icon)
@@ -6764,7 +6773,7 @@ public class MaterialIcon : MonoBehaviour
         }
 
         if (!m_text.enableAutoSizing)
-             m_text.enableAutoSizing = true;
+            m_text.enableAutoSizing = true;
 
         m_text.SetText(char.ConvertFromUtf32(ID_TO_UNICODE[(int)m_icon]));
         m_text.alignment = TextAlignmentOptions.Center;

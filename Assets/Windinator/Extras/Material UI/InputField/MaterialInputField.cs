@@ -41,10 +41,10 @@ public class MaterialInputField : MonoBehaviour
 
     [Header("Color")]
 
-    [SerializeField] ColorAssigner.ColorType m_fieldColor;
-    [SerializeField] ColorAssigner.ColorType m_normalColor;
-    [SerializeField] ColorAssigner.ColorType m_selectedColor;
-    [SerializeField] ColorAssigner.ColorType m_errorColor;
+    [SerializeField] ColorType m_fieldColor;
+    [SerializeField] ColorType m_normalColor;
+    [SerializeField] ColorType m_selectedColor;
+    [SerializeField] ColorType m_errorColor;
 
     [Header("Component References")]
 

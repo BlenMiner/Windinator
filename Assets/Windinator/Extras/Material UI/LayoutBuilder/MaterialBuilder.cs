@@ -19,6 +19,18 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
 
+        private static GameObject _MaterialIcon;
+
+        public static GameObject MaterialIcon
+        {
+            get
+            {
+                if (_MaterialIcon == null)
+                    _MaterialIcon = Resources.Load<GameObject>("Windinator.Material.UI/Material Icon");
+                return _MaterialIcon;
+            }
+        }
+
         private static GameObject _MaterialButton;
 
         public static GameObject MaterialButton
@@ -55,7 +67,7 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
     }
-    public static class LayoutMaterial
+    public static class MaterialLayout
     {
         public class SegmentedButton : PrefabRef<MaterialButtonSegment>
         {
@@ -289,14 +301,14 @@ namespace Riten.Windinator.LayoutBuilder
         {
             MaterialLabelStyle m_style;
             FontStyles m_fontStyle;
-            ColorAssigner.AllColorType m_color;
+            AllColorType m_color;
             string m_text;
 
             public Label(
                 string text = "",
                 MaterialLabelStyle style = MaterialLabelStyle.Body,
                 FontStyles fontStyle = FontStyles.Normal,
-                ColorAssigner.AllColorType color = ColorAssigner.AllColorType.Primary
+                AllColorType color = AllColorType.Primary
             ) : base(LayoutMaterialPrefabs.MaterialLabel)
             {
                 m_text = text;
@@ -316,6 +328,33 @@ namespace Riten.Windinator.LayoutBuilder
                 field.FontStyle = m_fontStyle;
 
                 field.SetDirty();
+
+                m_reference.Value = field;
+
+                return prefab;
+            }
+        }
+
+        public class Icon : PrefabRef<MaterialIcon>
+        {
+            MaterialIcons m_icon;
+            AllColorType m_color;
+
+            public Icon(
+                MaterialIcons icon = MaterialIcons.plus,
+                AllColorType color = AllColorType.OnBackground
+            ) : base(LayoutMaterialPrefabs.MaterialLabel)
+            {
+                m_icon = icon;
+                m_color = color;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var prefab = base.Build(parent);
+                var field = prefab.GetComponentInChildren<MaterialIcon>();
+
+                field.UpdateIcon(m_icon, m_color);
 
                 m_reference.Value = field;
 

@@ -162,6 +162,7 @@ namespace Riten.Windinator.LayoutBuilder
 
             public override RectTransform Build(RectTransform parent)
             {
+                if (m_prefab == null) return null;
                 return Object.Instantiate(m_prefab, parent, false).transform as RectTransform;
             }
         }
@@ -362,6 +363,11 @@ namespace Riten.Windinator.LayoutBuilder
 
                 return transform;
             }
+        }
+
+        public class Rectangle : PrefabRef<RectangleGraphic>
+        {
+
         }
 
         public class Grid : Element

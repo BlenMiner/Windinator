@@ -11,7 +11,7 @@ namespace Riten.Windinator.Material
 
         public ColorPalette Color;
 
-        public ColorAssigner.ColorType ColorSelected;
+        public ColorType ColorSelected;
 
         bool m_selected = false;
 

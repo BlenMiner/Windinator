@@ -14,59 +14,59 @@ namespace Riten.Windinator
         }
     }
 
+    [System.Serializable]
+    public enum ColorType
+    {
+        Primary,
+        PrimaryContainer,
+        Secondary,
+        SecondaryContainer,
+        Tertiary,
+        TertiaryContainer,
+        Error,
+        ErrorContainer,
+        Background,
+        Surface,
+        SurfaceVariant,
+        Outline,
+        Snackbar,
+    }
+
+    [System.Serializable]
+    public enum AllColorType
+    {
+        Primary,
+        PrimaryContainer,
+        Secondary,
+        SecondaryContainer,
+        Tertiary,
+        TertiaryContainer,
+        Error,
+        ErrorContainer,
+        Background,
+        Surface,
+        SurfaceVariant,
+        Outline,
+        Snackbar,
+
+        OnPrimary,
+        OnPrimaryContainer,
+        OnSecondary,
+        OnSecondaryContainer,
+        OnTertiary,
+        OnTertiaryContainer,
+        OnError,
+        OnErrorContainer,
+        OnBackground,
+        OnSurface,
+        OnSurfaceVariant,
+        OnOutline,
+        OnSnackbar,
+    }
+
     [CreateAssetMenu(menuName = "Windinator/Material Palette")]
     public class ColorAssigner : ScriptableObject
     {
-        [System.Serializable]
-        public enum ColorType
-        {
-            Primary,
-            PrimaryContainer,
-            Secondary,
-            SecondaryContainer,
-            Tertiary,
-            TertiaryContainer,
-            Error,
-            ErrorContainer,
-            Background,
-            Surface,
-            SurfaceVariant,
-            Outline,
-            Snackbar,
-        }
-
-        [System.Serializable]
-        public enum AllColorType
-        {
-            Primary,
-            PrimaryContainer,
-            Secondary,
-            SecondaryContainer,
-            Tertiary,
-            TertiaryContainer,
-            Error,
-            ErrorContainer,
-            Background,
-            Surface,
-            SurfaceVariant,
-            Outline,
-            Snackbar,
-
-            OnPrimary,
-            OnPrimaryContainer,
-            OnSecondary,
-            OnSecondaryContainer,
-            OnTertiary,
-            OnTertiaryContainer,
-            OnError,
-            OnErrorContainer,
-            OnBackground,
-            OnSurface,
-            OnSurfaceVariant,
-            OnOutline,
-            OnSnackbar,
-        }
-
         public ColorPair Primary = new ColorPair(Color.white, Color.white);
         public ColorPair PrimaryContainer = new ColorPair(Color.white, Color.white);
         public ColorPair Secondary = new ColorPair(Color.white, Color.white);
