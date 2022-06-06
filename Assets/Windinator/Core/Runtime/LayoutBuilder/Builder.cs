@@ -367,7 +367,42 @@ namespace Riten.Windinator.LayoutBuilder
 
         public class Rectangle : PrefabRef<RectangleGraphic>
         {
+            Element m_child;
 
+            Vector2 m_size;
+
+            Vector4 m_roundess;
+
+            float m_outline;
+
+            public Rectangle(Element child, Vector2 size, Vector4 roundness = default, float outline = default) : base()
+            {
+                m_child = child;
+                m_size = size;
+                m_roundess = roundness;
+                m_outline = outline;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var transform = Create("#Layout-Rectangle-Graphic", parent);
+                transform.sizeDelta = m_size;
+
+                var layout = transform.gameObject.AddComponent<LayoutElement>();
+                var graphic = transform.gameObject.AddComponent<RectangleGraphic>();
+
+                layout.preferredWidth = m_size.x;
+                layout.preferredHeight = m_size.y;
+
+                graphic.SetRoundness(m_roundess);
+                graphic.SetOutline(Color.black, m_outline);
+
+                m_reference.Value = graphic;
+
+                m_child?.Build(transform);
+
+                return transform;
+            }
         }
 
         public class Grid : Element
