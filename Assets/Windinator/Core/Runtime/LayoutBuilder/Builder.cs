@@ -451,7 +451,7 @@ namespace Riten.Windinator.LayoutBuilder
 
             private readonly ShapeProperties m_shape;
 
-            public Rectangle(Element child, Vector2? size = null,
+            public Rectangle(Element child = null, Vector2? size = null,
                 Vector4 padding = default,
                 ShapeProperties shape = default) : base()
             {
