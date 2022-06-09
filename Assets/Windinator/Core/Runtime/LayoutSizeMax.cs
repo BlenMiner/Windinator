@@ -30,8 +30,7 @@ namespace Riten.Windinator.LayoutBuilder
             foreach (var c in m_children)
             {
                 var rt = c.transform as RectTransform;
-
-                size = Vector2.Max(size, rt.sizeDelta);
+                size = Vector2.Max(size, rt.rect.size);
             }
 
             rectTransform.sizeDelta = size;
