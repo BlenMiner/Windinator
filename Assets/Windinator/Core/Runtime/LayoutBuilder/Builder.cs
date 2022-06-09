@@ -31,6 +31,33 @@ namespace Riten.Windinator.LayoutBuilder
         }
     }
 
+    public struct ShadowProperties
+    {
+        public float Size;
+
+        public float Blur;
+
+        public Color? Color;
+    }
+
+    public struct OutlineProperties
+    {
+        public float Size;
+
+        public Color? Color;
+    }
+
+    public struct ShapeProperties
+    {
+        public Color? Color;
+
+        public Vector4 Roundness;
+
+        public OutlineProperties Outline;
+
+        public ShadowProperties Shadow;
+    }
+
     public class Builder : Layout.Element
     {
         RectTransform m_root;
@@ -78,7 +105,7 @@ namespace Riten.Windinator.LayoutBuilder
 
             public Element(Vector4 Padding = default)
             {
-                this.m_padding = Padding;
+                m_padding = Padding;
             }
 
             public virtual RectTransform Build(RectTransform parent)
@@ -102,6 +129,19 @@ namespace Riten.Windinator.LayoutBuilder
                 transform.offsetMax = Vector2.zero;
 
                 return transform;
+            }
+
+            public VerticalLayoutGroup AddGenericGroup(Transform transform)
+            {
+                var group = transform.gameObject.AddComponent<VerticalLayoutGroup>();
+
+                group.childForceExpandWidth = false;
+                group.childForceExpandHeight = false;
+                group.childControlWidth = true;
+                group.childControlHeight = true;
+                group.padding = new RectOffset((int)m_padding.x, (int)m_padding.y, (int)m_padding.z, (int)m_padding.w);
+
+                return group;
             }
 
             public static RectTransform Create(string name, RectTransform parent)
@@ -140,6 +180,8 @@ namespace Riten.Windinator.LayoutBuilder
                 transform.sizeDelta = m_size;
 
                 var layout = transform.gameObject.AddComponent<LayoutElement>();
+
+                AddGenericGroup(transform);
 
                 layout.preferredWidth = m_size.x;
                 layout.preferredHeight = m_size.y;
@@ -282,7 +324,7 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 m_child = child;
             }
-             
+
             public override RectTransform Build(RectTransform parent)
             {
                 var transform = base.Build(parent);
@@ -316,6 +358,42 @@ namespace Riten.Windinator.LayoutBuilder
                 transform.sizeDelta = Vector2.zero;
 
                 m_reference.Value = transform.GetComponent<ScrollViewDynamicRuntime>();
+
+                return transform;
+            }
+        }
+
+        public class Stack : Element
+        {
+            Element[] m_children;
+
+            TextAnchor m_aligmnet;
+
+            public Stack(Element[] children = null, TextAnchor alignment = TextAnchor.UpperLeft, Vector4 Padding = default) : base(Padding)
+            {
+                m_aligmnet = alignment;
+                m_children = children;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var transform = Create("#Layout-Stack", parent);
+
+                foreach (var child in m_children)
+                {
+                    var vertical = new Vertical(new Element[] { child }, alignment: m_aligmnet, Padding: m_padding).Build(transform);
+
+                    vertical.anchorMin = Vector2.zero;
+                    vertical.anchorMax = Vector2.one;
+                    vertical.anchoredPosition = Vector2.zero;
+                    vertical.sizeDelta = Vector2.zero;
+
+                    var fitter = vertical.gameObject.AddComponent<ContentSizeFitter>();
+                    fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                    fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+                }
+
+                transform.gameObject.AddComponent<LayoutSizeMax>();
 
                 return transform;
             }
@@ -367,35 +445,52 @@ namespace Riten.Windinator.LayoutBuilder
 
         public class Rectangle : PrefabRef<RectangleGraphic>
         {
-            Element m_child;
+            private readonly Element m_child;
 
-            Vector2 m_size;
+            private readonly Vector2? m_size;
 
-            Vector4 m_roundess;
+            private readonly ShapeProperties m_shape;
 
-            float m_outline;
-
-            public Rectangle(Element child, Vector2 size, Vector4 roundness = default, float outline = default) : base()
+            public Rectangle(Element child, Vector2? size = null,
+                Vector4 padding = default,
+                ShapeProperties shape = default) : base()
             {
                 m_child = child;
                 m_size = size;
-                m_roundess = roundness;
-                m_outline = outline;
+                m_padding = padding;
+                m_shape = shape;
             }
 
             public override RectTransform Build(RectTransform parent)
             {
                 var transform = Create("#Layout-Rectangle-Graphic", parent);
-                transform.sizeDelta = m_size;
+
+                if (m_size.HasValue) transform.sizeDelta = m_size.Value;
+
+                var cr = transform.gameObject.AddComponent<CanvasRenderer>();
+                cr.cullTransparentMesh = false;
 
                 var layout = transform.gameObject.AddComponent<LayoutElement>();
                 var graphic = transform.gameObject.AddComponent<RectangleGraphic>();
 
-                layout.preferredWidth = m_size.x;
-                layout.preferredHeight = m_size.y;
+                AddGenericGroup(transform);
 
-                graphic.SetRoundness(m_roundess);
-                graphic.SetOutline(Color.black, m_outline);
+                if (m_size.HasValue)
+                {
+                    var size = m_size.Value;
+
+                    layout.preferredWidth = size.x;
+                    layout.preferredHeight = size.y;
+                }
+
+                graphic.SetRoundness(m_shape.Roundness);
+                graphic.SetOutline(m_shape.Outline.Color.GetValueOrDefault(Color.black), m_shape.Outline.Size);
+                graphic.SetShadow(
+                    m_shape.Shadow.Color.GetValueOrDefault(Color.black),
+                    m_shape.Shadow.Size,
+                    m_shape.Shadow.Blur
+                );
+                graphic.color = m_shape.Color.GetValueOrDefault(Color.white);
 
                 m_reference.Value = graphic;
 

@@ -14,12 +14,18 @@ public class ScrollTest : LayoutBaker
 
     public override Element Bake()
     {
-        return new Vertical(
+        return new Stack(
             new Element[] {
-                new Container(
-                    new ScrollViewDynamic().GetReference(out Scrollview),
-                    new Vector2(300, 200)
-                )
+                new Rectangle(
+                    child: new ScrollViewDynamic().GetReference(out Scrollview),
+                    new Vector2(500, 400),
+                    padding: new Vector4(30, 30, 30, 30),
+                    new ShapeProperties {
+                        Color = new Color(0.9f, 0.9f, 0.9f),
+                        Roundness = new Vector4(20, 20, 20, 20)
+                    }
+                ),
+                new Button("Huh")
             },
             alignment: TextAnchor.MiddleCenter
         );

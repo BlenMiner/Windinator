@@ -86,7 +86,7 @@ public class {0} : LayoutBaker
             }
             catch
             {
-                Error("Failed to clean prefabs, make sure 'WindinatorConfig' exists in a Resources folder.");
+                // Error("Failed to clean prefabs, make sure 'WindinatorConfig' exists in a Resources folder.");
             }
         }
 
@@ -262,7 +262,7 @@ public class {0} : LayoutBaker
                 if (config.Prefabs[i] == null)
                     config.Prefabs.RemoveAt(i--);
 
-            foreach (var p in config.Prefabs) 
+            foreach (var p in config.Prefabs)
             {
                 string assetPath = AssetDatabase.GetAssetPath(p.gameObject);
 
@@ -284,14 +284,14 @@ public class {0} : LayoutBaker
                         h.childControlWidth = true;
                         h.childControlHeight = true;
                         h.childForceExpandWidth = false;
-                        h.childForceExpandHeight = false; 
+                        h.childForceExpandHeight = false;
                     }
 
                     builder.ClearContents();
                     builder.Build();
                 }
 
-                AssetDatabase.Refresh(); 
+                AssetDatabase.Refresh();
             }
 
             EditorUtility.SetDirty(config);
@@ -305,7 +305,7 @@ public class {0} : LayoutBaker
             RefreshPrefabs();
         }
 
-        [MenuItem("Assets/Windinator/Windinator Config")] 
+        [MenuItem("Assets/Windinator/Windinator Config")]
         public static void NewConfig()
         {
             string folderPath = GetCurrentFolder();
