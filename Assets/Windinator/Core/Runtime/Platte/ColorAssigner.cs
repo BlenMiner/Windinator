@@ -64,6 +64,15 @@ namespace Riten.Windinator
         OnSnackbar,
     }
 
+    public static class AllColorTypeExtension
+    {
+        public static Color ToColor(this AllColorType color)
+        {
+            if (Windinator.WindinatorConfig == null) return Color.black;
+            return Windinator.WindinatorConfig.ColorPalette[color];
+        }
+    }
+
     [CreateAssetMenu(menuName = "Windinator/Material Palette")]
     public class ColorAssigner : ScriptableObject
     {
@@ -124,7 +133,7 @@ namespace Riten.Windinator
                     case AllColorType.SurfaceVariant: return SurfaceVariant.Color;
                     case AllColorType.Outline: return Outline.Color;
                     case AllColorType.Snackbar: return Snackbar.Color;
-                         
+
                     case AllColorType.OnPrimary: return Primary.OnColor;
                     case AllColorType.OnPrimaryContainer: return PrimaryContainer.OnColor;
                     case AllColorType.OnSecondary: return Secondary.OnColor;

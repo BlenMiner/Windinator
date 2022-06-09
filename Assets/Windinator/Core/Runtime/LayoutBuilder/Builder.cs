@@ -77,7 +77,7 @@ namespace Riten.Windinator.LayoutBuilder
 
         public override RectTransform Build(RectTransform parent)
         {
-            return new Layout.Horizontal(children: new Layout.Element[1] { m_child }).Build(parent);
+            return m_child.Build(parent);
         }
     }
 
@@ -115,7 +115,10 @@ namespace Riten.Windinator.LayoutBuilder
 
             public static RectTransform CreateMaximized(string name, RectTransform parent)
             {
-                var go = new GameObject(name, typeof(RectTransform));
+                var go = new GameObject(name, typeof(RectTransform), typeof(LayoutElement));
+                var layout = go.GetComponent<LayoutElement>();
+
+                layout.ignoreLayout = true;
 
                 var transform = go.transform as RectTransform;
 
@@ -164,14 +167,18 @@ namespace Riten.Windinator.LayoutBuilder
         [System.Serializable]
         public class Container : Element
         {
-            Element m_child;
+            readonly Element m_child;
 
-            Vector2 m_size;
+            readonly Vector2 m_size;
 
-            public Container(Element child, Vector2 size) : base()
+            readonly float m_flexibleHeight, m_flexibleWidth;
+
+            public Container(Element child, Vector2 size, float flexibleHeight = 0, float flexibleWidth = 0) : base()
             {
                 m_child = child;
                 m_size = size;
+                m_flexibleHeight = flexibleHeight;
+                m_flexibleWidth = flexibleWidth;
             }
 
             public override RectTransform Build(RectTransform parent)
@@ -185,6 +192,9 @@ namespace Riten.Windinator.LayoutBuilder
 
                 layout.preferredWidth = m_size.x;
                 layout.preferredHeight = m_size.y;
+
+                layout.flexibleHeight = m_flexibleHeight;
+                layout.flexibleWidth = m_flexibleWidth;
 
                 m_child?.Build(transform);
 
@@ -271,11 +281,12 @@ namespace Riten.Windinator.LayoutBuilder
 
             public override RectTransform Build(RectTransform parent)
             {
-                var transform = CreateMaximized("#Layout-Horizontal", parent);
+                var transform = Create("#Layout-Horizontal", parent);
                 var layoutGroup = transform.gameObject.AddComponent<HorizontalLayoutGroup>();
                 var layoutElement = transform.gameObject.AddComponent<LayoutElement>();
 
-                layoutElement.flexibleHeight = 0f;
+                layoutElement.flexibleHeight = 1f;
+                layoutElement.flexibleWidth = 1f;
 
                 if (m_children != null && m_children.Length > 0)
                 {
@@ -292,6 +303,25 @@ namespace Riten.Windinator.LayoutBuilder
                 layoutGroup.spacing = m_spacing;
 
                 LayoutRebuilder.ForceRebuildLayoutImmediate(transform);
+                return transform;
+            }
+        }
+
+        [System.Serializable]
+        public class Expand : Element
+        {
+            Element m_child;
+
+            public Expand(Element child) : base(default)
+            {
+                m_child = child;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var transform = CreateMaximized("#Layout-Flexible-Space", parent);
+                m_child?.Build(transform);
+                AddGenericGroup(transform);
                 return transform;
             }
         }
@@ -416,11 +446,12 @@ namespace Riten.Windinator.LayoutBuilder
 
             public override RectTransform Build(RectTransform parent)
             {
-                var transform = CreateMaximized("#Layout-Vertical", parent);
+                var transform = Create("#Layout-Vertical", parent);
                 var layoutGroup = transform.gameObject.AddComponent<VerticalLayoutGroup>();
                 var layoutElement = transform.gameObject.AddComponent<LayoutElement>();
 
-                layoutElement.flexibleHeight = 0f;
+                layoutElement.flexibleHeight = 1f;
+                layoutElement.flexibleWidth = 1f;
 
                 layoutGroup.padding = new RectOffset((int)m_padding.x, (int)m_padding.y, (int)m_padding.z, (int)m_padding.w);
 
@@ -451,19 +482,26 @@ namespace Riten.Windinator.LayoutBuilder
 
             private readonly ShapeProperties m_shape;
 
+            private float m_flexibleWidth = 0f;
+
+            private float m_flexibleHeight = 0f;
+
             public Rectangle(Element child = null, Vector2? size = null,
                 Vector4 padding = default,
-                ShapeProperties shape = default) : base()
+                ShapeProperties shape = default,
+                float flexibleWidth = 0, float flexibleHeight = 0) : base()
             {
                 m_child = child;
                 m_size = size;
                 m_padding = padding;
                 m_shape = shape;
+                m_flexibleWidth = flexibleWidth;
+                m_flexibleHeight = flexibleHeight;
             }
 
             public override RectTransform Build(RectTransform parent)
             {
-                var transform = Create("#Layout-Rectangle-Graphic", parent);
+                RectTransform transform = Create("#Layout-Rectangle-Graphic", parent);
 
                 if (m_size.HasValue) transform.sizeDelta = m_size.Value;
 
@@ -479,9 +517,12 @@ namespace Riten.Windinator.LayoutBuilder
                 {
                     var size = m_size.Value;
 
-                    layout.preferredWidth = size.x;
-                    layout.preferredHeight = size.y;
+                    layout.minWidth = size.x;
+                    layout.minHeight = size.y;
                 }
+
+                layout.flexibleHeight = m_flexibleHeight;
+                layout.flexibleWidth = m_flexibleWidth;
 
                 graphic.SetRoundness(m_shape.Roundness);
                 graphic.SetOutline(m_shape.Outline.Color.GetValueOrDefault(Color.black), m_shape.Outline.Size);
@@ -520,7 +561,7 @@ namespace Riten.Windinator.LayoutBuilder
 
             public override RectTransform Build(RectTransform parent)
             {
-                var transform = CreateMaximized("#Layout-Grid", parent);
+                var transform = Create("#Layout-Grid", parent);
                 var layoutGroup = transform.gameObject.AddComponent<GridLayoutGroup>();
                 var layoutElement = transform.gameObject.AddComponent<LayoutElement>();
 
