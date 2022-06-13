@@ -167,9 +167,9 @@ public class {0} : LayoutBaker
         }
 
         [UnityEditor.Callbacks.DidReloadScripts]
-        static void OnScriptsReloaded()
+        static async void OnScriptsReloaded()
         {
-            // await Task.Delay(1000);
+            await Task.Delay(200);
 
             LoadWindow();
 

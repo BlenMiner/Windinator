@@ -57,9 +57,20 @@ namespace Riten.Windinator
 
         private int m_shouldBlockGameFlow = 0;
 
+        public static Color GetColor(AllColorType color)
+        {
+            if (WindinatorConfig == null) return Color.white;
+            return WindinatorConfig.ColorPalette[color];
+        }
+
         public static bool Warmup()
         {
             return Instance != null;
+        }
+
+        public static void RunNextFrame(Action action)
+        {
+            Instance.m_nextFrame.Enqueue(action);
         }
 
         public static void SetupCanvas(Canvas canvas, CanvasScaler scaler)

@@ -6756,8 +6756,11 @@ public class MaterialIcon : MonoBehaviour
 
     public void UpdateIcon(MaterialIcons icon, AllColorType color)
     {
-        m_text.color = Windinator.WindinatorConfig.ColorPalette[color];
+        m_color = color;
         UpdateIcon(icon);
+
+        if (m_text != null)
+            m_text.color = Windinator.GetColor(color);
     }
 
     public void UpdateIcon(MaterialIcons icon)

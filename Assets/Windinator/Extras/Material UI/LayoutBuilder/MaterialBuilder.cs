@@ -118,6 +118,8 @@ namespace Riten.Windinator.LayoutBuilder
                     var btn = buttonList[i];
 
                     btn.GetReference(out buttonUI[i]);
+
+                    if (buttonUI[i].Value == null) return null;
                 }
 
                 var prefab = new Horizontal(
@@ -191,6 +193,9 @@ namespace Riten.Windinator.LayoutBuilder
             public override RectTransform Build(RectTransform parent)
             {
                 var prefab = base.Build(parent);
+
+                if (prefab == null) return null;
+
                 var btn = prefab.GetComponentInChildren<MaterialButton>();
 
                 btn.SetText(m_text);
@@ -198,7 +203,7 @@ namespace Riten.Windinator.LayoutBuilder
                 btn.SetPadding(new RectOffset((int)m_padding.x, (int)m_padding.y, (int)m_padding.z, (int)m_padding.w));
                 btn.SetButtonType(m_type);
 
-                m_reference.Value = btn;
+                SetReference(btn);
 
                 return prefab;
             }
@@ -229,6 +234,9 @@ namespace Riten.Windinator.LayoutBuilder
             public override RectTransform Build(RectTransform parent)
             {
                 var prefab = base.Build(parent);
+
+                if (prefab == null) return null;
+
                 var btn = prefab.GetComponentInChildren<MaterialButton>();
 
                 btn.SetText(m_text);
@@ -236,7 +244,7 @@ namespace Riten.Windinator.LayoutBuilder
                 btn.SetPadding(new RectOffset((int)m_padding.x, (int)m_padding.y, (int)m_padding.z, (int)m_padding.w));
                 btn.SetButtonType(m_type);
 
-                m_reference.Value = btn;
+                SetReference(btn);
 
                 return prefab;
             }
@@ -278,6 +286,9 @@ namespace Riten.Windinator.LayoutBuilder
             public override RectTransform Build(RectTransform parent)
             {
                 var prefab = base.Build(parent);
+
+                if (prefab == null) return null;
+
                 var field = prefab.GetComponentInChildren<MaterialInputField>();
 
                 field.Text = m_text;
@@ -291,7 +302,7 @@ namespace Riten.Windinator.LayoutBuilder
 
                 field.SetDirty();
 
-                m_reference.Value = field;
+                SetReference(field);
 
                 return prefab;
             }
@@ -320,6 +331,9 @@ namespace Riten.Windinator.LayoutBuilder
             public override RectTransform Build(RectTransform parent)
             {
                 var prefab = base.Build(parent);
+
+                if (prefab == null) return null;
+
                 var field = prefab.GetComponentInChildren<MaterialLabel>();
 
                 field.Text = m_text;
@@ -329,7 +343,7 @@ namespace Riten.Windinator.LayoutBuilder
 
                 field.SetDirty();
 
-                m_reference.Value = field;
+                SetReference(field);
 
                 return prefab;
             }
@@ -352,11 +366,14 @@ namespace Riten.Windinator.LayoutBuilder
             public override RectTransform Build(RectTransform parent)
             {
                 var prefab = base.Build(parent);
+
+                if (prefab == null) return null;
+
                 var field = prefab.GetComponentInChildren<MaterialIcon>();
 
                 field.UpdateIcon(m_icon, m_color);
 
-                m_reference.Value = field;
+                SetReference(field);
 
                 return prefab;
             }

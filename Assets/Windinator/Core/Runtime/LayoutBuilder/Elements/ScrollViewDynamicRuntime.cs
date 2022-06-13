@@ -16,6 +16,8 @@ namespace Riten.Windinator
 
         bool m_dirty = false;
 
+        bool m_first = true;
+
         public ScrollViewController<T, D> Setup<T, D>(
             ObservableCollection<D> data,
             float elementSize,
@@ -54,6 +56,14 @@ namespace Riten.Windinator
             if (m_dirty)
             {
                 m_update?.Invoke();
+
+                // This just ensures unity had time to calculate the layout sizes
+                if (m_first)
+                {
+                    m_first = false;
+                    return;
+                }
+
                 m_dirty = false;
             }
         }

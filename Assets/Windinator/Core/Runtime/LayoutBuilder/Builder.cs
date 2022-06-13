@@ -168,9 +168,36 @@ namespace Riten.Windinator.LayoutBuilder
         }
 
         [System.Serializable]
+        public class ElementRef<T> : Element where T : Component
+        {
+            Reference<T> m_reference;
+
+            public ElementRef(Vector4 padding = default) : base(padding)
+            {
+                m_reference = new Reference<T>();
+            }
+
+            public ElementRef<T> GetReference(out Reference<T> reference)
+            {
+                reference = m_reference;
+                return this;
+            }
+
+            protected void SetReference(T value)
+            {
+                m_reference.Value = value;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                return base.Build(parent);
+            }
+        }
+
+        [System.Serializable]
         public class PrefabRef<T> : Prefab where T : Component
         {
-            protected Reference<T> m_reference;
+            Reference<T> m_reference;
 
             public PrefabRef(GameObject prefab = null) : base(prefab)
             {
@@ -181,6 +208,11 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 reference = m_reference;
                 return this;
+            }
+
+            protected void SetReference(T value)
+            {
+                m_reference.Value = value;
             }
 
             public override RectTransform Build(RectTransform parent)
@@ -292,9 +324,11 @@ namespace Riten.Windinator.LayoutBuilder
                 transform.anchoredPosition = Vector2.zero;
                 transform.sizeDelta = Vector2.zero;
 
-                m_reference.Value = transform.GetComponent<ScrollRect>();
+                var scrollRect = transform.GetComponent<ScrollRect>();
 
-                var nextParent = m_reference.Value.content;
+                SetReference(scrollRect);
+
+                var nextParent = scrollRect.content;
 
                 m_child?.Build(nextParent);
 
@@ -310,12 +344,15 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 var transform = base.Build(parent);
 
-                transform.anchorMin = Vector2.zero;
-                transform.anchorMax = Vector2.one;
-                transform.anchoredPosition = Vector2.zero;
-                transform.sizeDelta = Vector2.zero;
+                if (transform != null)
+                {
+                    transform.anchorMin = Vector2.zero;
+                    transform.anchorMax = Vector2.one;
+                    transform.anchoredPosition = Vector2.zero;
+                    transform.sizeDelta = Vector2.zero;
 
-                m_reference.Value = transform.GetComponent<ScrollViewDynamicRuntime>();
+                    SetReference(transform.GetComponent<ScrollViewDynamicRuntime>());
+                }
 
                 return transform;
             }
@@ -397,7 +434,7 @@ namespace Riten.Windinator.LayoutBuilder
                 graphic.SetRoundness(m_roundess);
                 graphic.SetOutline(Color.black, m_outline);
 
-                m_reference.Value = graphic;
+                SetReference(graphic);
 
                 m_child?.Build(transform);
 
@@ -467,6 +504,51 @@ namespace Riten.Windinator.LayoutBuilder
                 layout.preferredHeight = m_space;
 
                 return element;
+            }
+        }
+
+        public class Graphic : ElementRef<Image>
+        {
+            readonly Sprite m_sprite;
+
+            readonly float m_pixelScaler;
+
+            readonly bool m_preserveAspect;
+
+            readonly static Dictionary<Texture2D, Sprite> m_cache = new Dictionary<Texture2D, Sprite>();
+
+            public Graphic(Sprite sprite = null, Texture2D texture = null, float pixelsPerUnitScaler = 1f, bool preserveAspect = true) : base(default)
+            {
+                m_preserveAspect = preserveAspect;
+                m_pixelScaler = pixelsPerUnitScaler;
+                m_sprite = sprite;
+
+                if (texture != null && !m_cache.TryGetValue(texture, out m_sprite))
+                {
+                    m_sprite = Sprite.Create(
+                        texture,
+                        new Rect(0, 0, texture.width, texture.height),
+                        Vector2.one * 0.5f,
+                        100f
+                    );
+
+                    m_cache.Add(texture, m_sprite);
+                }
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var transform = Create("#Layout-Image", parent);
+
+                var img = transform.gameObject.AddComponent<Image>();
+
+                img.pixelsPerUnitMultiplier = m_pixelScaler;
+                img.sprite = m_sprite;
+                img.preserveAspect = m_preserveAspect;
+
+                SetReference(img);
+
+                return transform;
             }
         }
     }
