@@ -5,7 +5,7 @@ namespace Riten.Windinator.LayoutBuilder
 {
     public abstract class LayoutBaker : MonoBehaviour
     {
-        [SerializeField] bool m_fullScreen = false;
+        [SerializeField] bool m_freeControl = false;
 
         public void ClearContents()
         {
@@ -16,18 +16,17 @@ namespace Riten.Windinator.LayoutBuilder
         private void UpdateFullscreen()
         {
             RectTransform me = transform as RectTransform;
+            var contentSize = GetComponent<ContentSizeFitter>();
 
-            if (m_fullScreen)
+            if (contentSize == null) return;
+
+            if (m_freeControl)
             {
-                GetComponent<ContentSizeFitter>().enabled = false;
-                me.anchorMin = Vector3.zero;
-                me.anchorMax = Vector3.one;
-                me.sizeDelta = Vector2.zero;
-                me.anchoredPosition = Vector2.zero;
+                contentSize.enabled = false;
             }
             else
             {
-                GetComponent<ContentSizeFitter>().enabled = true;
+                contentSize.enabled = true;
 
                 me.anchorMin = Vector3.one * 0.5f;
                 me.anchorMax = Vector3.one * 0.5f;

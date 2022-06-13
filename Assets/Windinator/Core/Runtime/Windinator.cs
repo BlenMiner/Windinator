@@ -45,6 +45,11 @@ namespace Riten.Windinator
         /// </summary>
         public static bool IsEmpty => Instance.m_windows.Count == 0;
 
+        /// <summary>
+        /// Returns the ammount of pushed windows
+        /// </summary>
+        public static int WindowCount => Instance.m_windows.Count;
+
         WindinatorConfig m_windinatorConfig;
 
         WindinatorPool m_windowPool;

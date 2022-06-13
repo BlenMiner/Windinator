@@ -78,7 +78,7 @@ public class MaterialInputField : MonoBehaviour
 
     public string LabelText { get => m_labelText; set { m_labelText = value; } }
 
-    public string Text { get => m_text; set { m_text = value; } }
+    public string Text { get => m_textField.text; set { m_textField.text = value; } }
 
     public string HelperText { get => m_helperText; set { m_helperText = value; } }
 

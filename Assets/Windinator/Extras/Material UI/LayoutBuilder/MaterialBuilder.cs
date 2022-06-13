@@ -67,7 +67,7 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
     }
-    public static class Material
+    public static class MaterialUI
     {
         public class SegmentedButton : PrefabRef<MaterialButtonSegment>
         {

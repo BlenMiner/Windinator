@@ -175,7 +175,7 @@ namespace Riten.Windinator
                 m_windowSettings.BackgroundSettings.BackgroundColor = Windinator.WindinatorConfig.DefaultBackgroundColor;
                 m_windowSettings.AnimationSettings.AnimatedByDefault = true;
                 m_windowSettings.AnimationSettings.TransitionAnimDuration = 0.1f;
-                m_windowSettings.WindowFlowSettings.CanCloseWindow = true;
+                m_windowSettings.WindowFlowSettings.CanCloseWindow = false;
             }
         }
 

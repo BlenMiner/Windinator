@@ -77,7 +77,7 @@ namespace Riten.Windinator.LayoutBuilder
 
         public override RectTransform Build(RectTransform parent)
         {
-            return m_child.Build(parent);
+            return m_child?.Build(parent);
         }
     }
 
@@ -103,6 +103,10 @@ namespace Riten.Windinator.LayoutBuilder
         {
             protected Vector4 m_padding;
 
+            protected float m_flexibleWidth = -1f, m_flexibleHeight;
+
+            protected LayoutElement m_layout;
+
             public Element(Vector4 Padding = default)
             {
                 m_padding = Padding;
@@ -113,12 +117,19 @@ namespace Riten.Windinator.LayoutBuilder
                 return null;
             }
 
-            public static RectTransform CreateMaximized(string name, RectTransform parent)
+            public Element Flexible(float horizontal = 1f, float vertical = 1f)
+            {
+                m_flexibleWidth = horizontal;
+                m_flexibleHeight = vertical;
+                return this;
+            }
+
+            public RectTransform CreateMaximized(string name, RectTransform parent)
             {
                 var go = new GameObject(name, typeof(RectTransform), typeof(LayoutElement));
-                var layout = go.GetComponent<LayoutElement>();
 
-                layout.ignoreLayout = true;
+                m_layout = go.GetComponent<LayoutElement>();
+                m_layout.ignoreLayout = true;
 
                 var transform = go.transform as RectTransform;
 
@@ -147,7 +158,7 @@ namespace Riten.Windinator.LayoutBuilder
                 return group;
             }
 
-            public static RectTransform Create(string name, RectTransform parent)
+            public RectTransform Create(string name, RectTransform parent)
             {
                 var go = new GameObject(name, typeof(RectTransform));
 
@@ -160,6 +171,10 @@ namespace Riten.Windinator.LayoutBuilder
                 transform.anchorMin = center;
                 transform.anchorMax = center;
 
+                m_layout = transform.gameObject.AddComponent<LayoutElement>();
+                m_layout.flexibleWidth = m_flexibleWidth;
+                m_layout.flexibleHeight = m_flexibleHeight;
+
                 return transform;
             }
         }
@@ -171,14 +186,10 @@ namespace Riten.Windinator.LayoutBuilder
 
             readonly Vector2 m_size;
 
-            readonly float m_flexibleHeight, m_flexibleWidth;
-
-            public Container(Element child, Vector2 size, float flexibleHeight = 0, float flexibleWidth = 0) : base()
+            public Container(Element child, Vector2 size) : base()
             {
                 m_child = child;
                 m_size = size;
-                m_flexibleHeight = flexibleHeight;
-                m_flexibleWidth = flexibleWidth;
             }
 
             public override RectTransform Build(RectTransform parent)
@@ -186,15 +197,10 @@ namespace Riten.Windinator.LayoutBuilder
                 var transform = Create("#Layout-Rectangle", parent);
                 transform.sizeDelta = m_size;
 
-                var layout = transform.gameObject.AddComponent<LayoutElement>();
-
                 AddGenericGroup(transform);
 
-                layout.preferredWidth = m_size.x;
-                layout.preferredHeight = m_size.y;
-
-                layout.flexibleHeight = m_flexibleHeight;
-                layout.flexibleWidth = m_flexibleWidth;
+                m_layout.preferredWidth = m_size.x;
+                m_layout.preferredHeight = m_size.y;
 
                 m_child?.Build(transform);
 
@@ -371,9 +377,8 @@ namespace Riten.Windinator.LayoutBuilder
             public override RectTransform Build(RectTransform parent)
             {
                 var transform = Create("#Layout-Flexible-Space", parent);
-                var layoutElement = transform.gameObject.AddComponent<LayoutElement>();
-                layoutElement.flexibleWidth = m_weight;
-                layoutElement.flexibleHeight = m_weight;
+                m_layout.flexibleWidth = m_weight;
+                m_layout.flexibleHeight = m_weight;
                 return transform;
             }
         }
@@ -622,11 +627,11 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
 
-        public class Space : Element
+        public class Spacer : Element
         {
             float m_space = 0f;
 
-            public Space(float space) : base(default)
+            public Spacer(float space) : base(default)
             {
                 m_space = space;
             }
@@ -651,13 +656,16 @@ namespace Riten.Windinator.LayoutBuilder
 
             readonly bool m_preserveAspect;
 
+            readonly Color m_color;
+
             readonly static Dictionary<Texture2D, Sprite> m_cache = new Dictionary<Texture2D, Sprite>();
 
-            public Graphic(Sprite sprite = null, Texture2D texture = null, float pixelsPerUnitScaler = 1f, bool preserveAspect = true) : base(default)
+            public Graphic(Sprite sprite = null, Texture2D texture = null, Color? color = null, float pixelsPerUnitScaler = 1f, bool preserveAspect = true) : base(default)
             {
                 m_preserveAspect = preserveAspect;
                 m_pixelScaler = pixelsPerUnitScaler;
                 m_sprite = sprite;
+                m_color = color.GetValueOrDefault(Color.white);
 
                 if (texture != null && !m_cache.TryGetValue(texture, out m_sprite))
                 {
@@ -681,6 +689,7 @@ namespace Riten.Windinator.LayoutBuilder
                 img.pixelsPerUnitMultiplier = m_pixelScaler;
                 img.sprite = m_sprite;
                 img.preserveAspect = m_preserveAspect;
+                img.color = m_color;
 
                 SetReference(img);
 

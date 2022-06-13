@@ -3,7 +3,7 @@ using Riten.Windinator;
 using Riten.Windinator.LayoutBuilder;
 using Riten.Windinator.Material;
 
-using static Riten.Windinator.LayoutBuilder.Material;
+using static Riten.Windinator.LayoutBuilder.MaterialUI;
 using static Riten.Windinator.LayoutBuilder.Layout;
 
 public class ButtonsScreen : LayoutBaker
