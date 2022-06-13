@@ -4,7 +4,7 @@ using Riten.Windinator.LayoutBuilder;
 using System.Collections.ObjectModel;
 
 using static Riten.Windinator.LayoutBuilder.Layout;
-using static Riten.Windinator.LayoutBuilder.MaterialLayout;
+using static Riten.Windinator.LayoutBuilder.Material;
 
 public class ScrollTest : LayoutBaker
 {
@@ -16,10 +16,22 @@ public class ScrollTest : LayoutBaker
     {
         return new Vertical(
             new Element[] {
-                new Container(
-                    new ScrollViewDynamic().GetReference(out Scrollview),
-                    new Vector2(300, 200)
-                )
+                new Rectangle(
+                    child: new ScrollViewDynamic().GetReference(out Scrollview),
+                    new Vector2(500, 400),
+                    padding: new Vector4(30, 30, 30, 30),
+                    new ShapeProperties {
+                        Color = new Color(0.9f, 0.9f, 0.9f),
+                        Roundness = new Vector4(20, 20, 20, 20)
+                    }
+                ),
+                new Stack(
+                    children: new Element[] {
+                        new Rectangle(size: new Vector2(150, 50), shape: new ShapeProperties {Color = Color.black}),
+                        new Button("Hello")
+                    }
+                ),
+                new Button("Huh")
             },
             alignment: TextAnchor.MiddleCenter
         );

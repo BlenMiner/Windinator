@@ -6317,7 +6317,7 @@ public class MaterialIcon : MonoBehaviour
         {6285, 989339},
         {6286, 989340},
         {6287, 989341},
-        {6288, 989342}, 
+        {6288, 989342},
         {6289, 989343},
         // {725, 989344},
         {6290, 989345},
@@ -6325,7 +6325,7 @@ public class MaterialIcon : MonoBehaviour
         {6292, 989347},
         {6293, 989348},
         {6294, 989349},
-        {6295, 989350}, 
+        {6295, 989350},
         {6296, 989351},
         {6297, 989352},
         {6298, 989353},
@@ -6719,7 +6719,7 @@ public class MaterialIcon : MonoBehaviour
         if (m_text == null)
             m_text = GetComponent<TMP_Text>();
 
-        if (m_text == null) 
+        if (m_text == null)
             m_text = gameObject.AddComponent<TextMeshProUGUI>();
 
         if (m_mdiFont == null)

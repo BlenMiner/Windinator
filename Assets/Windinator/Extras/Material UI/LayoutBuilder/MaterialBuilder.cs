@@ -67,7 +67,7 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
     }
-    public static class MaterialLayout
+    public static class Material
     {
         public class SegmentedButton : PrefabRef<MaterialButtonSegment>
         {
@@ -357,7 +357,7 @@ namespace Riten.Windinator.LayoutBuilder
             public Icon(
                 MaterialIcons icon = MaterialIcons.plus,
                 AllColorType color = AllColorType.OnBackground
-            ) : base(LayoutMaterialPrefabs.MaterialLabel)
+            ) : base(LayoutMaterialPrefabs.MaterialIcon)
             {
                 m_icon = icon;
                 m_color = color;

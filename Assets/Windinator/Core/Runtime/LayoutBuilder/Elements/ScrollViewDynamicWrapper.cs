@@ -32,9 +32,9 @@ namespace Riten.Windinator
 
         float m_spacing;
 
-        public float Spacing 
+        public float Spacing
         {
-            get => m_spacing; 
+            get => m_spacing;
             set
             {
                 m_spacing = value;
@@ -89,7 +89,7 @@ namespace Riten.Windinator
                 dirVector = new Vector2(0, -1);
                 scaleVector = new Vector2(0, 1);
                 scrollPos = Mathf.Abs(m_scrollView.content.anchoredPosition.y);
-                itemsCountThatFit = Mathf.RoundToInt(view.rect.height / itemSize) + 1;
+                itemsCountThatFit = Mathf.RoundToInt(view.rect.height / itemSize) + 2;
             }
             else
             {
@@ -98,7 +98,7 @@ namespace Riten.Windinator
                 dirVector = new Vector2(1, 0);
                 scaleVector = new Vector2(1, 0);
                 scrollPos = Mathf.Abs(m_scrollView.content.anchoredPosition.x);
-                itemsCountThatFit = Mathf.RoundToInt(view.rect.width / itemSize) + 1;
+                itemsCountThatFit = Mathf.RoundToInt(view.rect.width / itemSize) + 2;
             }
 
             int indexOffset = Mathf.FloorToInt(scrollPos / itemSize);

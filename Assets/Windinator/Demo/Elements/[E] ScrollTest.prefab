@@ -172,7 +172,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2610149292898505501}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a4db7a114972834c8e4117be1d82ba3, type: 3}
+  m_Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -377,6 +377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90b1a56383100764ba708939fa4bb920, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_fullScreen: 0
   Scrollview:
     Value: {fileID: 7840681388674300329}
 --- !u!114 &4148923401343678127
@@ -685,7 +686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.10980393, g: 0.10588236, b: 0.121568635, a: 0.2}
+  m_Color: {r: 0.4039216, g: 0.3137255, b: 0.6431373, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -694,18 +695,18 @@ MonoBehaviour:
       m_Calls: []
   m_texture: {fileID: 0}
   m_graphicBlur: 0
-  m_circleAlpha: 0.2
+  m_circleAlpha: 0
   m_circlePos: {x: 0, y: 0}
   m_circleColor: {r: 0, g: 0, b: 0, a: 0}
   m_circleRadius: 0
   m_outlineSize: 0
-  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 0}
   m_shadowSize: 0
   m_shadowBlur: 0
   m_shadowPower: 1
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadowColor: {r: 0, g: 0, b: 0, a: 0}
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
-  CircleColor: {r: 0, g: 0, b: 0, a: 0}
+  CircleColor: {r: 0.4039216, g: 0.3137255, b: 0.6431373, a: 1}
   m_useMaxRoundness: 1
   m_uniformRoundness: 0
   m_roudnessInPixels: {x: 0, y: 0, z: 0, w: 0}
@@ -718,7 +719,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6115335335198973993}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba4b0bfaaa0d4f346acf20ef0ea72d2c, type: 3}
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_targetGraphic: {fileID: 7538333135789529145}

@@ -4,7 +4,7 @@ using Riten.Windinator.LayoutBuilder;
 using Riten.Windinator.Material;
 
 using static Riten.Windinator.LayoutBuilder.Layout;
-using static Riten.Windinator.LayoutBuilder.MaterialLayout;
+using static Riten.Windinator.LayoutBuilder.Material;
 
 public class LoginForm : LayoutBaker
 {
