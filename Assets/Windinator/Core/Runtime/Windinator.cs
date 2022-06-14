@@ -334,8 +334,8 @@ namespace Riten.Windinator
                 if (cull != window.IsCulled)
                     window.CullWindow(cull);
 
-                if (!cull && window.CullBackgroundWindows)
-                    cull = window.CullBackgroundWindows;
+                if (!cull && window.CullBackgroundWindows && !window.IsAnimating)
+                    cull = true;
             }
         }
 

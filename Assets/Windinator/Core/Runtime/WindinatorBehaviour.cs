@@ -87,6 +87,10 @@ namespace Riten.Windinator
 
         private Canvas _canvas;
 
+        public int AnimationActors { get; set; }
+
+        public bool IsAnimating => AnimationActors > 0;
+
         public Canvas Canvas
         {
             get

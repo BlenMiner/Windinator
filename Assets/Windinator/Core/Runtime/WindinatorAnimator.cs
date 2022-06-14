@@ -21,7 +21,9 @@ namespace Riten.Windinator
 
         public void Animate(WindinatorBehaviour window, WindinatorAnimations.AnimationDelegade anim, Action onDone)
         {
-            m_instances.Add(new WindinatorAnimatorState {
+            window.AnimationActors += 1;
+            m_instances.Add(new WindinatorAnimatorState
+            {
                 window = window,
                 time = 0f,
                 onDone = onDone,
@@ -52,6 +54,7 @@ namespace Riten.Windinator
                 if (state.time > 1f)
                 {
                     state.time = 1f;
+                    state.window.AnimationActors -= 1;
                     state.window.ResetAnimationState();
                     state.onDone?.Invoke();
                     m_instances.RemoveAt(i--);
@@ -69,8 +72,12 @@ namespace Riten.Windinator
         {
             for (int i = 0; i < m_instances.Count; ++i)
             {
-                if (m_instances[i].window == window)
+                var w = m_instances[i];
+                if (w.window == window)
+                {
+                    w.window.AnimationActors -= 1;
                     m_instances.RemoveAt(i--);
+                }
             }
         }
     }
