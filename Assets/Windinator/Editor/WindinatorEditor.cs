@@ -525,7 +525,7 @@ public class {0} : LayoutBaker
                 }
             }
 
-            completion.Append("Successfuly linked prefabs:\n\n");
+            completion.Append("\nSuccessfuly linked prefabs:\n\n");
 
             foreach (var s in selections)
             {

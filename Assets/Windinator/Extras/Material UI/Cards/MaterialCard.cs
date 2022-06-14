@@ -27,8 +27,6 @@ public class MaterialCard : MonoBehaviour
 
     public Colors OutlinedColor;
 
-    public ColorAssigner Pallete => Windinator.WindinatorConfig.ColorPalette;
-
     private void Reset()
     {
         m_graphic = GetComponent<RectangleGraphic>();
@@ -46,10 +44,10 @@ public class MaterialCard : MonoBehaviour
 
         m_graphic.color = Style switch
         {
-            MaterialCardStyle.Outlined => Pallete[OutlinedColor],
-            MaterialCardStyle.Filled => Pallete[FilledColor],
-            MaterialCardStyle.Elevated=> Pallete[ElevatedColor],
-            _ => Pallete[FilledColor]
+            MaterialCardStyle.Outlined => OutlinedColor.ToColor(),
+            MaterialCardStyle.Filled => FilledColor.ToColor(),
+            MaterialCardStyle.Elevated=> ElevatedColor.ToColor(),
+            _ => FilledColor.ToColor()
         } ;
     }
 }
