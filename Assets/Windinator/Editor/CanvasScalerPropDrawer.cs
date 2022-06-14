@@ -59,7 +59,7 @@ public class CanvasScalerPropDrawer : PropertyDrawer
     {
         Init(property);
 
-        float size = 20f;
+        float size = 60f;
 
         if (!m_UiScaleMode.hasMultipleDifferentValues)
         {
@@ -70,10 +70,10 @@ public class CanvasScalerPropDrawer : PropertyDrawer
             else if (m_UiScaleMode.enumValueIndex == (int)CanvasScaler.ScaleMode.ScaleWithScreenSize)
             {
                 size += 20f;
-                size += 30f;
+                size += 20f;
                 if (m_ScreenMatchMode.enumValueIndex == (int)CanvasScaler.ScreenMatchMode.MatchWidthOrHeight && !m_ScreenMatchMode.hasMultipleDifferentValues)
                 {
-                    size += 50f;
+                    size += 40f;
                 }
             }
             // Constant physical size
@@ -87,12 +87,19 @@ public class CanvasScalerPropDrawer : PropertyDrawer
             size += 20f;
         }
 
-        return size;
+        return size + 10f;
     }
 
     public override void OnGUI(Rect position, SerializedProperty serializedObject, GUIContent label)
     {
         EditorGUI.BeginProperty(position, label, serializedObject);
+        EditorGUI.HelpBox(position, "", MessageType.None);
+
+        position.x += 10f;
+        position.width -= 20f;
+
+        position.y += 5f;
+        position.height -= 10f;
 
         Init(serializedObject);
 
@@ -102,6 +109,9 @@ public class CanvasScalerPropDrawer : PropertyDrawer
         Vector2 size = new Vector2(position.width, 20f);
         Vector2 pos = position.position;
 
+        EditorGUI.LabelField(new Rect(pos + Vector2.right * (position.width * 0.4f), size), label);
+
+        pos.y += 40f;
         EditorGUI.PropertyField(new Rect(pos, size), m_UiScaleMode);
 
         pos.y += 20f;
@@ -118,20 +128,20 @@ public class CanvasScalerPropDrawer : PropertyDrawer
             else if (m_UiScaleMode.enumValueIndex == (int)CanvasScaler.ScaleMode.ScaleWithScreenSize)
             {
                 EditorGUI.PropertyField(new Rect(pos, size), m_ReferenceResolution); pos.y += 20f;
-                EditorGUI.PropertyField(new Rect(pos, size), m_ScreenMatchMode); pos.y += 30f;
+                EditorGUI.PropertyField(new Rect(pos, size), m_ScreenMatchMode); pos.y += 20f;
                 if (m_ScreenMatchMode.enumValueIndex == (int)CanvasScaler.ScreenMatchMode.MatchWidthOrHeight && !m_ScreenMatchMode.hasMultipleDifferentValues)
                 {
                     DualLabeledSlider(new Rect(pos, size), m_MatchWidthOrHeight, s_Styles.matchContent, s_Styles.widthContent, s_Styles.heightContent);
-                    pos.y += 50f;
+                    pos.y += 40f;
                 }
             }
             // Constant physical size
-            /*else if (m_UiScaleMode.enumValueIndex == (int)CanvasScaler.ScaleMode.ConstantPhysicalSize)
+            else if (m_UiScaleMode.enumValueIndex == (int)CanvasScaler.ScaleMode.ConstantPhysicalSize)
             {
-                EditorGUILayout.PropertyField(m_PhysicalUnit);
-                EditorGUILayout.PropertyField(m_FallbackScreenDPI);
-                EditorGUILayout.PropertyField(m_DefaultSpriteDPI);
-            }*/
+                EditorGUI.PropertyField(new Rect(pos, size),m_PhysicalUnit); pos.y += 20f;
+                EditorGUI.PropertyField(new Rect(pos, size),m_FallbackScreenDPI); pos.y += 20f;
+                EditorGUI.PropertyField(new Rect(pos, size),m_DefaultSpriteDPI); pos.y += 20f;
+            }
 
             EditorGUI.PropertyField(new Rect(pos, size), m_ReferencePixelsPerUnit);
             pos.y += 20f;
@@ -145,7 +155,7 @@ public class CanvasScalerPropDrawer : PropertyDrawer
         position.height = EditorGUIUtility.singleLineHeight;
         Rect pos = position;
 
-        position.y += 12;
+        position.y += 20f;
         position.xMin += EditorGUIUtility.labelWidth;
         position.xMax -= EditorGUIUtility.fieldWidth;
 

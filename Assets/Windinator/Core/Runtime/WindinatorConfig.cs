@@ -20,6 +20,7 @@ namespace Riten.Windinator
 
         public UnityEngine.UI.CanvasScaler.ScreenMatchMode ScreenMatchMode = UnityEngine.UI.CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
 
+        [Range(0f, 1f)]
         public float Match = 0.5f;
 
         public UnityEngine.UI.CanvasScaler.Unit Physicalunit = UnityEngine.UI.CanvasScaler.Unit.Points;
