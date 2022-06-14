@@ -62,7 +62,7 @@ namespace Riten.Windinator
 
         private int m_shouldBlockGameFlow = 0;
 
-        public static Color GetColor(AllColorType color)
+        public static Color GetColor(Colors color)
         {
             if (WindinatorConfig == null) return Color.white;
             return WindinatorConfig.ColorPalette[color];

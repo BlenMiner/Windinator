@@ -11,7 +11,7 @@ namespace Riten.Windinator.Material
 
         public ColorPalette Color;
 
-        public ColorType ColorSelected;
+        public Colors ColorSelected = Colors.SurfaceVariant;
 
         bool m_selected = false;
 
@@ -31,7 +31,7 @@ namespace Riten.Windinator.Material
 
         public void UpdateSelectedColor()
         {
-            Color c = m_hovering || m_selected ? Windinator.WindinatorConfig.ColorPalette[ColorSelected].Color : default;
+            Color c = m_hovering || m_selected ? ColorSelected.ToColor() : default;
             Graphic.color = c;
         }
 

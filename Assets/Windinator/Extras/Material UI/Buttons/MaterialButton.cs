@@ -159,19 +159,19 @@ namespace Riten.Windinator.Material
 
         public void ApplButtonStyle(MaterialButtonType type)
         {
-            var primary = Windinator.WindinatorConfig.ColorPalette[ColorType.Primary];
-            var secondary = Windinator.WindinatorConfig.ColorPalette[ColorType.SecondaryContainer];
-            var outline = Windinator.WindinatorConfig.ColorPalette[ColorType.Outline];
-            var surface = Windinator.WindinatorConfig.ColorPalette[ColorType.Surface];
+            var primary = Windinator.WindinatorConfig.ColorPalette[Colors.Primary];
+            var secondary = Windinator.WindinatorConfig.ColorPalette[Colors.SecondaryContainer];
+            var outline = Windinator.WindinatorConfig.ColorPalette[Colors.Outline];
+            var surface = Windinator.WindinatorConfig.ColorPalette[Colors.Surface];
 
-            var primaryColor = !InvertColors ? primary.Color : primary.OnColor;
-            var secondaryColor = !InvertColors ? secondary.Color : secondary.OnColor;
-            var outlineColor = !InvertColors ? outline.Color : outline.OnColor;
-            var surfaceColor = !InvertColors ? surface.Color : surface.OnColor;
+            var primaryColor = (!InvertColors ? Colors.Primary : Colors.OnPrimary).ToColor();
+            var secondaryColor = (!InvertColors ? Colors.SecondaryContainer : Colors.OnSecondaryContainer).ToColor();
+            var outlineColor = (!InvertColors ? Colors.Outline : Colors.OnOutline).ToColor();
+            var surfaceColor = (!InvertColors ? Colors.Surface : Colors.OnSurface).ToColor();
 
-            var primaryOnColor = InvertColors ? primary.Color : primary.OnColor;
-            var secondaryOnColor = InvertColors ? secondary.Color : secondary.OnColor;
-            var surfaceOnColor = InvertColors ? surface.Color : surface.OnColor;
+            var primaryOnColor = (InvertColors ? Colors.Primary : Colors.OnPrimary).ToColor();
+            var secondaryOnColor = (InvertColors ? Colors.SecondaryContainer : Colors.OnSecondaryContainer).ToColor();
+            var surfaceOnColor = (InvertColors ? Colors.Surface : Colors.OnSurface).ToColor();
 
             if (m_renderer.cull)
                 m_renderer.cull = false;

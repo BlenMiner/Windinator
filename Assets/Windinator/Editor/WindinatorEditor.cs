@@ -289,15 +289,25 @@ public class {0} : LayoutBaker
 
             foreach (var p in config.Prefabs)
             {
-                string assetPath = AssetDatabase.GetAssetPath(p.gameObject);
+                BakeElement(force, p.gameObject);
+            }
 
-                var mono = p.gameObject.GetComponent<LayoutBaker>();
+            EditorUtility.SetDirty(config);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        static void BakeElement(bool force, GameObject p)
+        {
+            string assetPath = AssetDatabase.GetAssetPath(p);
+
+                var mono = p.GetComponent<LayoutBaker>();
 
                 string oldHash = mono.ScriptHash;
                 string hash = GetSha256Hash(MonoScript.FromMonoBehaviour(mono).bytes);
 
                 if (hash == oldHash && !force)
-                    continue;
+                    return;
 
                 // The editing scope will automatically save, reimport prefab and unload contents
                 using (var editingScope = new PrefabUtility.EditPrefabContentsScope(assetPath))
@@ -328,11 +338,6 @@ public class {0} : LayoutBaker
                 }
 
                 AssetDatabase.Refresh();
-            }
-
-            EditorUtility.SetDirty(config);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
         }
 
         [MenuItem("Windinator/Force Re-bake Elements")]
@@ -463,7 +468,41 @@ public class {0} : LayoutBaker
         [MenuItem("Assets/Windinator/Link Selected Prefabs", validate = true)]
         public static bool LinkAvailable()
         {
-            return Selection.gameObjects != null && Selection.gameObjects.Length > 0;
+            bool validSelection = Selection.gameObjects != null && Selection.gameObjects.Length > 0;
+
+            if (validSelection)
+            {
+                foreach(var go in Selection.gameObjects)
+                    if (go.GetComponent<LayoutBaker>() != null || go.GetComponent<WindinatorBehaviour>() != null) return true;
+            }
+
+            return false;
+        }
+
+        [MenuItem("Assets/Windinator/Re-bake Selection", validate = true)]
+        public static bool RebakePossible()
+        {
+            bool validSelection = Selection.gameObjects != null && Selection.gameObjects.Length > 0;
+
+            if (validSelection)
+            {
+                foreach(var go in Selection.gameObjects)
+                    if (go.GetComponent<LayoutBaker>() != null) return true;
+            }
+
+            return false;
+        }
+
+        [MenuItem("Assets/Windinator/Re-bake Selection")]
+        public static void RebakeSelection()
+        {
+            var selections = Selection.gameObjects;
+
+            foreach(var go in selections)
+            {
+                if (go.GetComponent<LayoutBaker>() != null)
+                    BakeElement(true, go);
+            }
         }
 
 

@@ -15,25 +15,7 @@ namespace Riten.Windinator
     }
 
     [System.Serializable]
-    public enum ColorType
-    {
-        Primary,
-        PrimaryContainer,
-        Secondary,
-        SecondaryContainer,
-        Tertiary,
-        TertiaryContainer,
-        Error,
-        ErrorContainer,
-        Background,
-        Surface,
-        SurfaceVariant,
-        Outline,
-        Snackbar,
-    }
-
-    [System.Serializable]
-    public enum AllColorType
+    public enum Colors
     {
         Primary,
         PrimaryContainer,
@@ -66,7 +48,7 @@ namespace Riten.Windinator
 
     public static class AllColorTypeExtension
     {
-        public static Color ToColor(this AllColorType color)
+        public static Color ToColor(this Colors color)
         {
             if (Windinator.WindinatorConfig == null) return Color.black;
             return Windinator.WindinatorConfig.ColorPalette[color];
@@ -90,63 +72,39 @@ namespace Riten.Windinator
         public ColorPair Outline = new ColorPair(Color.white, Color.white);
         public ColorPair Snackbar = new ColorPair(Color.white, Color.white);
 
-        public ColorPair this[ColorType idx]
+        public Color this[Colors idx]
         {
             get
             {
                 switch (idx)
                 {
-                    case ColorType.Primary: return Primary;
-                    case ColorType.PrimaryContainer: return PrimaryContainer;
-                    case ColorType.Secondary: return Secondary;
-                    case ColorType.SecondaryContainer: return SecondaryContainer;
-                    case ColorType.Tertiary: return Tertiary;
-                    case ColorType.TertiaryContainer: return TertiaryContainer;
-                    case ColorType.Error: return Error;
-                    case ColorType.ErrorContainer: return ErrorContainer;
-                    case ColorType.Background: return Background;
-                    case ColorType.Surface: return Surface;
-                    case ColorType.SurfaceVariant: return SurfaceVariant;
-                    case ColorType.Outline: return Outline;
-                    case ColorType.Snackbar: return Snackbar;
-                    default: throw new System.Exception("Invalid Color");
-                }
-            }
-        }
+                    case Colors.Primary: return Primary.Color;
+                    case Colors.PrimaryContainer: return PrimaryContainer.Color;
+                    case Colors.Secondary: return Secondary.Color;
+                    case Colors.SecondaryContainer: return SecondaryContainer.Color;
+                    case Colors.Tertiary: return Tertiary.Color;
+                    case Colors.TertiaryContainer: return TertiaryContainer.Color;
+                    case Colors.Error: return Error.Color;
+                    case Colors.ErrorContainer: return ErrorContainer.Color;
+                    case Colors.Background: return Background.Color;
+                    case Colors.Surface: return Surface.Color;
+                    case Colors.SurfaceVariant: return SurfaceVariant.Color;
+                    case Colors.Outline: return Outline.Color;
+                    case Colors.Snackbar: return Snackbar.Color;
 
-        public Color this[AllColorType idx]
-        {
-            get
-            {
-                switch (idx)
-                {
-                    case AllColorType.Primary: return Primary.Color;
-                    case AllColorType.PrimaryContainer: return PrimaryContainer.Color;
-                    case AllColorType.Secondary: return Secondary.Color;
-                    case AllColorType.SecondaryContainer: return SecondaryContainer.Color;
-                    case AllColorType.Tertiary: return Tertiary.Color;
-                    case AllColorType.TertiaryContainer: return TertiaryContainer.Color;
-                    case AllColorType.Error: return Error.Color;
-                    case AllColorType.ErrorContainer: return ErrorContainer.Color;
-                    case AllColorType.Background: return Background.Color;
-                    case AllColorType.Surface: return Surface.Color;
-                    case AllColorType.SurfaceVariant: return SurfaceVariant.Color;
-                    case AllColorType.Outline: return Outline.Color;
-                    case AllColorType.Snackbar: return Snackbar.Color;
-
-                    case AllColorType.OnPrimary: return Primary.OnColor;
-                    case AllColorType.OnPrimaryContainer: return PrimaryContainer.OnColor;
-                    case AllColorType.OnSecondary: return Secondary.OnColor;
-                    case AllColorType.OnSecondaryContainer: return SecondaryContainer.OnColor;
-                    case AllColorType.OnTertiary: return Tertiary.OnColor;
-                    case AllColorType.OnTertiaryContainer: return TertiaryContainer.OnColor;
-                    case AllColorType.OnError: return Error.OnColor;
-                    case AllColorType.OnErrorContainer: return ErrorContainer.OnColor;
-                    case AllColorType.OnBackground: return Background.OnColor;
-                    case AllColorType.OnSurface: return Surface.OnColor;
-                    case AllColorType.OnSurfaceVariant: return SurfaceVariant.OnColor;
-                    case AllColorType.OnOutline: return Outline.OnColor;
-                    case AllColorType.OnSnackbar: return Snackbar.OnColor;
+                    case Colors.OnPrimary: return Primary.OnColor;
+                    case Colors.OnPrimaryContainer: return PrimaryContainer.OnColor;
+                    case Colors.OnSecondary: return Secondary.OnColor;
+                    case Colors.OnSecondaryContainer: return SecondaryContainer.OnColor;
+                    case Colors.OnTertiary: return Tertiary.OnColor;
+                    case Colors.OnTertiaryContainer: return TertiaryContainer.OnColor;
+                    case Colors.OnError: return Error.OnColor;
+                    case Colors.OnErrorContainer: return ErrorContainer.OnColor;
+                    case Colors.OnBackground: return Background.OnColor;
+                    case Colors.OnSurface: return Surface.OnColor;
+                    case Colors.OnSurfaceVariant: return SurfaceVariant.OnColor;
+                    case Colors.OnOutline: return Outline.OnColor;
+                    case Colors.OnSnackbar: return Snackbar.OnColor;
                     default: throw new System.Exception("Invalid Color");
                 }
             }

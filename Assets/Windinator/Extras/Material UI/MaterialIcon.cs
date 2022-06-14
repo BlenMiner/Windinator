@@ -6756,18 +6756,19 @@ public class MaterialIcon : MonoBehaviour
 
     public void UpdateIcon(MaterialIcons icon, Color color)
     {
-        m_color = color;
-        UpdateIcon(icon);
+        if (m_text == null) InitializeTMP();
 
-        if (m_text != null)
-            m_text.color = color;
+        m_color = color;
+        m_text.color = color;
+        
+        UpdateIcon(icon);
     }
 
     public void UpdateIcon(MaterialIcons icon)
     {
+        if (m_text == null) InitializeTMP();
+        
         m_icon = icon;
-
-        if (m_text == null) return;
 
         if (m_icon == MaterialIcons.none)
         {

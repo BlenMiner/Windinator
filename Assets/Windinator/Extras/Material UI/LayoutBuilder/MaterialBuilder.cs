@@ -312,14 +312,14 @@ namespace Riten.Windinator.LayoutBuilder
         {
             MaterialLabelStyle m_style;
             FontStyles m_fontStyle;
-            AllColorType m_color;
+            Colors m_color;
             string m_text;
 
             public Label(
                 string text = "",
                 MaterialLabelStyle style = MaterialLabelStyle.Body,
                 FontStyles fontStyle = FontStyles.Normal,
-                AllColorType color = AllColorType.Primary
+                Colors color = Colors.Primary
             ) : base(LayoutMaterialPrefabs.MaterialLabel)
             {
                 m_text = text;

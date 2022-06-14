@@ -8,25 +8,25 @@ namespace Riten.Windinator
     {
         [SerializeField] Graphic m_targetGraphic;
 
-        [SerializeField] ColorType m_color;
+        [SerializeField] Colors m_color;
 
-        [SerializeField] bool m_onColor;
+        [SerializeField] bool m_useCustomColor;
+
+        [SerializeField] Color m_customColor;
 
         [SerializeField, Range(0, 1)] float m_alpha = 1f;
 
-        public bool OnColor
-        {
-            get { return m_onColor; }
-            set { m_onColor = value; UpdateColor(); }
-        }
-
-        public ColorType ColorType
+        public Colors Value
         {
             get { return m_color; }
-            set { m_color = value; UpdateColor(); }
+            set { m_color = value; m_useCustomColor = false; UpdateColor(); }
         }
 
-        public ColorPair Value => Windinator.WindinatorConfig == null ? default : Windinator.WindinatorConfig.ColorPalette[ColorType];
+        public Color RawValue
+        {
+            get { return m_useCustomColor ? m_customColor : m_color.ToColor(); }
+            set { m_customColor = value; m_useCustomColor = true; UpdateColor(); }
+        }
 
         private void Reset()
         {
@@ -48,8 +48,7 @@ namespace Riten.Windinator
         {
             if (m_targetGraphic == null) return;
 
-            var pair = Value;
-            var c = m_onColor ? pair.OnColor : pair.Color;
+            var c = m_useCustomColor ? m_customColor : m_color.ToColor();
             c.a = m_alpha;
             m_targetGraphic.color = c;
         }

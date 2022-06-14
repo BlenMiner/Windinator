@@ -21,7 +21,7 @@ public class MaterialLabel : MonoBehaviour
 
     public FontStyles FontStyle;
 
-    public AllColorType Color;
+    public Colors Color;
 
     public string Text;
 

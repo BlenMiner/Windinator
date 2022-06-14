@@ -41,10 +41,10 @@ public class MaterialInputField : MonoBehaviour
 
     [Header("Color")]
 
-    [SerializeField] ColorType m_fieldColor;
-    [SerializeField] ColorType m_normalColor;
-    [SerializeField] ColorType m_selectedColor;
-    [SerializeField] ColorType m_errorColor;
+    [SerializeField] Colors m_fieldColor = Colors.SecondaryContainer;
+    [SerializeField] Colors m_normalColor = Colors.OnSecondaryContainer;
+    [SerializeField] Colors m_selectedColor = Colors.Primary;
+    [SerializeField] Colors m_errorColor = Colors.Error;
 
     [Header("Component References")]
 
@@ -187,9 +187,9 @@ public class MaterialInputField : MonoBehaviour
         m_labelPaddingTarget = selected || !emptyText ? (m_type == MaterialTextFieldType.Outlined ? -40f : -24f) : 0;
 
         float bottomBarHeight = selected ? 3f : 2f;
-        m_bottomBarColorTarget = selected ? m_palette[m_selectedColor].Color : m_palette[m_normalColor].OnColor;
+        m_bottomBarColorTarget = selected ? m_selectedColor.ToColor() : m_normalColor.ToColor();
 
-        if (m_error) m_bottomBarColorTarget = m_palette[m_errorColor].Color;
+        if (m_error) m_bottomBarColorTarget = m_errorColor.ToColor();
 
         m_labelColorTarget = m_bottomBarColorTarget;
 
@@ -197,7 +197,7 @@ public class MaterialInputField : MonoBehaviour
 
         var newSize = new Vector2(m_bottomLine.rectTransform.sizeDelta.x, bottomBarHeight);
 
-        var color = m_palette[m_fieldColor].Color;
+        var color = m_fieldColor.ToColor();
         var empty = color;
         empty.a = 0;
 

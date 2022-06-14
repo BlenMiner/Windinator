@@ -20,8 +20,8 @@ public class GoogleTemplate : LayoutBaker
         return new Vertical(
             new Element[]
             {
-                new Graphic(sprite: m_logo, color: Windinator.GetColor(AllColorType.OnBackground)),
-                new MaterialUI.Label("Guuglio", style: MaterialLabelStyle.Headline, fontStyle: TMPro.FontStyles.Bold, color: AllColorType.OnBackground),
+                new Graphic(sprite: m_logo, color: Windinator.GetColor(Colors.OnBackground)),
+                new MaterialUI.Label("Guuglio", style: MaterialLabelStyle.Headline, fontStyle: TMPro.FontStyles.Bold, color: Colors.OnBackground),
 
                 new Spacer(25f),
 

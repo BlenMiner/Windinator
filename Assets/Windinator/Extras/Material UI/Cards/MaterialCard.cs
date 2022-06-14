@@ -21,11 +21,11 @@ public class MaterialCard : MonoBehaviour
 
     [Space]
 
-    public AllColorType ElevatedColor;
+    public Colors ElevatedColor;
 
-    public AllColorType FilledColor;
+    public Colors FilledColor;
 
-    public AllColorType OutlinedColor;
+    public Colors OutlinedColor;
 
     public ColorAssigner Pallete => Windinator.WindinatorConfig.ColorPalette;
 
@@ -41,7 +41,7 @@ public class MaterialCard : MonoBehaviour
 
     public void SetDirty()
     {
-        m_graphic.SetOutline(Pallete[ColorType.Outline].Color, Style == MaterialCardStyle.Outlined ? 1f : 0f);
+        m_graphic.SetOutline(Colors.Outline.ToColor(), Style == MaterialCardStyle.Outlined ? 1f : 0f);
         m_graphic.SetShadow(Color.black, Style == MaterialCardStyle.Elevated ? 5f : 0f, 9f);
 
         m_graphic.color = Style switch
