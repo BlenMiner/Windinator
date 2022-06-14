@@ -341,6 +341,12 @@ public class {0} : LayoutBaker
             RefreshPrefabs(true);
         }
 
+        [MenuItem("Windinator/Re-bake Dirty Elements")]
+        public static void RefreshElements()
+        {
+            RefreshPrefabs();
+        }
+
         [MenuItem("Assets/Windinator/Windinator Config")]
         public static void NewConfig()
         {
