@@ -79,6 +79,11 @@ namespace Riten.Windinator
             Instance.m_nextFrame.Enqueue(action);
         }
 
+        public static void Clear(WindinatorBehaviour window)
+        {
+            Instance.m_animator.Clear(window);
+        }
+
         public static void SetupCanvas(Canvas canvas, CanvasScaler scaler)
         {
             if (!Application.isPlaying && WindinatorConfig == null) return;
@@ -182,6 +187,7 @@ namespace Riten.Windinator
                     }
                 });
             }
+            else UpdateVisibility();
 
             return window;
         }

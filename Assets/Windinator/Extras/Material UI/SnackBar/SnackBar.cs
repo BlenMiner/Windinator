@@ -54,8 +54,26 @@ namespace Riten.Windinator.Material
             return Vector2.zero;
         }
 
+        void OnEnable()
+        {
+            this.onWindowClosed += OnPopped;
+        }
+
+        void OnDisable()
+        {
+            this.onWindowClosed -= OnPopped;
+        }
+        
+        void OnPopped()
+        {
+            m_blockUpdate = true;
+            if (CurrentSnackbar == this)
+                CurrentSnackbar = null;
+        }
+
         public void Setup(string message, string action = null, System.Action actionCallback = null, SnackbarPos position = SnackbarPos.BottomCenter, float padding = 10f, float aliveTime = 5f)
         {
+            Windinator.Clear(this);
             if (action != null)
             {
                 m_buttonMsg.SetText(action);

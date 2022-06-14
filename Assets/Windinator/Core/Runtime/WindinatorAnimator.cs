@@ -64,5 +64,14 @@ namespace Riten.Windinator
                 }
             }
         }
+
+        internal void Clear(WindinatorBehaviour window)
+        {
+            for (int i = 0; i < m_instances.Count; ++i)
+            {
+                if (m_instances[i].window == window)
+                    m_instances.RemoveAt(i--);
+            }
+        }
     }
 }

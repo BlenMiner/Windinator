@@ -67,14 +67,12 @@ public class GoogleTemplate : LayoutBaker
         }
         else if (RootWindow != null)
         {
-            RootWindow.ForcePopWindow();
             var resultPage = Windinator.Push<GoogleResults>();
-
             resultPage.Setup(searchStr);
         }
         else
         {
-            Debug.LogError("Missing Window");
+            Debug.LogError("Missing Root Window");
         }
     }
 }
