@@ -10,7 +10,7 @@ public class MaterialIcon : MonoBehaviour
 
     [SerializeField, Searchable] MaterialIcons m_icon = MaterialIcons.plus;
 
-    [SerializeField] AllColorType m_color = AllColorType.OnBackground;
+    [SerializeField] Color m_color = Color.white;
 
     TMP_FontAsset m_mdiFont;
 
@@ -6754,13 +6754,13 @@ public class MaterialIcon : MonoBehaviour
         UpdateIcon(m_icon, m_color);
     }
 
-    public void UpdateIcon(MaterialIcons icon, AllColorType color)
+    public void UpdateIcon(MaterialIcons icon, Color color)
     {
         m_color = color;
         UpdateIcon(icon);
 
         if (m_text != null)
-            m_text.color = Windinator.GetColor(color);
+            m_text.color = color;
     }
 
     public void UpdateIcon(MaterialIcons icon)

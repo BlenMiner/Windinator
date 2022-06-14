@@ -8,7 +8,7 @@ public class BottomBar : LayoutBaker
         return new Layout.Rectangle(
             shape: new ShapeProperties()
             {
-                Color = Windinator.GetColor(AllColorType.Primary),
+                Color = AllColorType.Primary.ToColor(),
                 Shadow = new ShadowProperties()
                 {
                     Size = 10f,
@@ -17,10 +17,10 @@ public class BottomBar : LayoutBaker
             },
             child: new Layout.Horizontal(
                 new Layout.Element[] {
-                    new MaterialUI.Icon(MaterialIcons.home, color: AllColorType.OnPrimary),
-                    new MaterialUI.Icon(MaterialIcons.apple, color: AllColorType.OnPrimary),
-                    new MaterialUI.Icon(MaterialIcons.ornament, color: AllColorType.OnPrimary),
-                    new MaterialUI.Icon(MaterialIcons.settings_helper, color: AllColorType.OnPrimary),
+                    new MaterialUI.Icon(MaterialIcons.home, color: AllColorType.OnPrimary.ToColor()),
+                    new MaterialUI.Icon(MaterialIcons.apple, color: AllColorType.OnPrimary.ToColor()),
+                    new MaterialUI.Icon(MaterialIcons.ornament, color: AllColorType.OnPrimary.ToColor()),
+                    new MaterialUI.Icon(MaterialIcons.settings_helper, color: AllColorType.OnPrimary.ToColor()),
                 },
                 Padding: new UnityEngine.Vector4(10, 10, 10, 10),
                 spacing: 20f,

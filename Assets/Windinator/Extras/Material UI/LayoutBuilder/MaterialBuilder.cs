@@ -352,15 +352,15 @@ namespace Riten.Windinator.LayoutBuilder
         public class Icon : PrefabRef<MaterialIcon>
         {
             MaterialIcons m_icon;
-            AllColorType m_color;
+            Color m_color;
 
             public Icon(
                 MaterialIcons icon = MaterialIcons.plus,
-                AllColorType color = AllColorType.OnBackground
+                Color? color = null
             ) : base(LayoutMaterialPrefabs.MaterialIcon)
             {
                 m_icon = icon;
-                m_color = color;
+                m_color = color.GetValueOrDefault(Color.black);
             }
 
             public override RectTransform Build(RectTransform parent)
