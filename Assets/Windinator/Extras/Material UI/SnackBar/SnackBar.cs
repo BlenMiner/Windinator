@@ -66,7 +66,6 @@ namespace Riten.Windinator.Material
         
         void OnPopped()
         {
-            Debug.Log("OnPopped");
             m_blockUpdate = true;
             if (CurrentSnackbar == this)
                 CurrentSnackbar = null;
