@@ -303,43 +303,43 @@ public class {0} : LayoutBaker
         {
             string assetPath = AssetDatabase.GetAssetPath(p);
 
-                var mono = p.GetComponent<LayoutBaker>();
+            var mono = p.GetComponent<LayoutBaker>();
 
-                string oldHash = mono.ScriptHash;
-                string hash = GetSha256Hash(MonoScript.FromMonoBehaviour(mono).bytes);
+            string oldHash = mono.ScriptHash;
+            string hash = GetSha256Hash(MonoScript.FromMonoBehaviour(mono).bytes);
 
-                if (hash == oldHash && !force)
-                    return;
+            if (hash == oldHash && !force)
+                return;
 
-                // The editing scope will automatically save, reimport prefab and unload contents
-                using (var editingScope = new PrefabUtility.EditPrefabContentsScope(assetPath))
+            // The editing scope will automatically save, reimport prefab and unload contents
+            using (var editingScope = new PrefabUtility.EditPrefabContentsScope(assetPath))
+            {
+                var builder = editingScope.prefabContentsRoot.GetComponent<LayoutBaker>();
+                var script = MonoScript.FromMonoBehaviour(builder);
+
+                builder.ScriptHash = hash;
+
+                if (editingScope.prefabContentsRoot.GetComponent<ContentSizeFitter>() == null)
                 {
-                    var builder = editingScope.prefabContentsRoot.GetComponent<LayoutBaker>();
-                    var script = MonoScript.FromMonoBehaviour(builder);
-
-                    builder.ScriptHash = hash;
-
-                    if (editingScope.prefabContentsRoot.GetComponent<ContentSizeFitter>() == null)
-                    {
-                        var size = editingScope.prefabContentsRoot.AddComponent<ContentSizeFitter>();
-                        size.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-                        size.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-                    }
-
-                    if (editingScope.prefabContentsRoot.GetComponent<HorizontalLayoutGroup>() == null)
-                    {
-                        var h = editingScope.prefabContentsRoot.AddComponent<HorizontalLayoutGroup>();
-                        h.childControlWidth = true;
-                        h.childControlHeight = true;
-                        h.childForceExpandWidth = false;
-                        h.childForceExpandHeight = false;
-                    }
-
-                    builder.ClearContents();
-                    builder.Build();
+                    var size = editingScope.prefabContentsRoot.AddComponent<ContentSizeFitter>();
+                    size.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+                    size.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
                 }
 
-                AssetDatabase.Refresh();
+                if (editingScope.prefabContentsRoot.GetComponent<HorizontalLayoutGroup>() == null)
+                {
+                    var h = editingScope.prefabContentsRoot.AddComponent<HorizontalLayoutGroup>();
+                    h.childControlWidth = true;
+                    h.childControlHeight = true;
+                    h.childForceExpandWidth = false;
+                    h.childForceExpandHeight = false;
+                }
+
+                builder.ClearContents();
+                builder.Build();
+            }
+
+            AssetDatabase.Refresh();
         }
 
         [MenuItem("Windinator/Force Re-bake Elements")]

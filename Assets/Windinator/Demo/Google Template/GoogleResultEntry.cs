@@ -16,7 +16,7 @@ public class GoogleResultEntry : LayoutBaker
             {
                 new MaterialUI.Label("Some Result").GetReference(out Label),
                 new FlexibleSpace(),
-                new MaterialUI.Button("A Button"),
+                new MaterialUI.Button("A Button!"),
                 new MaterialUI.Button(icon: MaterialIcons.pencil),
                 new MaterialUI.Button(icon: MaterialIcons.trash_can)
             }
