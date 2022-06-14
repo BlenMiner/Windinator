@@ -44,7 +44,7 @@ public class GoogleTemplate : LayoutBaker
             alignment: TextAnchor.MiddleCenter
         );
     }
-
+ 
     private void Awake()
     {
         RootWindow = GetComponentInParent<WindinatorBehaviour>();

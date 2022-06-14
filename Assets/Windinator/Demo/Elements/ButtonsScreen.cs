@@ -19,7 +19,7 @@ public class ButtonsScreen : LayoutBaker
                     {
                         new Vertical(
                             children: new Element[] {
-                                new Button("Something that will get changed", type: MaterialButtonType.Elevated, icon: MaterialIcons.plus).GetReference(out m_firstButton),
+                                new Button("Something that will get changed.", type: MaterialButtonType.Elevated, icon: MaterialIcons.plus).GetReference(out m_firstButton),
                                 new ActionButton(icon: MaterialIcons.numeric_1),
                             },
                             spacing: 5,

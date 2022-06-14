@@ -9,6 +9,7 @@ using Riten.Windinator.LayoutBuilder;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace Riten.Windinator
 {
@@ -252,7 +253,31 @@ public class {0} : LayoutBaker
             EditorPrefs.DeleteKey("Windinator.Class");
         }
 
-        static void RefreshPrefabs()
+        static SHA256 shaHash;
+
+        static string GetSha256Hash(byte[] input)
+        {
+            if (shaHash == null) shaHash = SHA256.Create();
+
+            // Convert the input string to a byte array and compute the hash.
+            byte[] data = shaHash.ComputeHash(input);
+
+            // Create a new Stringbuilder to collect the bytes
+            // and create a string.
+            StringBuilder sBuilder = new StringBuilder();
+
+            // Loop through each byte of the hashed data 
+            // and format each one as a hexadecimal string.
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+
+            // Return the hexadecimal string.
+            return sBuilder.ToString();
+        }
+
+        static void RefreshPrefabs(bool force = false)
         {
             WindinatorConfig config = Resources.Load<WindinatorConfig>("WindinatorConfig");
 
@@ -266,10 +291,21 @@ public class {0} : LayoutBaker
             {
                 string assetPath = AssetDatabase.GetAssetPath(p.gameObject);
 
+                var mono = p.gameObject.GetComponent<LayoutBaker>();
+
+                string oldHash = mono.ScriptHash;
+                string hash = GetSha256Hash(MonoScript.FromMonoBehaviour(mono).bytes);
+
+                if (hash == oldHash && !force)
+                    continue;
+
                 // The editing scope will automatically save, reimport prefab and unload contents
                 using (var editingScope = new PrefabUtility.EditPrefabContentsScope(assetPath))
                 {
                     var builder = editingScope.prefabContentsRoot.GetComponent<LayoutBaker>();
+                    var script = MonoScript.FromMonoBehaviour(builder);
+
+                    builder.ScriptHash = hash;
 
                     if (editingScope.prefabContentsRoot.GetComponent<ContentSizeFitter>() == null)
                     {
@@ -299,10 +335,10 @@ public class {0} : LayoutBaker
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Windinator/Re-bake Elements")]
+        [MenuItem("Windinator/Force Re-bake Elements")]
         public static void Rebake()
         {
-            RefreshPrefabs();
+            RefreshPrefabs(true);
         }
 
         [MenuItem("Assets/Windinator/Windinator Config")]

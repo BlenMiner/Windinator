@@ -15,7 +15,7 @@ public class ScrollTest : LayoutBaker
     public override Element Bake()
     {
         return new Vertical(
-            new Element[] {
+            new Element[] { 
                 new Rectangle(
                     child: new ScrollViewDynamic().GetReference(out Scrollview),
                     new Vector2(500, 400),

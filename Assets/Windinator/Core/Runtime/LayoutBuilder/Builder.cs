@@ -99,7 +99,7 @@ namespace Riten.Windinator.LayoutBuilder
     public static class Layout
     {
         [System.Serializable]
-        public class Element
+        public abstract class Element
         {
             protected Vector4 m_padding;
 

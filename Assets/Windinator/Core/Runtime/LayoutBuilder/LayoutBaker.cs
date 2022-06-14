@@ -7,6 +7,8 @@ namespace Riten.Windinator.LayoutBuilder
     {
         [SerializeField] bool m_freeControl = false;
 
+        [HideInInspector] public string ScriptHash;
+
         public void ClearContents()
         {
             for (int i = transform.childCount - 1; i >= 0; i--)
@@ -37,7 +39,7 @@ namespace Riten.Windinator.LayoutBuilder
         {
             UpdateFullscreen();
         }
-
+        
         public RectTransform Build()
         {
             RectTransform me = transform as RectTransform;
