@@ -261,11 +261,11 @@ namespace Riten.Windinator
         /// Pops this window
         /// </summary>
         /// <returns>Returns true if successful, this depends on 'CanExit' state</returns>
-        public bool PopWindow()
+        public bool PopWindow(AnimationDelegade animation = null)
         {
             if (CanExitWindow)
             {
-                ForcePopWindow();
+                ForcePopWindow(animation);
                 return true;
             }
             else return false;
@@ -274,9 +274,9 @@ namespace Riten.Windinator
         /// <summary>
         /// Pops this window, always succeeds
         /// </summary>
-        public void ForcePopWindow()
+        public void ForcePopWindow(AnimationDelegade animation = null)
         {
-            Windinator.Pop(this);
+            Windinator.Pop(this, animation);
         }
 
         /// <summary>

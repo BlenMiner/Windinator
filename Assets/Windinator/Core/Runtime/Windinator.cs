@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static Riten.Windinator.WindinatorAnimations;
 
 namespace Riten.Windinator
 {
@@ -149,7 +150,7 @@ namespace Riten.Windinator
         /// <summary>
         /// Pushes a new window to the stack, it will be on top.
         /// </summary>
-        public static WindinatorBehaviour PushPrefab(WindinatorBehaviour prefab)
+        public static WindinatorBehaviour PushPrefab(WindinatorBehaviour prefab, AnimationDelegade animation = null)
         {
             var instance = Instance;
             var config = instance.m_windinatorConfig;
@@ -162,13 +163,13 @@ namespace Riten.Windinator
             if (window.ShoudBlockGameFlow)
                 instance.m_shouldBlockGameFlow += 1;
 
-            if (window.AnimatedByDefault)
+            if (window.AnimatedByDefault || animation != null)
             {
                 instance.m_nextFrame.Enqueue(() =>
                 {
-                    if (window.gameObject.activeSelf && window.FadeIn != null)
+                    if (window.gameObject.activeSelf && (window.FadeIn != null || animation != null))
                     {
-                        instance.m_animator.Animate(window, window.FadeIn, () =>
+                        instance.m_animator.Animate(window, animation == null ? window.FadeIn : animation, () =>
                         {
                             window.CanvasGroup.alpha = 1f;
                         });
@@ -186,7 +187,7 @@ namespace Riten.Windinator
         /// <summary>
         /// Pushes a new window to the stack, it will be on top.
         /// </summary>
-        public static T Push<T>() where T : WindinatorBehaviour
+        public static T Push<T>(AnimationDelegade animation = null) where T : WindinatorBehaviour
         {
             var instance = Instance;
             var config = instance.m_windinatorConfig;
@@ -197,7 +198,7 @@ namespace Riten.Windinator
 
                 if (w is T)
                 {
-                    return (T)PushPrefab(w);
+                    return (T)PushPrefab(w, animation);
                 }
             }
 
@@ -243,7 +244,7 @@ namespace Riten.Windinator
         /// <summary>
         /// Pops top most window.
         /// </summary>
-        public static void Pop(bool force = false)
+        public static void Pop(bool force = false, AnimationDelegade animation = null)
         {
             var instance = Instance;
             var windows = instance.m_windows;
@@ -252,15 +253,15 @@ namespace Riten.Windinator
 
             var top = windows[windows.Count - 1];
 
-            if (force) top.ForcePopWindow();
-            else top.PopWindow();
+            if (force) top.ForcePopWindow(animation);
+            else       top.PopWindow(animation);
         }
 
         /// <summary>
         /// Pops a specific instance of an window.
         /// </summary>
         /// <param name="target">The window instance</param>
-        public static void Pop(WindinatorBehaviour target)
+        public static void Pop(WindinatorBehaviour target, AnimationDelegade animation = null)
         {
             var instance = Instance;
             if (instance.m_windows.Contains(target))
@@ -274,9 +275,9 @@ namespace Riten.Windinator
                 if (window.ShoudBlockGameFlow)
                     instance.m_shouldBlockGameFlow = Mathf.Max(0, instance.m_shouldBlockGameFlow - 1);
 
-                if (window.FadeOut != null)
+                if (window.FadeOut != null || animation != null)
                 {
-                    instance.m_animator.Animate(window, window.FadeOut,
+                    instance.m_animator.Animate(window, animation == null ? window.FadeOut : animation,
                         () => instance.m_windowPool.Free(window)
                     );
                 }

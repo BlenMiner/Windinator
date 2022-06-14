@@ -26,6 +26,8 @@ public class {0} : WindinatorBehaviour
     {{
 
     }}
+    
+    // Use your usual Unity callback if you need, aka void Start(), Update(), etc.
 }}
 ";
 
