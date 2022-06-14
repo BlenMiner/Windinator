@@ -479,7 +479,7 @@ public class {0} : LayoutBaker
             return false;
         }
 
-        [MenuItem("Assets/Windinator/Re-bake Selection", validate = true)]
+        [MenuItem("Assets/Windinator/Re-bake Selection", true, 11)]
         public static bool RebakePossible()
         {
             bool validSelection = Selection.gameObjects != null && Selection.gameObjects.Length > 0;
@@ -493,7 +493,7 @@ public class {0} : LayoutBaker
             return false;
         }
 
-        [MenuItem("Assets/Windinator/Re-bake Selection")]
+        [MenuItem("Assets/Windinator/Re-bake Selection", false, 11)]
         public static void RebakeSelection()
         {
             var selections = Selection.gameObjects;
