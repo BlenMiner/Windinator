@@ -172,11 +172,13 @@ namespace Riten.Windinator
                         instance.m_animator.Animate(window, animation == null ? window.FadeIn : animation, () =>
                         {
                             window.CanvasGroup.alpha = 1f;
+                            UpdateVisibility();
                         });
                     }
                     else
                     {
                         window.CanvasGroup.alpha = 1f;
+                        UpdateVisibility();
                     }
                 });
             }
@@ -278,7 +280,10 @@ namespace Riten.Windinator
                 if (window.FadeOut != null || animation != null)
                 {
                     instance.m_animator.Animate(window, animation == null ? window.FadeOut : animation,
-                        () => instance.m_windowPool.Free(window)
+                        () => {
+                            instance.m_windowPool.Free(window);
+                            UpdateVisibility();
+                        }
                     );
                 }
                 else
@@ -289,6 +294,8 @@ namespace Riten.Windinator
                 target.OnWindowClosedEvent();
                 instance.m_windows.RemoveAt(id);
                 instance.UpdateSorting(id);
+
+                UpdateVisibility();
             }
         }
 
@@ -306,6 +313,23 @@ namespace Riten.Windinator
                 instance.m_windows.RemoveAt(index);
                 instance.m_windows.Add(target);
                 instance.UpdateSorting(index);
+            }
+        }
+
+        public static void UpdateVisibility()
+        {
+            var m_windows = Instance.m_windows;
+            bool cull = false;
+
+            for (int i = m_windows.Count - 1; i >= 0; --i)
+            {
+                var window = m_windows[i];
+
+                if (cull != window.IsCulled)
+                    window.CullWindow(cull);
+
+                if (!cull && window.CullBackgroundWindows)
+                    cull = window.CullBackgroundWindows;
             }
         }
 

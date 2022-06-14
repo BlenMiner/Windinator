@@ -14,6 +14,9 @@ namespace Riten.Windinator
         public struct OptimizationSettings
         {
             public int WarmupCount;
+
+            [Tooltip("If this window should stop your player from receiving input")]
+            public bool CullBackgroundWindows;
         }
 
         [Serializable]
@@ -146,6 +149,8 @@ namespace Riten.Windinator
 
         public bool AnimatedByDefault => m_windowSettings.AnimationSettings.AnimatedByDefault;
 
+        public bool CullBackgroundWindows => m_windowSettings.OptimizationSettings.CullBackgroundWindows;
+
         public OptimizationSettings GetOptimizationSettings() => m_windowSettings.OptimizationSettings;
 
         private GameObject m_generatedBackground;
@@ -176,6 +181,7 @@ namespace Riten.Windinator
                 m_windowSettings.AnimationSettings.AnimatedByDefault = true;
                 m_windowSettings.AnimationSettings.TransitionAnimDuration = 0.1f;
                 m_windowSettings.WindowFlowSettings.CanCloseWindow = false;
+                m_windowSettings.OptimizationSettings.CullBackgroundWindows = true;
             }
         }
 
@@ -287,6 +293,25 @@ namespace Riten.Windinator
         {
             CanvasGroup.blocksRaycasts = enable;
             CanvasGroup.interactable = enable;
+        }
+
+        /// <summary>
+        /// Is the window culled? Aka. Invisible.
+        /// </summary>
+        /// <value>Culled</value>
+        public bool IsCulled { get; private set; }
+
+        /// <summary>
+        /// Change the window culling mode.
+        /// </summary>
+        /// <param name="cull">Cull it?</param>
+        public void CullWindow(bool cull)
+        {
+            IsCulled = cull;
+            bool show = !cull;
+
+            EnableInteraction(show);
+            Canvas.enabled = show;
         }
 
         /// <summary>
