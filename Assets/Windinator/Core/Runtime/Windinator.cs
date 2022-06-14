@@ -276,8 +276,9 @@ namespace Riten.Windinator
             {
                 int id = instance.m_windows.IndexOf(target);
                 var window = instance.m_windows[id];
-
+                
                 window.EnableInteraction(false);
+                target.OnWindowClosedEvent();
                 window.OnSafeDisable();
 
                 if (window.ShoudBlockGameFlow)
@@ -297,7 +298,6 @@ namespace Riten.Windinator
                     instance.m_windowPool.Free(window);
                 }
 
-                target.OnWindowClosedEvent();
                 instance.m_windows.RemoveAt(id);
                 instance.UpdateSorting(id);
 
