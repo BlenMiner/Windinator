@@ -221,7 +221,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4280163100
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -314,7 +314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_targetGraphic: {fileID: 8208370229900248429}
-  m_color: 9
+  m_color: 25
   m_useCustomColor: 0
   m_customColor: {r: 0, g: 0, b: 0, a: 0}
   m_alpha: 1
@@ -382,7 +382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.18039216, g: 0.19215687, b: 0.17254902, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -419,7 +419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_targetGraphic: {fileID: 9200851565572998650}
-  m_color: 9
+  m_color: 12
   m_useCustomColor: 0
   m_customColor: {r: 0, g: 0, b: 0, a: 0}
   m_alpha: 1
@@ -492,15 +492,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128090774680, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_fontColor.b
-      value: 0.45098042
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128090774680, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_fontColor.g
-      value: 0.11764707
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128090774680, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_fontColor.r
-      value: 0.21960786
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128090774680, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_fontSizeBase
@@ -508,7 +508,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128090774680, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 4285734456
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128090774683, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_AnchorMax.y
@@ -584,7 +584,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128918503322, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128918503322, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_AnchorMin.x
@@ -592,7 +592,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128918503322, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128918503322, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_SizeDelta.x
@@ -636,7 +636,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128918503322, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -30
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128918503322, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -680,15 +680,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128918503327, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: CircleColor.b
-      value: 0.9725491
+      value: 0.16862746
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128918503327, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: CircleColor.g
-      value: 0.8705883
+      value: 0.098039225
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128918503327, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: CircleColor.r
-      value: 0.909804
+      value: 0.11764707
       objectReference: {fileID: 0}
     - target: {fileID: 3058997128918503327, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_outlineSize
@@ -745,6 +745,10 @@ PrefabInstance:
     - target: {fileID: 6357016827764872008, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416454176524889903, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
+      propertyPath: m_icon
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4c2800df3cabff4090827b0daec0b27, type: 3}
