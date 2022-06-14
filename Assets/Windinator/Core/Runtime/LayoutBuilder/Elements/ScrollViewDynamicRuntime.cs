@@ -1,5 +1,6 @@
 using Riten.Windinator.LayoutBuilder;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,18 +15,28 @@ namespace Riten.Windinator
 
         Action m_update;
 
+        Func<Type, bool> m_is;
+
         bool m_dirty = false;
 
         bool m_first = true;
 
-        public ScrollViewController<T, D> Setup<T, D>(
-            ObservableCollection<D> data,
+        public void Setup<T, D>(
+            IList<D> data,
             float elementSize,
-            Action<T, D> updateCell,
+            Action<int, T, D> updateCell,
             UIDirection direction = UIDirection.Vertical,
             float spacing = 0f
         ) where T : LayoutBaker
         {
+            if (m_is != null && m_is(typeof(T)))
+            {
+                m_update?.Invoke();
+                return;
+            }
+
+            m_dispose?.Invoke();
+
             var scrollView = new ScrollViewController<T, D>(m_scrollView, data, elementSize, updateCell, direction, spacing);
 
             m_update = () =>
@@ -38,7 +49,12 @@ namespace Riten.Windinator
                 scrollView.Dispose();
             };
 
-            return scrollView;
+            m_is = (a) =>
+            {
+                return scrollView.Is(a);
+            };
+
+            return;
         }
 
         private void Start()

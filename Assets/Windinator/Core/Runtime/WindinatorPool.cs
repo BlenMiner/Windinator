@@ -101,11 +101,14 @@ namespace Riten.Windinator
     {
         Queue<T> m_instances;
 
+        List<T> m_active;
+
         GameObject m_prefab;
 
         public GameObjectPool(GameObject prefab)
         {
             m_instances = new Queue<T>();
+            m_active = new List<T>();
             m_prefab = prefab;
         }
 
@@ -115,6 +118,7 @@ namespace Riten.Windinator
         /// <param name="instance">Window instance</param>
         public void Free(T instance)
         {
+            m_active.Remove(instance);
             m_instances.Enqueue(instance);
             Deactivate(instance);
         }
@@ -129,11 +133,14 @@ namespace Riten.Windinator
                     result.transform.SetParent(parent, false);
 
                 Activate(result);
+                m_active.Add(result);
                 return result;
             }
             else
             {
-                return GameObject.Instantiate(m_prefab, parent).GetComponent<T>();
+                var i = GameObject.Instantiate(m_prefab, parent).GetComponent<T>();
+                m_active.Add(i);
+                return i;
             }
         }
 
@@ -158,6 +165,18 @@ namespace Riten.Windinator
         {
             foreach (var go in m_instances)
                 GameObject.Destroy(go.gameObject);
+
+            m_instances.Clear();
+        }
+
+        internal void DestroyAll()
+        {
+            DestroyAllFree();
+
+            foreach (var go in m_active)
+                GameObject.Destroy(go.gameObject);
+
+            m_active.Clear();
         }
     }
 }

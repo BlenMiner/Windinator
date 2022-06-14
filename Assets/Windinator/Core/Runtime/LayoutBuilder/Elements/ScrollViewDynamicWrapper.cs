@@ -18,7 +18,7 @@ namespace Riten.Windinator
     {
         UIDirection m_direction;
 
-        Action<T, D> m_requestElement;
+        Action<int, T, D> m_requestElement;
 
         ScrollRect m_scrollView;
 
@@ -42,7 +42,12 @@ namespace Riten.Windinator
             }
         }
 
-        public ScrollViewController(ScrollRect rect, IList<D> data, float elementSize, Action<T, D> updateCell, UIDirection direction = UIDirection.Vertical, float spacing = 0f)
+        public bool Is(Type a)
+        {
+            return a.IsEquivalentTo(typeof(T));
+        }
+
+        public ScrollViewController(ScrollRect rect, IList<D> data, float elementSize, Action<int, T, D> updateCell, UIDirection direction = UIDirection.Vertical, float spacing = 0f)
         {
             m_spacing = spacing;
             m_requestElement = updateCell;
@@ -65,8 +70,7 @@ namespace Riten.Windinator
         public void Dispose()
         {
             m_scrollView.onValueChanged.RemoveListener(ScrollChanged);
-
-            m_pool.DestroyAllFree();
+            m_pool.DestroyAll();
         }
 
         public void Update()
@@ -126,8 +130,8 @@ namespace Riten.Windinator
                 if (tr.sizeDelta != newSize)
                     tr.sizeDelta = newSize;
 
-                if (indexOffset + i < m_data.Count)
-                    m_requestElement(element, m_data[indexOffset + i]);
+                int idx = indexOffset + i;
+                if (idx < m_data.Count) m_requestElement(idx, element, m_data[idx]);
             }
         }
 

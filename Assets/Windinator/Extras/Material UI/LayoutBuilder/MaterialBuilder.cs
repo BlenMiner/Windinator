@@ -336,12 +336,11 @@ namespace Riten.Windinator.LayoutBuilder
 
                 var field = prefab.GetComponentInChildren<MaterialLabel>();
 
-                field.Text = m_text;
-                field.Style = m_style;
-                field.Color = m_color;
-                field.FontStyle = m_fontStyle;
-
-                field.SetDirty();
+                field.LabelText = m_text;
+                field.LabelStyle = m_style;
+                field.LabelColor = m_color;
+                field.LabelFontStyle = m_fontStyle;
+                field.ForceUpdate();
 
                 SetReference(field);
 

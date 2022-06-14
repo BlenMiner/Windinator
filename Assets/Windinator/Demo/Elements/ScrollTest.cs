@@ -54,7 +54,7 @@ public class ScrollTest : LayoutBaker
         }
     }
 
-    private void UpdateCell(SimpleButton instance, int data)
+    private void UpdateCell(int index, SimpleButton instance, int data)
     {
         instance.ButtonReference.Value.SetText($"I'm the button {data}");
     }

@@ -25,8 +25,7 @@ public class BottomBar : LayoutBaker
                 Padding: new UnityEngine.Vector4(10, 10, 10, 10),
                 spacing: 20f,
                 alignment: UnityEngine.TextAnchor.MiddleCenter
-            ),
-            flexibleWidth: 1f
-        );
+            )
+        ).Flexible(1f, -1f);
     }
 }

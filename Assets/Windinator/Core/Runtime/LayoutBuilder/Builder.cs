@@ -107,9 +107,9 @@ namespace Riten.Windinator.LayoutBuilder
 
             protected LayoutElement m_layout;
 
-            public Element(Vector4 Padding = default)
+            public Element(Vector4 padding = default)
             {
-                m_padding = Padding;
+                m_padding = padding;
             }
 
             public virtual RectTransform Build(RectTransform parent)
@@ -184,9 +184,9 @@ namespace Riten.Windinator.LayoutBuilder
         {
             readonly Element m_child;
 
-            readonly Vector2 m_size;
+            readonly Vector2? m_size;
 
-            public Container(Element child, Vector2 size) : base()
+            public Container(Element child, Vector2? size = null) : base()
             {
                 m_child = child;
                 m_size = size;
@@ -195,12 +195,18 @@ namespace Riten.Windinator.LayoutBuilder
             public override RectTransform Build(RectTransform parent)
             {
                 var transform = Create("#Layout-Rectangle", parent);
-                transform.sizeDelta = m_size;
+
+                if (m_size.HasValue) transform.sizeDelta = m_size.Value;
 
                 AddGenericGroup(transform);
 
-                m_layout.preferredWidth = m_size.x;
-                m_layout.preferredHeight = m_size.y;
+                if (m_size.HasValue)
+                {
+                    var size = m_size.Value;
+
+                    m_layout.preferredWidth = size.x;
+                    m_layout.preferredHeight = size.y;
+                }
 
                 m_child?.Build(transform);
 
@@ -453,7 +459,7 @@ namespace Riten.Windinator.LayoutBuilder
 
                 foreach (var child in m_children)
                 {
-                    var vertical = new Vertical(new Element[] { child }, alignment: m_aligmnet, Padding: m_padding).Build(transform);
+                    var vertical = new Vertical(new Element[] { child }, alignment: m_aligmnet, padding: m_padding).Build(transform);
 
                     vertical.anchorMin = Vector2.zero;
                     vertical.anchorMax = Vector2.one;
@@ -479,7 +485,7 @@ namespace Riten.Windinator.LayoutBuilder
 
             float m_spacing;
 
-            public Vertical(Element[] children = null, float spacing = 0f, TextAnchor alignment = TextAnchor.UpperLeft, Vector4 Padding = default) : base(Padding)
+            public Vertical(Element[] children = null, float spacing = 0f, TextAnchor alignment = TextAnchor.UpperLeft, Vector4 padding = default) : base(padding)
             {
                 m_spacing = spacing;
                 m_aligmnet = alignment;
@@ -524,21 +530,14 @@ namespace Riten.Windinator.LayoutBuilder
 
             private readonly ShapeProperties m_shape;
 
-            private float m_flexibleWidth = 0f;
-
-            private float m_flexibleHeight = 0f;
-
             public Rectangle(Element child = null, Vector2? size = null,
                 Vector4 padding = default,
-                ShapeProperties shape = default,
-                float flexibleWidth = 0, float flexibleHeight = 0) : base()
+                ShapeProperties shape = default) : base()
             {
                 m_child = child;
                 m_size = size;
                 m_padding = padding;
                 m_shape = shape;
-                m_flexibleWidth = flexibleWidth;
-                m_flexibleHeight = flexibleHeight;
             }
 
             public override RectTransform Build(RectTransform parent)

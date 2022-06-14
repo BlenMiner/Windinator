@@ -4,13 +4,61 @@ using Riten.Windinator.LayoutBuilder;
 using Riten.Windinator.Material;
 
 using static Riten.Windinator.LayoutBuilder.Layout;
+using System.Collections.Generic;
 
 public class GoogleResultsContent : LayoutBaker
 {
-    public override Element Bake()
+    [SerializeField] Reference<MaterialLabel> m_title;
+    [SerializeField] Reference<ScrollViewDynamicRuntime> m_scrollview;
+
+    List<string> m_data = new List<string>();
+
+    private void Awake()
     {
-        return null; // Place your elements here
+        m_data.Add("Hello World");
+        m_data.Add("Wazzap");
+        m_data.Add("Some stuff");
     }
 
-    // Use your usual Unity callback if you need, aka void Start(), Update(), etc.
+    public override Element Bake()
+    {
+        return new Vertical(
+            new Element[]
+            {
+                new MaterialUI.Label(
+                    "Sample Text",
+                    color: Colors.OnBackground,
+                    style: MaterialLabelStyle.Title
+                ).GetReference(out m_title),
+
+                new Rectangle(
+                    new ScrollViewDynamic().GetReference(out m_scrollview),
+                    padding: new Vector4(30f, 30f, 30f, 30f),
+                    shape: new ShapeProperties
+                    {
+                        Color = Colors.PrimaryContainer.ToColor(),
+                        Roundness = new Vector4(20f, 20f, 20f, 20f)
+                    } 
+
+                ).Flexible()
+            },
+            alignment: TextAnchor.MiddleCenter,
+            padding: new Vector4(20, 20, 20, 20),
+            spacing: 20f
+        );
+    }
+
+    public void Setup(string searchStr)
+    {
+        for (int i = 0; i < 100; ++i)
+            m_data.Add(searchStr + " " + i);
+
+        m_title.Value.LabelText = searchStr;
+        m_scrollview.Value.Setup<GoogleResultEntry, string>(m_data, 50f, UpdateCell);
+    }
+
+    public void UpdateCell(int index, GoogleResultEntry element, string data)
+    {
+        element.Label.Value.LabelText = data;
+    }
 }

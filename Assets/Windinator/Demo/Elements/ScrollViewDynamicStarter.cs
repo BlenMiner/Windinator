@@ -25,7 +25,7 @@ namespace Riten.Windinator
                 someNumbers.Add(Time.frameCount / 60);
         }
 
-        void UpdateItem(SimpleButton item, int data)
+        void UpdateItem(int index, SimpleButton item, int data)
         {
             item.ButtonReference.Value.SetText($"Number {data}");
         }
