@@ -60,5 +60,12 @@ public class GoogleResultsContent : LayoutBaker
     public void UpdateCell(int index, GoogleResultEntry element, string data)
     {
         element.Label.Value.LabelText = data;
+        var delete = element.DeleteButton.Value;
+
+        delete.onClick.RemoveAllListeners();
+        delete.onClick.AddListener(() => {
+            m_data.RemoveAt(index);
+            m_scrollview.Value.SetDirty();
+        });
     }
 }
