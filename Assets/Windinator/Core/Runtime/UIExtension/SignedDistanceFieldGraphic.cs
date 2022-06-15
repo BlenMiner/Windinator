@@ -44,7 +44,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     private Material m_material;
 
-    private float m_extraMargin => Mathf.Max(m_outlineSize, m_shadowSize);
+    private float m_extraMargin => Mathf.Max(m_outlineSize, m_shadowSize) + 1;
 
     protected event Action<float, float> onMaterialUpdate;
 

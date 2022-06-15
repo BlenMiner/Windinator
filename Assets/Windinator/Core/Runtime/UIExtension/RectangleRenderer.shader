@@ -130,7 +130,7 @@ Shader "Unlit/RectangleRenderer"
 
                 // For simplicity, convert UV to pixel coordinates
                 float2 position = (uv - 0.5) * _Size;
-                float2 halfSize = _Size * 0.5;
+                float2 halfSize = (_Size + 1) * 0.5;
 
                 if (_MaskRect.z > 0 && _MaskRect.w > 0 &&
                     position.x >= _MaskRect.x && position.x <= _MaskRect.x + _MaskRect.z &&
