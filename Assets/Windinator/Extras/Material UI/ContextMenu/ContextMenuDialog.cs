@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Riten.Windinator.Material
 {
@@ -27,7 +29,7 @@ namespace Riten.Windinator.Material
         }
     }
 
-    public class ContextMenuDialog : WindinatorBehaviour
+    public class ContextMenuDialog : WindinatorBehaviour, ISelectHandler, IDeselectHandler
     {
         struct RawContextMenuItem
         {
@@ -73,8 +75,14 @@ namespace Riten.Windinator.Material
 
         public void Setup(params ContextMenuItem[] items)
         {
+            if (EventSystem.current != null)
+                EventSystem.current.SetSelectedGameObject(gameObject);
+
             Setup(200f, items);
         }
+
+        public InputField myInputField;
+
 
         public void SetupChildren(ContextMenuListPreset listComponent, RectTransform list, ContextMenuItem[] items)
         {
@@ -97,6 +105,13 @@ namespace Riten.Windinator.Material
                 if (!go.activeSelf)
                     go.SetActive(true);
             }
+        }
+
+        public void OnSelect(BaseEventData eventData) { }
+
+        public void OnDeselect(BaseEventData eventData)
+        {
+            ForcePopWindow();
         }
     }
 }
