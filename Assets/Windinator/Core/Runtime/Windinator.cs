@@ -160,7 +160,7 @@ namespace Riten.Windinator
         public static WindinatorBehaviour PushPrefab(WindinatorBehaviour prefab, AnimationDelegade animation = null)
         {
             var instance = Instance;
-            var config = instance.m_windinatorConfig;
+            var config = WindinatorConfig;
 
             var window = instance.m_windowPool.Allocate(prefab.GetType(), prefab.gameObject, instance.transform);
             window.PreAwake();
@@ -200,7 +200,7 @@ namespace Riten.Windinator
         public static T Push<T>(AnimationDelegade animation = null) where T : WindinatorBehaviour
         {
             var instance = Instance;
-            var config = instance.m_windinatorConfig;
+            var config = WindinatorConfig;
 
             foreach (var w in config.Windows)
             {
@@ -225,7 +225,7 @@ namespace Riten.Windinator
         internal static GameObject GetElementPrefab<T>()
         {
             var instance = Instance;
-            var config = instance.m_windinatorConfig;
+            var config = WindinatorConfig;
 
             foreach (var p in config.Prefabs)
             {
