@@ -58,7 +58,7 @@ namespace Riten.Windinator.Material
 
             foreach (var go in m_spawnedObjects) go.SetActive(false);
 
-            m_contextMenuRoot.anchoredPosition = Canvas.ScreenToCanvasPosition(Input.mousePosition);
+            m_contextMenuRoot.localPosition = Canvas.ScreenToCanvasPosition(RectTransform, Input.mousePosition);
 
             SetupChildren(m_list, m_contextMenuRoot, items);
 

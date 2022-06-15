@@ -22,21 +22,18 @@ public static class WindinatorUtils
         return Return;
     }
 
-    public static Vector3 ScreenToCanvasPosition(this Canvas canvas, Vector3 screenPosition)
+    public static Vector3 ScreenToCanvasPosition(this Canvas canvas, Vector2 screenPosition)
+    {
+        return ScreenToCanvasPosition(canvas, canvas.transform as RectTransform, screenPosition);
+    }
+
+    public static Vector3 ScreenToCanvasPosition(this Canvas canvas, RectTransform parent, Vector2 screenPosition)
     {
         Vector3 Return = Vector3.zero;
-        var _Cam = canvas.worldCamera;
+        var camera = canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
 
-        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
-        {
-            Return = screenPosition;
-        }
-        else if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
-        {
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, screenPosition, _Cam, out var tempVector);
-            Return = canvas.transform.TransformPoint(tempVector);
-        }
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screenPosition, camera, out var tempVector);
 
-        return Return;
+        return tempVector;
     }
 }

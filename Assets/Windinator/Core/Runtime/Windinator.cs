@@ -116,10 +116,10 @@ namespace Riten.Windinator
         {
             m_windowPool = new WindinatorPool(m_windinatorConfig.OptimizePooling);
 
-            var canvas = gameObject.AddComponent<Canvas>();
+            Canvas = gameObject.AddComponent<Canvas>();
             var scaler = gameObject.AddComponent<CanvasScaler>();
 
-            SetupCanvas(canvas, scaler);
+            SetupCanvas(Canvas, scaler);
 
             foreach(var window in m_windinatorConfig.Windows)
             {
@@ -151,6 +151,8 @@ namespace Riten.Windinator
         /// For example if your player should stop moving when a window is opened.
         /// </summary>
         public static bool ShoudBlockGameFlow => Instance.m_shouldBlockGameFlow > 0;
+
+        public static Canvas Canvas { get; private set; }
 
         /// <summary>
         /// Pushes a new window to the stack, it will be on top.
