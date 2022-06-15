@@ -14,7 +14,7 @@ namespace Riten.Windinator
         Vertical
     }
 
-    public class ScrollViewController<T, D> : IDisposable where T : LayoutBaker
+    public class ScrollViewController<T, D> : IDisposable where T : MonoBehaviour
     {
         UIDirection m_direction;
 
@@ -59,6 +59,21 @@ namespace Riten.Windinator
             m_scrollView.onValueChanged.AddListener(ScrollChanged);
 
             m_pool = new GameObjectPool<T>(Windinator.GetElementPrefab<T>());
+            Update();
+        }
+
+        public ScrollViewController(ScrollRect rect, GameObject prefab, IList<D> data, float elementSize, Action<int, T, D> updateCell, UIDirection direction = UIDirection.Vertical, float spacing = 0f)
+        {
+            m_spacing = spacing;
+            m_requestElement = updateCell;
+            m_scrollView = rect;
+            m_data = data;
+            m_itemSize = elementSize;
+            m_direction = direction;
+
+            m_scrollView.onValueChanged.AddListener(ScrollChanged);
+
+            m_pool = new GameObjectPool<T>(prefab);
             Update();
         }
 

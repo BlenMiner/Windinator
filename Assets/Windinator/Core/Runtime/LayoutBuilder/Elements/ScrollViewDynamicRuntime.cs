@@ -29,6 +29,18 @@ namespace Riten.Windinator
             float spacing = 0f
         ) where T : LayoutBaker
         {
+            Setup(Windinator.GetElementPrefab<T>(), data, elementSize, updateCell, direction, spacing);
+        }
+
+        public void Setup<T, D>(
+            GameObject prefab,
+            IList<D> data,
+            float elementSize,
+            Action<int, T, D> updateCell,
+            UIDirection direction = UIDirection.Vertical,
+            float spacing = 0f
+        ) where T : MonoBehaviour
+        {
             if (m_is != null && m_is(typeof(T)))
             {
                 m_update?.Invoke();
@@ -37,7 +49,7 @@ namespace Riten.Windinator
 
             m_dispose?.Invoke();
 
-            var scrollView = new ScrollViewController<T, D>(m_scrollView, data, elementSize, updateCell, direction, spacing);
+            var scrollView = new ScrollViewController<T, D>(m_scrollView, prefab, data, elementSize, updateCell, direction, spacing);
 
             m_update = () =>
             {
