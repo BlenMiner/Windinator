@@ -24,7 +24,9 @@ namespace Riten.Windinator.Material
         public void Setup(GameObject prefab)
         {
             Clear();
-            Instantiate(prefab, m_parent, false);
+
+            if (prefab != null)
+                Instantiate(prefab, m_parent, false);
         }
 
         public T Setup<T>(GameObject prefab) where T : Component
