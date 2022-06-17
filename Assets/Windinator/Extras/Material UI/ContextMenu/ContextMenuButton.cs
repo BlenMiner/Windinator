@@ -2,11 +2,14 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Riten.Windinator.Audio;
 
 namespace Riten.Windinator.Material
 {
     public class ContextMenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
+        public SoundLibrary OnClickSound;
+
         public Graphic Graphic;
 
         public ColorPalette Color;
@@ -50,6 +53,7 @@ namespace Riten.Windinator.Material
         public void OnPointerClick(PointerEventData eventData)
         {
             onClick?.Invoke();
+            OnClickSound?.PlayRandom();
         }
     }
 }

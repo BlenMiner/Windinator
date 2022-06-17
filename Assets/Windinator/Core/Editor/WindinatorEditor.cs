@@ -342,19 +342,19 @@ public class {0} : LayoutBaker
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Windinator/Force Re-bake Elements")]
+        [MenuItem("Assets/Create/Windinator/Force Re-bake Elements", priority = 200)]
         public static void Rebake()
         {
             RefreshPrefabs(true);
         }
 
-        [MenuItem("Windinator/Re-bake Dirty Elements")]
+        [MenuItem("Assets/Create/Windinator/Re-bake Dirty Elements", priority = 200)]
         public static void RefreshElements()
         {
             RefreshPrefabs();
         }
 
-        [MenuItem("Assets/Windinator/Windinator Config")]
+        [MenuItem("Assets/Create/Windinator/Windinator Config")]
         public static void NewConfig()
         {
             string folderPath = GetCurrentFolder();
@@ -368,7 +368,7 @@ public class {0} : LayoutBaker
             AssetDatabase.CreateAsset(CreateInstance<WindinatorConfig>(), savePath);
         }
 
-        [MenuItem("Assets/Windinator/New Window", priority = 0)]
+        [MenuItem("Assets/Create/Windinator/New Window", priority = -100)]
         public static void NewWindow()
         {
             string folderPath = GetCurrentFolder();
@@ -408,7 +408,7 @@ public class {0} : LayoutBaker
             DestroyImmediate(window);
         }
 
-        [MenuItem("Assets/Windinator/New Element", priority = 0)]
+        [MenuItem("Assets/Create/Windinator/New Element", priority = -100)]
         public static void NewElement()
         {
             string folderPath = GetCurrentFolder();
@@ -445,29 +445,7 @@ public class {0} : LayoutBaker
             DestroyImmediate(window);
         }
 
-        /*[MenuItem("Assets/Windinator/New Layout Backer", priority = 0)]
-        public static void NewLayoutBaker()
-        {
-            string folderPath = GetCurrentFolder();
-
-            var savePath = EditorUtility.SaveFilePanel("Save layout script", folderPath, "NewLayout", "cs");
-
-            if (string.IsNullOrWhiteSpace(savePath)) return;
-
-            FileInfo fileInfo = new FileInfo(savePath);
-            string name = fileInfo.Name.Replace(' ', '_');
-            var ext = fileInfo.Extension;
-
-            string className = name.Substring(0, name.Length - ext.Length);
-
-            File.WriteAllText(savePath, string.Format(LAYOUT_TEMPLATE_SRC, className));
-
-            savePath = GetRelativePath(savePath);
-
-            AssetDatabase.ImportAsset(savePath);
-        }*/
-
-        [MenuItem("Assets/Windinator/Link Selected Prefabs", validate = true)]
+        [MenuItem("Assets/Create/Windinator/Link Selected Prefabs", validate = true)]
         public static bool LinkAvailable()
         {
             bool validSelection = Selection.gameObjects != null && Selection.gameObjects.Length > 0;
@@ -481,7 +459,7 @@ public class {0} : LayoutBaker
             return false;
         }
 
-        [MenuItem("Assets/Windinator/Re-bake Selection", true, 11)]
+        [MenuItem("Assets/Create/Windinator/Re-bake Selection", true, 100)]
         public static bool RebakePossible()
         {
             bool validSelection = Selection.gameObjects != null && Selection.gameObjects.Length > 0;
@@ -495,7 +473,7 @@ public class {0} : LayoutBaker
             return false;
         }
 
-        [MenuItem("Assets/Windinator/Re-bake Selection", false, 11)]
+        [MenuItem("Assets/Create/Windinator/Re-bake Selection", false, 100)]
         public static void RebakeSelection()
         {
             var selections = Selection.gameObjects;
@@ -508,7 +486,7 @@ public class {0} : LayoutBaker
         }
 
 
-        [MenuItem("Assets/Windinator/Link Selected Prefabs")]
+        [MenuItem("Assets/Create/Windinator/Link Selected Prefabs")]
         public static void LinkPrefabWindow()
         {
             var selections = Selection.gameObjects;

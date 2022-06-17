@@ -173,6 +173,7 @@ GameObject:
   - component: {fileID: 3058997128918503324}
   - component: {fileID: 388045887839842829}
   - component: {fileID: 6357016827764872008}
+  - component: {fileID: 2575204186421470635}
   m_Layer: 5
   m_Name: Material Button
   m_TagString: Untagged
@@ -402,6 +403,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2575204186421470635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3058997128918511717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4cfa0bcc02b77541b57caef2424545f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_button: {fileID: 6357016827764872008}
+  Library: {fileID: 11400000, guid: ff00e5ddf9113384f8633c442d774495, type: 2}
 --- !u!1001 &4371301930838632721
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -415,15 +430,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2229133245609291699, guid: df8de62d60cc7ee48bffc17997047d9a, type: 3}
       propertyPath: m_fontColor.b
-      value: 0.121568635
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2229133245609291699, guid: df8de62d60cc7ee48bffc17997047d9a, type: 3}
       propertyPath: m_fontColor.g
-      value: 0.10588236
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2229133245609291699, guid: df8de62d60cc7ee48bffc17997047d9a, type: 3}
       propertyPath: m_fontColor.r
-      value: 0.10980393
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5787479701573248858, guid: df8de62d60cc7ee48bffc17997047d9a, type: 3}
       propertyPath: m_Pivot.x
@@ -507,6 +522,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5787479701573248858, guid: df8de62d60cc7ee48bffc17997047d9a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7323460894326507070, guid: df8de62d60cc7ee48bffc17997047d9a, type: 3}
+      propertyPath: m_icon
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8338065037249393277, guid: df8de62d60cc7ee48bffc17997047d9a, type: 3}

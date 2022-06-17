@@ -97,7 +97,7 @@ namespace Riten.Windinator
         }
     }
 
-    public class GameObjectPool<T> where T : MonoBehaviour
+    public class GameObjectPool<T> where T : Component
     {
         Queue<T> m_instances;
 
@@ -142,6 +142,11 @@ namespace Riten.Windinator
                 m_active.Add(i);
                 return i;
             }
+        }
+
+        public C Allocate<C>(Transform parent) where C : Component
+        {
+            return Allocate(parent).GetComponentInChildren<C>();
         }
 
         public T PreAllocate(Transform parent)
