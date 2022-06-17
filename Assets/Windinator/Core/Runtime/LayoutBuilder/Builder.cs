@@ -25,7 +25,9 @@ namespace Riten.Windinator.LayoutBuilder
             get
             {
                 if (_ScrollViewD == null)
+                {
                     _ScrollViewD = Resources.Load<GameObject>("Windinator.Presets/Scroll View Dynamic");
+                }
                     
                 return _ScrollViewD;
             }
