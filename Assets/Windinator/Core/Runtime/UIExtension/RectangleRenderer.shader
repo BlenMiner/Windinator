@@ -149,7 +149,7 @@ Shader "Unlit/RectangleRenderer"
 
                 // Calculate the different masks based on the SDF
                 float graphicAlpha = 1 - smoothstep(-delta - _GraphicBlur, 0, dist);
-                float outlineAlpha = (1 - smoothstep(_OutlineSize - delta, _OutlineSize, dist));
+                float outlineAlpha = (1 - smoothstep(_OutlineSize - delta * 1.5f, _OutlineSize, dist));
                 float shadowAlpha = (1 - smoothstep(_ShadowSize - _ShadowBlur - delta, _ShadowSize, dist));
 
                 float circleSDF = distance(position, _CirclePos) - _CircleRadius;
