@@ -6725,6 +6725,8 @@ public class MaterialIcon : MonoBehaviour
 
         m_color = color;
         m_text.color = color;
+
+        m_text.SetAllDirty();
     }
 
     void InitializeTMP()
@@ -6785,9 +6787,11 @@ public class MaterialIcon : MonoBehaviour
 
         if (m_icon == MaterialIcons.none)
         {
-            m_text.enabled = false;
+            if (m_text.enabled)
+                m_text.enabled = false;
             return;
         }
+        else if (!m_text.enabled) m_text.enabled = true;
 
         if (!m_text.enableAutoSizing)
             m_text.enableAutoSizing = true;
