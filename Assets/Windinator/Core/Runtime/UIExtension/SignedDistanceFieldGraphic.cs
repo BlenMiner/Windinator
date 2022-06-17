@@ -62,7 +62,15 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     public Color CircleColor;
 
-    public Color OutlineColor => m_outlineColor;
+    public Color OutlineColor
+    {
+        get => m_outlineColor;
+        set
+        {
+            m_outlineColor = value;
+            SetAllDirty();
+        }
+    }
 
     public void SetCircle(Vector2 pos, Color color, float size, float alpha)
     {

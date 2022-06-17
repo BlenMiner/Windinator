@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 using Riten.Windinator;
+using System;
 
 [ExecuteAlways]
 public class MaterialIcon : MonoBehaviour
@@ -6713,6 +6714,18 @@ public class MaterialIcon : MonoBehaviour
         {6679, 989735},
         {6680, 989936}
 };
+
+    public MaterialIcons Icon => m_icon;
+
+    public Color IconColor => m_color;
+
+    internal void UpdateColor(Color color)
+    {
+        if (m_text == null) InitializeTMP();
+
+        m_color = color;
+        m_text.color = color;
+    }
 
     void InitializeTMP()
     {
