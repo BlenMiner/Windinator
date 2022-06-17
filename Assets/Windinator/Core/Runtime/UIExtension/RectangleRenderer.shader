@@ -170,7 +170,7 @@ Shader "Unlit/RectangleRenderer"
                         half4(_OutlineColor.rgb * step(0.001, _OutlineSize), outlineAlpha),
                         outlineAlpha
                     ),
-                    half4(_GraphicColor.rgb, graphicAlpha * _GraphicColor.a),
+                    half4(_GraphicColor.rgb, _GraphicColor.a),
                     graphicAlpha
                 );
 
