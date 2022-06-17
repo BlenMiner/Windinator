@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Riten.Windinator.Audio;
 
 public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointerDownHandler, IPointerUpHandler
 {
@@ -40,6 +41,10 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
     [SerializeField] Colors m_IconSelected = Colors.OnSurfaceVariant;
     [SerializeField] MaterialIcons m_IconContent = MaterialIcons.none;
 
+    [Header("Sound")]
+
+    [SerializeField] SoundLibrary m_TapSound;
+
     const float Offset = 10f;
     const float ThumbSize = 24f;
     const float ThumbMinSize = 16f;
@@ -61,8 +66,11 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
     private AnimationState StartState;
     private AnimationState TargetState;
     private float AnimationValue = 1f;
+    private float PressingValue = 0f;
 
     public bool Selected { get; private set; } = false;
+
+    public bool Pressing { get; private set; } = false;
 
     private void Awake()
     {
@@ -158,27 +166,54 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
 
     private void Update()
     {
-        if (AnimationValue < 1f)
+        float time = AnimationValue;
+
+        PressingValue = Mathf.MoveTowards(PressingValue, Pressing ? 1 : 0, Time.deltaTime * 10f);
+
+        var trackColor = Berp(StartState.TrackColor, TargetState.TrackColor, time);
+        var trackOutline = Berp(StartState.TrackOutlineColor, TargetState.TrackOutlineColor, time);
+
+        var thumbColor = Berp(StartState.ThumbColor, TargetState.ThumbColor, time);
+        var position = Berp(StartState.ThumbPosition, TargetState.ThumbPosition, time);
+
+        var size = Vector2.Lerp(StartState.ThumbSize, TargetState.ThumbSize, time);
+        var scale = Vector3.one;
+
+        if (Pressing) size = Vector2.Lerp(size, Vector2.one * ThumbMaxSize, PressingValue);
+
+        scale.y *= m_AnimThumbStretch.Evaluate(time);
+
+        var iconColor = Color.Lerp(StartState.IconColor, TargetState.IconColor, time);
+        var icon = time > 0.5f ? TargetState.Icon : StartState.Icon;
+
+        if (trackColor != m_Track.color ||
+            trackOutline != m_Track.OutlineColor ||
+            m_Thumb.color != thumbColor ||
+            m_Thumb.rectTransform.anchoredPosition != position ||
+            m_Thumb.rectTransform.sizeDelta != size ||
+            m_Icon.Icon != icon ||
+            m_Icon.IconColor != iconColor ||
+            scale != m_Thumb.transform.localScale)
         {
-            float time = AnimationValue;
-
-            m_Track.color = Berp(StartState.TrackColor, TargetState.TrackColor, time);
-            m_Track.OutlineColor = Berp(StartState.TrackOutlineColor, TargetState.TrackOutlineColor, time);
-
-            m_Thumb.color = Berp(StartState.ThumbColor, TargetState.ThumbColor, time);
-            m_Thumb.rectTransform.anchoredPosition = Berp(StartState.ThumbPosition, TargetState.ThumbPosition, time);
-
-            var size = Vector2.Lerp(StartState.ThumbSize, TargetState.ThumbSize, time);
-            size.x += (size.y * (1f - m_AnimThumbStretch.Evaluate(time))) * 0.5f;
-            size.y *= m_AnimThumbStretch.Evaluate(time);
+            m_Track.color = trackColor;
+            m_Track.OutlineColor = trackOutline;
+            m_Thumb.color = thumbColor;
+            m_Thumb.rectTransform.anchoredPosition = position;
             m_Thumb.rectTransform.sizeDelta = size;
+            m_Thumb.rectTransform.localScale = scale;
 
             m_Icon.UpdateIcon(
-                StartState.Icon,
-                Color.Lerp(StartState.IconColor, TargetState.IconColor, time)
+                icon,
+                iconColor
             );
+        }
 
+        if (AnimationValue != 1f)
+        {
             AnimationValue += Time.deltaTime * m_AnimSpeed;
+
+            if (AnimationValue > 1f)
+                AnimationValue = 1f;
         }
     }
 
@@ -194,12 +229,14 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
 
     public void OnPointerDown(PointerEventData eventData)
     {
-
+        Pressing = true;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        m_TapSound?.PlayRandom();
         Value = !Value;
         AnimateState();
+        Pressing = false;
     }
 }
