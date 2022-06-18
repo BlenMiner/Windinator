@@ -84,6 +84,10 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
   m_texture: {fileID: 0}
   m_graphicBlur: 0
   m_circleAlpha: 0.2
@@ -92,10 +96,11 @@ MonoBehaviour:
   m_circleRadius: 0
   m_outlineSize: 0
   m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
-  m_shadowSize: 4
-  m_shadowBlur: 9
+  m_shadowSize: 15
+  m_shadowBlur: 25
   m_shadowPower: 1
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+  m_maskRect: {x: 0, y: 0, z: 0, w: 0}
   CircleColor: {r: 0, g: 0, b: 0, a: 0}
   m_useMaxRoundness: 0
   m_uniformRoundness: 1
@@ -114,7 +119,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_targetGraphic: {fileID: 2837744036114590074}
   m_color: 9
-  m_onColor: 0
+  m_useCustomColor: 0
+  m_customColor: {r: 0, g: 0, b: 0, a: 0}
+  m_alpha: 1
 --- !u!1 &7048393352421789126
 GameObject:
   m_ObjectHideFlags: 0

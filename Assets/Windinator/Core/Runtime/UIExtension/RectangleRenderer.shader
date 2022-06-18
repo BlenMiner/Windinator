@@ -145,10 +145,11 @@ Shader "Unlit/RectangleRenderer"
                 // Signed distance field calculation
                 float dist = sdRoundedBox(position, halfSize, _Roundness);
                 float delta = fwidth(dist);
+                float delta1 = fwidth(dist + 1);
 
                 // Calculate the different masks based on the SDF
-                float graphicAlpha = 1 - smoothstep(_GraphicBlur - delta, 0, dist);
-                float graphicAlphaOutline = 1 - smoothstep(_GraphicBlur - delta, 0, dist + 1);
+                float graphicAlpha = 1 - smoothstep(-delta, 0, dist);
+                float graphicAlphaOutline = 1 - smoothstep(-delta1, 0, dist + 1);
                 float outlineAlpha = (1 - smoothstep(_OutlineSize - 1 - delta, _OutlineSize - 1 + delta, dist)) * _OutlineColor.a;
                 float shadowAlpha = (1 - smoothstep(_ShadowSize - _ShadowBlur - delta, _ShadowSize, dist));
 
@@ -156,18 +157,18 @@ Shader "Unlit/RectangleRenderer"
                 float circleAASDF = 1 - smoothstep(-fwidth(circleSDF), 0, circleSDF);
 
                 // Start with the background most layer, aka shadows
-                shadowAlpha *= (pow(shadowAlpha, _ShadowPow) * _ShadowColor.a);
-                outlineAlpha = outlineAlpha * _OutlineColor.a;
+                shadowAlpha *= (pow(shadowAlpha, _ShadowPow) * _ShadowColor.a) * step(0.001, _ShadowSize);
+                outlineAlpha = outlineAlpha * _OutlineColor.a * step(0.001, _OutlineSize);
 
-                float4 baseColor = float4(_GraphicColor.rgb, 0);
-                float4 shadowColor = float4(_ShadowColor.rgb, shadowAlpha) * step(0.001, _ShadowSize);
-                float4 outlineColor = float4(_OutlineColor.rgb, outlineAlpha) * step(0.001, _OutlineSize);
+                float4 baseColor = float4(0, 0, 0, 0);
+                float4 shadowColor = float4(_ShadowColor.rgb, shadowAlpha);
+                float4 outlineColor = float4(_OutlineColor.rgb, outlineAlpha);
                 float4 graphicColor = float4(_GraphicColor.rgb, graphicAlpha * _GraphicColor.a);
 
                 float4 shadows = lerp(
                     baseColor,
                     shadowColor,
-                    shadowColor.a
+                    shadowColor.a * _GraphicColor.a
                 );
 
                 float4 shadowWithOutline = lerp(

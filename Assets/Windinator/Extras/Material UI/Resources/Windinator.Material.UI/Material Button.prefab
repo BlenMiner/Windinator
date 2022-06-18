@@ -200,7 +200,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -38.5943, y: 4.3079}
+  m_AnchoredPosition: {x: -38.5943, y: 4.307892}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3058997128918503320
@@ -238,8 +238,8 @@ MonoBehaviour:
       m_Top: 0
       m_Bottom: 0
     OutlineSize: 1.5
-    ShadowSize: 5
-    ShadowBlur: 9
+    ShadowSize: 15
+    ShadowBlur: 25
     FitToContent: 1
   onClick:
     m_PersistentCalls:
@@ -424,6 +424,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3058997128918503322}
     m_Modifications:
+    - target: {fileID: 935047011971687902, guid: df8de62d60cc7ee48bffc17997047d9a, type: 3}
+      propertyPath: m_IgnoreLayout
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2229133245609291699, guid: df8de62d60cc7ee48bffc17997047d9a, type: 3}
       propertyPath: m_Enabled
       value: 0

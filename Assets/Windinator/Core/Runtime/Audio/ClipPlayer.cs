@@ -42,6 +42,7 @@ namespace Riten.Windinator.Audio
             source.volume = volume;
             source.priority = priority;
             source.pitch = pitch;
+            source.spatialBlend = 0f;
 
             source.Play();
             sourceHelper.OnClipFinished(() => {

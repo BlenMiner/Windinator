@@ -103,7 +103,7 @@ namespace Riten.Windinator.LayoutBuilder
             public MaterialIcons On { get; }
             public MaterialIcons Off { get; }
 
-            public LabeledSwitch(string text, bool value,
+            public LabeledSwitch(string text, bool value = false,
                 MaterialIcons prepend = MaterialIcons.none,
                 MaterialIcons on = MaterialIcons.none,
                 MaterialIcons off = MaterialIcons.none,

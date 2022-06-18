@@ -31,6 +31,7 @@ public class SettingsPanel : LayoutBaker
                     }, startSelectedIndex: 1),
 
                     new MaterialUI.Label("Volume Settings", style: MaterialLabelStyle.Label),
+                    new Spacer(40f)
                 },
                 spacing: 20f
             ),
