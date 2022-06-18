@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Riten.Windinator.Audio;
+using UnityEngine.Events;
+using Riten.Windinator.Animation;
 
 public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointerDownHandler, IPointerUpHandler
 {
@@ -50,6 +52,8 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
     const float ThumbMinSize = 16f;
     const float ThumbMaxSize = 28f;
 
+    public UnityEvent<bool> onValueChanged;
+
     struct AnimationState
     {
         public Color TrackColor;
@@ -63,30 +67,62 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
         public Color IconColor;
     }
 
-    private AnimationState StartState;
     private AnimationState TargetState;
-    private float AnimationValue = 1f;
     private float PressingValue = 0f;
 
     public bool Selected { get; private set; } = false;
 
     public bool Pressing { get; private set; } = false;
 
+    bool OldValue;
+
+    public static MaterialIcons Lerp(MaterialIcons start, MaterialIcons end, float value)
+    {
+        return value > 0.5f ? end : start;
+    }
+
+    VarAnimator<Color> TrackColorVar;
+    VarAnimator<Color> TrackOutlineColorVar;
+    VarAnimator<Color> ThumbColorVar;
+    VarAnimator<Color> IconColorVar;
+
+    VarAnimator<Vector2> ThumbSizeVar;
+    VarAnimator<Vector2> ThumbPosVar;
+
+    VarAnimator<MaterialIcons> IconVar;
+
+    private void Initialize()
+    {
+        TrackColorVar = new VarAnimator<Color>(VarAnimator<Color>.Lerp, v => m_Track.color = v, m_AnimSpeed, m_AnimThumb);
+        TrackOutlineColorVar = new VarAnimator<Color>(VarAnimator<Color>.Lerp, v => m_Track.OutlineColor = v, m_AnimSpeed, m_AnimThumb);
+        ThumbColorVar = new VarAnimator<Color>(VarAnimator<Color>.Lerp, v => m_Thumb.color = v, m_AnimSpeed, m_AnimThumb);
+        IconColorVar = new VarAnimator<Color>(VarAnimator<Color>.Lerp, v => m_Icon.IconColor = v, m_AnimSpeed, m_AnimThumb);
+        ThumbSizeVar = new VarAnimator<Vector2>(VarAnimator<Vector2>.Lerp, v => m_Thumb.rectTransform.sizeDelta = v, m_AnimSpeed, m_AnimThumb);
+        ThumbPosVar = new VarAnimator<Vector2>(VarAnimator<Vector2>.Lerp, v => m_Thumb.rectTransform.anchoredPosition = v, m_AnimSpeed, m_AnimThumb);
+        IconVar = new VarAnimator<MaterialIcons>(Lerp, v => m_Icon.Icon = v, m_AnimSpeed, m_AnimThumb);
+
+        ThumbSizeVar.SetModifier((value, time) =>
+        {
+            value.y *= m_AnimThumbStretch.Evaluate(time);
+            value = Vector2.Lerp(value, Vector2.one * ThumbMaxSize, PressingValue);
+            return value;
+        });
+    }
+
     private void Awake()
     {
+        Initialize();
+
+        OldValue = Value;
         SnapState();
     }
 
     private void OnValidate()
     {
-        SnapState();
-    }
+        if (TrackColorVar == null)
+            Initialize();
 
-    public void SnapState()
-    {
-        TargetState = GetTargetState();
-        Apply(TargetState);
-        AnimationValue = 1f;
+        SnapState();
     }
 
     AnimationState GetTargetState()
@@ -105,27 +141,30 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
         };
     }
 
-    AnimationState GetCurrentState()
+    public void SnapState()
     {
-        return new AnimationState
-        {
-            TrackColor = m_Track.color,
-            TrackOutlineColor = m_Track.OutlineColor,
+        TargetState = GetTargetState();
 
-            ThumbColor = m_Thumb.color,
-            ThumbPosition = m_Thumb.rectTransform.anchoredPosition,
-            ThumbSize = m_Thumb.rectTransform.sizeDelta,
-            
-            Icon = m_Icon.Icon,
-            IconColor = m_Icon.IconColor
-        };
+        TrackColorVar.SnapToTarget(TargetState.TrackColor);
+        TrackOutlineColorVar.SnapToTarget(TargetState.TrackOutlineColor);
+        ThumbColorVar.SnapToTarget(TargetState.ThumbColor);
+        IconColorVar.SnapToTarget(TargetState.IconColor);
+        ThumbSizeVar.SnapToTarget(TargetState.ThumbSize);
+        ThumbPosVar.SnapToTarget(TargetState.ThumbPosition);
+        IconVar.SnapToTarget(TargetState.Icon);
     }
 
     void AnimateState()
     {
         TargetState = GetTargetState();
-        StartState = GetCurrentState();
-        AnimationValue = 0f;
+
+        TrackColorVar.AnimateToTarget(TargetState.TrackColor);
+        TrackOutlineColorVar.AnimateToTarget(TargetState.TrackOutlineColor);
+        ThumbColorVar.AnimateToTarget(TargetState.ThumbColor);
+        IconColorVar.AnimateToTarget(TargetState.IconColor);
+        ThumbSizeVar.AnimateToTarget(TargetState.ThumbSize);
+        ThumbPosVar.AnimateToTarget(TargetState.ThumbPosition);
+        IconVar.AnimateToTarget(TargetState.Icon);
     }
 
     void Apply(AnimationState state)
@@ -140,80 +179,23 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
         m_Icon.UpdateIcon(state.Icon, state.IconColor);
     }
 
-    float Berp(float start, float end, float value)
-    {
-        value = m_AnimThumb.Evaluate(Mathf.Clamp01(value));
-        return start + (end - start) * value;
-    }
-
-    Vector2 Berp(Vector2 start, Vector2 end, float value)
-    {
-        return new Vector2(
-            Berp(start.x, end.x, value),
-            Berp(start.y, end.y, value)
-        );
-    }
-
-    Color Berp(Color start, Color end, float value)
-    {
-        return new Color(
-            Berp(start.r, end.r, value),
-            Berp(start.g, end.g, value),
-            Berp(start.b, end.b, value),
-            Berp(start.a, end.a, value)
-        );
-    }
-
     private void Update()
     {
-        float time = AnimationValue;
-
         PressingValue = Mathf.MoveTowards(PressingValue, Pressing ? 1 : 0, Time.deltaTime * 10f);
+        float delta = Time.deltaTime;
 
-        var trackColor = Berp(StartState.TrackColor, TargetState.TrackColor, time);
-        var trackOutline = Berp(StartState.TrackOutlineColor, TargetState.TrackOutlineColor, time);
+        TrackColorVar.Update(delta);
+        TrackOutlineColorVar.Update(delta);
+        ThumbColorVar.Update(delta);
+        IconColorVar.Update(delta);
+        ThumbSizeVar.Update(delta);
+        ThumbPosVar.Update(delta);
+        IconVar.Update(delta);
 
-        var thumbColor = Berp(StartState.ThumbColor, TargetState.ThumbColor, time);
-        var position = Berp(StartState.ThumbPosition, TargetState.ThumbPosition, time);
-
-        var size = Vector2.Lerp(StartState.ThumbSize, TargetState.ThumbSize, time);
-        var scale = Vector3.one;
-
-        if (Pressing) size = Vector2.Lerp(size, Vector2.one * ThumbMaxSize, PressingValue);
-
-        scale.y *= m_AnimThumbStretch.Evaluate(time);
-
-        var iconColor = Color.Lerp(StartState.IconColor, TargetState.IconColor, time);
-        var icon = time > 0.5f ? TargetState.Icon : StartState.Icon;
-
-        if (trackColor != m_Track.color ||
-            trackOutline != m_Track.OutlineColor ||
-            m_Thumb.color != thumbColor ||
-            m_Thumb.rectTransform.anchoredPosition != position ||
-            m_Thumb.rectTransform.sizeDelta != size ||
-            m_Icon.Icon != icon ||
-            m_Icon.IconColor != iconColor ||
-            scale != m_Thumb.transform.localScale)
+        if (OldValue != Value)
         {
-            m_Track.color = trackColor;
-            m_Track.OutlineColor = trackOutline;
-            m_Thumb.color = thumbColor;
-            m_Thumb.rectTransform.anchoredPosition = position;
-            m_Thumb.rectTransform.sizeDelta = size;
-            m_Thumb.rectTransform.localScale = scale;
-
-            m_Icon.UpdateIcon(
-                icon,
-                iconColor
-            );
-        }
-
-        if (AnimationValue != 1f)
-        {
-            AnimationValue += Time.deltaTime * m_AnimSpeed;
-
-            if (AnimationValue > 1f)
-                AnimationValue = 1f;
+            OldValue = Value;
+            onValueChanged?.Invoke(Value);
         }
     }
 

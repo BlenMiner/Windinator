@@ -66,6 +66,18 @@ namespace Riten.Windinator.LayoutBuilder
                 return _InputField;
             }
         }
+
+        private static GameObject _SwitchField;
+
+        public static GameObject SwitchField
+        {
+            get
+            {
+                if (_SwitchField == null)
+                    _SwitchField = Resources.Load<GameObject>("Windinator.Material.UI/Material Switch");
+                return _SwitchField;
+            }
+        }
     }
     public static class MaterialUI
     {
@@ -341,6 +353,34 @@ namespace Riten.Windinator.LayoutBuilder
                 field.LabelColor = m_color;
                 field.LabelFontStyle = m_fontStyle;
                 field.ForceUpdate();
+
+                SetReference(field);
+
+                return prefab;
+            }
+        }
+
+        public class Switch : PrefabRef<MaterialSwitch>
+        {
+            bool m_value;
+
+            public Switch(
+                bool value
+            ) : base(LayoutMaterialPrefabs.SwitchField)
+            {
+                m_value = value;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var prefab = base.Build(parent);
+
+                if (prefab == null) return null;
+
+                var field = prefab.GetComponentInChildren<MaterialSwitch>();
+
+                field.Value = m_value;
+                field.SnapState();
 
                 SetReference(field);
 

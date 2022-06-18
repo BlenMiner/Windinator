@@ -6715,9 +6715,25 @@ public class MaterialIcon : MonoBehaviour
         {6680, 989936}
 };
 
-    public MaterialIcons Icon => m_icon;
+    public MaterialIcons Icon
+    {
+        get => m_icon;
+        set
+        {
+            m_icon = value;
+            UpdateIcon(value);
+        }
+    }
 
-    public Color IconColor => m_color;
+    public Color IconColor
+    {
+        get => m_color;
+        set
+        {
+            m_color = value;
+            UpdateColor(value);
+        }
+    }
 
     internal void UpdateColor(Color color)
     {
