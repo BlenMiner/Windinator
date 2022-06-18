@@ -91,8 +91,10 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
 
     VarAnimator<MaterialIcons> IconVar;
 
-    private void Initialize()
+    public void Setup()
     {
+        if (TrackColorVar != null) return;
+
         TrackColorVar = new VarAnimator<Color>(VarAnimator<Color>.Lerp, v => m_Track.color = v, m_AnimSpeed, m_AnimThumb);
         TrackOutlineColorVar = new VarAnimator<Color>(VarAnimator<Color>.Lerp, v => m_Track.OutlineColor = v, m_AnimSpeed, m_AnimThumb);
         ThumbColorVar = new VarAnimator<Color>(VarAnimator<Color>.Lerp, v => m_Thumb.color = v, m_AnimSpeed, m_AnimThumb);
@@ -111,17 +113,12 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
 
     private void Awake()
     {
-        Initialize();
-
         OldValue = Value;
         SnapState();
     }
 
     private void OnValidate()
     {
-        if (TrackColorVar == null)
-            Initialize();
-
         SnapState();
     }
 
@@ -143,6 +140,8 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
 
     public void SnapState()
     {
+        Setup();
+
         TargetState = GetTargetState();
 
         TrackColorVar.SnapToTarget(TargetState.TrackColor);

@@ -137,7 +137,6 @@ Shader "Unlit/RectangleRenderer"
                     position.y >= _MaskRect.y && position.y <= _MaskRect.y + _MaskRect.w)
                 {
 
-                    //return fixed4(1, 0, 0, 1);
                     clip(-1);
                 }
 
@@ -158,24 +157,32 @@ Shader "Unlit/RectangleRenderer"
                 // Start with the background most layer, aka shadows
                 shadowAlpha *= pow(shadowAlpha, _ShadowPow) * _ShadowColor.a;
                 outlineAlpha *= _OutlineColor.a;
-                //graphicAlpha *= _GraphicColor.a;
+                graphicAlpha *= _GraphicColor.a;
 
-                float mult = min(1, step(0.001, _ShadowSize) + step(0.001, _OutlineSize));
+                float4 baseColor = float4(_GraphicColor.rgb, 0);
+                float4 shadowColor = float4(_ShadowColor.rgb, shadowAlpha) * step(0.001, _ShadowSize);
+                float4 outlineColor = float4(_OutlineColor.rgb, outlineAlpha) * step(0.001, _OutlineSize);
+                float4 graphicColor = float4(_GraphicColor.rgb, graphicAlpha);
 
-                half4 effectsWithoutShadowOrOutline = half4(_GraphicColor.rgb, graphicAlpha * _GraphicColor.a);
-
-                half4 effects = lerp(
-                    lerp(
-                        half4(_ShadowColor.rgb * step(0.001, _ShadowSize), shadowAlpha),
-                        half4(_OutlineColor.rgb * step(0.001, _OutlineSize), outlineAlpha),
-                        outlineAlpha
-                    ),
-                    half4(_GraphicColor.rgb, _GraphicColor.a),
-                    graphicAlpha
+                float4 shadows = lerp(
+                    baseColor,
+                    shadowColor,
+                    shadowColor.a
                 );
 
-                effects = effects * mult + effectsWithoutShadowOrOutline * (1 - mult);
+                float4 shadowWithOutline = lerp(
+                    shadows,
+                    outlineColor,
+                    outlineColor.a
+                );
 
+                float4 effects = lerp(
+                    shadowWithOutline,
+                    graphicColor,
+                    graphicColor.a
+                );
+
+                effects.a = max(shadowColor.a, max(outlineColor.a, graphicColor.a));
                 effects = lerp(effects, _CircleColor, circleAASDF * _CircleAlpha * graphicAlpha);
 
                 // Unity stuff
@@ -186,7 +193,7 @@ Shader "Unlit/RectangleRenderer"
                 #ifdef UNITY_UI_ALPHACLIP
                 clip (effects.a - 0.001);
                 #endif
-                
+
                 return effects;
             }
             ENDCG
