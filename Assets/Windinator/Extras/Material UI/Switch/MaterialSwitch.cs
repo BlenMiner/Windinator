@@ -17,6 +17,26 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
     [SerializeField, Searchable] MaterialIcons m_IconTrue;
     [SerializeField, Searchable] MaterialIcons m_IconFalse;
 
+    public MaterialIcons IconOn
+    {
+        get => m_IconTrue;
+        set
+        {
+            m_IconTrue = value;
+            SnapState();
+        }
+    }
+
+    public MaterialIcons IconOff
+    {
+        get => m_IconFalse;
+        set
+        {
+            m_IconFalse = value;
+            SnapState();
+        }
+    }
+
     [SerializeField] float m_AnimSpeed = 10f;
     [SerializeField] AnimationCurve m_AnimThumb;
     [SerializeField] AnimationCurve m_AnimThumbStretch;

@@ -22,7 +22,10 @@ namespace Riten.Windinator.Audio
         public static AudioSourceHelper Allocate()
         {
             if (Prefab == null) InitPrefab();
-            return AudioSources.Allocate(null);
+
+            var instance = AudioSources.Allocate(null);
+            instance.gameObject.hideFlags = HideFlags.HideInHierarchy;
+            return instance;
         }
 
         public static void Free(AudioSourceHelper source)

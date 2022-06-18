@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using System;
 
 namespace Riten.Windinator.LayoutBuilder
 {
@@ -229,8 +230,16 @@ namespace Riten.Windinator.LayoutBuilder
 
             public override RectTransform Build(RectTransform parent)
             {
-                if (m_prefab == null) return null;
-                return Object.Instantiate(m_prefab, parent, false).transform as RectTransform;
+                try
+                {
+                    if (m_prefab == null) return null;
+                    return GameObject.Instantiate(m_prefab, parent, false).transform as RectTransform;
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError(ex.Message + "\n" + ex.StackTrace);
+                    return null;
+                }
             }
         }
 

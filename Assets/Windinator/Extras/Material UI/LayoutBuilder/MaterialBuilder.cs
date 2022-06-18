@@ -7,6 +7,18 @@ namespace Riten.Windinator.LayoutBuilder
 {
     public static class LayoutMaterialPrefabs
     {
+        private static GameObject _MaterialSeparator;
+
+        public static GameObject MaterialSeparator
+        {
+            get
+            {
+                if (_MaterialSeparator == null)
+                    _MaterialSeparator = Resources.Load<GameObject>("Windinator.Material.UI/Material Separator");
+                return _MaterialSeparator;
+            }
+        }
+
         private static GameObject _MaterialLabel;
 
         public static GameObject MaterialLabel
@@ -81,6 +93,60 @@ namespace Riten.Windinator.LayoutBuilder
     }
     public static class MaterialUI
     {
+        public class LabeledSwitch : Element
+        {
+            public string Text { get; }
+            public string SubTitle { get; }
+            public bool Separator { get; }
+            public bool Value { get; }
+            public MaterialIcons Prepend { get; }
+            public MaterialIcons On { get; }
+            public MaterialIcons Off { get; }
+
+            public LabeledSwitch(string text, bool value,
+                MaterialIcons prepend = MaterialIcons.none,
+                MaterialIcons on = MaterialIcons.none,
+                MaterialIcons off = MaterialIcons.none,
+                string subTitle = null,
+                bool separator = false) : base(default)
+            {
+                Text = text;
+                Value = value;
+                Prepend = prepend;
+                On = on;
+                Off = off;
+                SubTitle = subTitle;
+                Separator = separator;
+            }
+
+            Element Bake()
+            {
+                return new Horizontal(
+                    new Element[] {
+                        new Icon(Prepend, color: Colors.OnSurface.ToColor()),
+                        new Vertical(
+                            new Element[]
+                            {
+                                new Label(Text, color: Colors.OnSurface),
+                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialLabelStyle.Label),
+                            },
+                            alignment: TextAnchor.MiddleLeft
+                        ),
+                        new FlexibleSpace(),
+                        Separator ? new Separator(true) : null,
+                        new Switch(Value, On, Off)
+                    },
+                    alignment: TextAnchor.MiddleCenter,
+                    spacing: 20f
+                );
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                return Bake().Build(parent);
+            }
+        }
+
         public class SegmentedButton : PrefabRef<MaterialButtonSegment>
         {
             string[] m_text;
@@ -130,15 +196,18 @@ namespace Riten.Windinator.LayoutBuilder
                     var btn = buttonList[i];
 
                     btn.GetReference(out buttonUI[i]);
-
-                    if (buttonUI[i].Value == null) return null;
                 }
 
                 var prefab = new Horizontal(
                     buttonList,
                     alignment: TextAnchor.MiddleCenter,
-                    spacing: 1f
+                    spacing: -1f
                 ).Build(parent);
+
+                for (int i = 0; i < buttonList.Length; i++)
+                {
+                    if (buttonUI[i].Value == null) return null;
+                }
 
                 prefab.name = "#Layout-Segmented-Button";
 
@@ -165,15 +234,15 @@ namespace Riten.Windinator.LayoutBuilder
 
                     if (start)
                     {
-                        graphic.SetRoundness(new Vector4(-10, -10, float.PositiveInfinity, float.PositiveInfinity));
+                        graphic.SetRoundness(new Vector4(0, 0, float.PositiveInfinity, float.PositiveInfinity));
                     }
                     else if (end)
                     {
-                        graphic.SetRoundness(new Vector4(float.PositiveInfinity, float.PositiveInfinity, -10, -10));
+                        graphic.SetRoundness(new Vector4(float.PositiveInfinity, float.PositiveInfinity, 0, 0));
                     }
                     else
                     {
-                        graphic.SetRoundness(new Vector4(-10, -10, -10, -10));
+                        graphic.SetRoundness(Vector4.zero);
                     }
                 }
                 return prefab;
@@ -216,6 +285,38 @@ namespace Riten.Windinator.LayoutBuilder
                 btn.SetButtonType(m_type);
 
                 SetReference(btn);
+
+                return prefab;
+            }
+        }
+
+        public class Separator : PrefabRef<MaterialSeparator>
+        {
+            private readonly bool vertical;
+            private readonly Color? color;
+
+            public Separator(
+                bool Vertical,
+                Color? Color = null
+            )
+                : base(prefab: LayoutMaterialPrefabs.MaterialSeparator)
+            {
+                vertical = Vertical;
+                color = Color;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var prefab = base.Build(parent);
+
+                if (prefab == null) return null;
+
+                var separator = prefab.GetComponentInChildren<MaterialSeparator>();
+
+                separator.Color = color.GetValueOrDefault(Colors.SurfaceVariant.ToColor());
+                separator.Vertical = vertical;
+
+                SetReference(separator);
 
                 return prefab;
             }
@@ -362,13 +463,21 @@ namespace Riten.Windinator.LayoutBuilder
 
         public class Switch : PrefabRef<MaterialSwitch>
         {
-            bool m_value;
+            readonly bool m_value;
+
+            readonly MaterialIcons m_offIcon;
+
+            readonly MaterialIcons m_onIcon;
 
             public Switch(
-                bool value
+                bool value, 
+                MaterialIcons onIcon = MaterialIcons.none,
+                MaterialIcons offIcon = MaterialIcons.none
             ) : base(LayoutMaterialPrefabs.SwitchField)
             {
                 m_value = value;
+                m_onIcon = onIcon;
+                m_offIcon = offIcon;
             }
 
             public override RectTransform Build(RectTransform parent)
@@ -380,6 +489,8 @@ namespace Riten.Windinator.LayoutBuilder
                 var field = prefab.GetComponentInChildren<MaterialSwitch>();
 
                 field.Value = m_value;
+                field.IconOn = m_onIcon;
+                field.IconOff = m_offIcon;
                 field.SnapState();
 
                 SetReference(field);

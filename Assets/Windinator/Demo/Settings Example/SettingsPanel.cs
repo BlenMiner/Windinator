@@ -13,27 +13,40 @@ public class SettingsPanel : LayoutBaker
             new Vertical(
                 new Element[]
                 {
-                    new Horizontal(
-                        new Element[] { new MaterialUI.Label("Fullscreen?", style: MaterialLabelStyle.Title) , new MaterialUI.Switch(false) },
-                        alignment: TextAnchor.MiddleCenter,
-                        spacing: 20f
+                    new MaterialUI.Label("General Settings", style: MaterialLabelStyle.Label),
+                    new MaterialUI.LabeledSwitch(
+                        "Wi-Fi", false, MaterialIcons.wifi,
+                        MaterialIcons.wifi, MaterialIcons.wifi_off,
+                        "Public campus Wi-Fi", true
                     ),
-                    new MaterialUI.Switch(false),
-                    new MaterialUI.Switch(true),
+                    new MaterialUI.LabeledSwitch("Bluetooth", true, MaterialIcons.bluetooth, MaterialIcons.check),
+                    new MaterialUI.LabeledSwitch("Airplane Mode", true, MaterialIcons.airplane),
+                    new MaterialUI.LabeledSwitch("Do not disturb", false, MaterialIcons.volume_mute),
+
+                    new MaterialUI.Separator(false),
+
+                    new MaterialUI.SegmentedButton(new string[]
+                    {
+                        "Dark Mode", "Light Mode", "Invisible Mode"
+                    }, startSelectedIndex: 1),
+
+                    new MaterialUI.Label("Volume Settings", style: MaterialLabelStyle.Label),
                 },
-                spacing: 15f
+                spacing: 20f
             ),
-            size: new Vector2(200f, -1f),
+            size: new Vector2(400f, -1f),
             padding: Vector4.one * 20f,
             shape: new ShapeProperties
             {
+                Color = Colors.Surface.ToColor(),
                 Roundness = Vector4.one * 40,
                 Shadow = new ShadowProperties
                 {
-                    Blur = 20f,
-                    Size = 10f
+                    Blur = 30f,
+                    Size = 20f
                 }
             }
         );
     }
+
 }

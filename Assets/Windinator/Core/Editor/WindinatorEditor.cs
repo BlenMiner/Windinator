@@ -342,19 +342,19 @@ public class {0} : LayoutBaker
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Assets/Create/Windinator/Force Re-bake Elements", priority = 200)]
+        [MenuItem("Assets/Windinator/Force Re-bake Elements", priority = 200)]
         public static void Rebake()
         {
             RefreshPrefabs(true);
         }
 
-        [MenuItem("Assets/Create/Windinator/Re-bake Dirty Elements", priority = 200)]
+        [MenuItem("Assets/Windinator/Re-bake Dirty Elements", priority = 200)]
         public static void RefreshElements()
         {
             RefreshPrefabs();
         }
 
-        [MenuItem("Assets/Create/Windinator/Windinator Config")]
+        [MenuItem("Assets/Windinator/Windinator Config")]
         public static void NewConfig()
         {
             string folderPath = GetCurrentFolder();
@@ -368,7 +368,7 @@ public class {0} : LayoutBaker
             AssetDatabase.CreateAsset(CreateInstance<WindinatorConfig>(), savePath);
         }
 
-        [MenuItem("Assets/Create/Windinator/New Window", priority = -100)]
+        [MenuItem("Assets/Windinator/New Window", priority = -100)]
         public static void NewWindow()
         {
             string folderPath = GetCurrentFolder();
@@ -408,7 +408,7 @@ public class {0} : LayoutBaker
             DestroyImmediate(window);
         }
 
-        [MenuItem("Assets/Create/Windinator/New Element", priority = -100)]
+        [MenuItem("Assets/Windinator/New Element", priority = -100)]
         public static void NewElement()
         {
             string folderPath = GetCurrentFolder();
@@ -445,7 +445,7 @@ public class {0} : LayoutBaker
             DestroyImmediate(window);
         }
 
-        [MenuItem("Assets/Create/Windinator/Link Selected Prefabs", validate = true)]
+        [MenuItem("Assets/Windinator/Link Selected Prefabs", validate = true)]
         public static bool LinkAvailable()
         {
             bool validSelection = Selection.gameObjects != null && Selection.gameObjects.Length > 0;
@@ -459,7 +459,7 @@ public class {0} : LayoutBaker
             return false;
         }
 
-        [MenuItem("Assets/Create/Windinator/Re-bake Selection", true, 100)]
+        [MenuItem("Assets/Windinator/Re-bake Selection", true, 100)]
         public static bool RebakePossible()
         {
             bool validSelection = Selection.gameObjects != null && Selection.gameObjects.Length > 0;
@@ -473,7 +473,7 @@ public class {0} : LayoutBaker
             return false;
         }
 
-        [MenuItem("Assets/Create/Windinator/Re-bake Selection", false, 100)]
+        [MenuItem("Assets/Windinator/Re-bake Selection", false, 100)]
         public static void RebakeSelection()
         {
             var selections = Selection.gameObjects;
@@ -486,7 +486,7 @@ public class {0} : LayoutBaker
         }
 
 
-        [MenuItem("Assets/Create/Windinator/Link Selected Prefabs")]
+        [MenuItem("Assets/Windinator/Link Selected Prefabs")]
         public static void LinkPrefabWindow()
         {
             var selections = Selection.gameObjects;

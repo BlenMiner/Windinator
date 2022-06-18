@@ -154,16 +154,11 @@ namespace Riten.Windinator.Material
             m_buttonType = type;
 
             if (type != MaterialButtonType.Manual)
-                ApplButtonStyle(type);
+                ApplyButtonStyle(type);
         }
 
-        public void ApplButtonStyle(MaterialButtonType type)
+        public void ApplyButtonStyle(MaterialButtonType type)
         {
-            var primary = Windinator.WindinatorConfig.ColorPalette[Colors.Primary];
-            var secondary = Windinator.WindinatorConfig.ColorPalette[Colors.SecondaryContainer];
-            var outline = Windinator.WindinatorConfig.ColorPalette[Colors.Outline];
-            var surface = Windinator.WindinatorConfig.ColorPalette[Colors.Surface];
-
             var primaryColor = (!InvertColors ? Colors.Primary : Colors.OnPrimary).ToColor();
             var secondaryColor = (!InvertColors ? Colors.SecondaryContainer : Colors.OnSecondaryContainer).ToColor();
             var outlineColor = (!InvertColors ? Colors.Outline : Colors.OnOutline).ToColor();

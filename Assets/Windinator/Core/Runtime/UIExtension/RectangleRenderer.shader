@@ -147,22 +147,22 @@ Shader "Unlit/RectangleRenderer"
                 float delta = fwidth(dist);
 
                 // Calculate the different masks based on the SDF
-                float graphicAlpha = 1 - smoothstep(-delta - _GraphicBlur, 0, dist);
-                float outlineAlpha = (1 - smoothstep(_OutlineSize - delta * 1.5f, _OutlineSize, dist));
+                float graphicAlpha = 1 - smoothstep(_GraphicBlur - delta, 0, dist);
+                float graphicAlphaOutline = 1 - smoothstep(_GraphicBlur - delta, 0, dist + 1);
+                float outlineAlpha = (1 - smoothstep(_OutlineSize - 1 - delta, _OutlineSize - 1 + delta, dist)) * _OutlineColor.a;
                 float shadowAlpha = (1 - smoothstep(_ShadowSize - _ShadowBlur - delta, _ShadowSize, dist));
 
                 float circleSDF = distance(position, _CirclePos) - _CircleRadius;
                 float circleAASDF = 1 - smoothstep(-fwidth(circleSDF), 0, circleSDF);
 
                 // Start with the background most layer, aka shadows
-                shadowAlpha *= pow(shadowAlpha, _ShadowPow) * _ShadowColor.a;
-                outlineAlpha *= _OutlineColor.a;
-                graphicAlpha *= _GraphicColor.a;
+                shadowAlpha *= (pow(shadowAlpha, _ShadowPow) * _ShadowColor.a);
+                outlineAlpha = outlineAlpha * _OutlineColor.a;
 
                 float4 baseColor = float4(_GraphicColor.rgb, 0);
                 float4 shadowColor = float4(_ShadowColor.rgb, shadowAlpha) * step(0.001, _ShadowSize);
                 float4 outlineColor = float4(_OutlineColor.rgb, outlineAlpha) * step(0.001, _OutlineSize);
-                float4 graphicColor = float4(_GraphicColor.rgb, graphicAlpha);
+                float4 graphicColor = float4(_GraphicColor.rgb, graphicAlpha * _GraphicColor.a);
 
                 float4 shadows = lerp(
                     baseColor,
@@ -172,18 +172,17 @@ Shader "Unlit/RectangleRenderer"
 
                 float4 shadowWithOutline = lerp(
                     shadows,
-                    outlineColor,
-                    outlineColor.a
-                );
-
-                float4 effects = lerp(
-                    shadowWithOutline,
                     graphicColor,
                     graphicColor.a
                 );
 
-                effects.a = max(shadowColor.a, max(outlineColor.a, graphicColor.a));
-                effects = lerp(effects, _CircleColor, circleAASDF * _CircleAlpha * graphicAlpha);
+                float4 effects = lerp(
+                    shadowWithOutline,
+                    outlineColor,
+                    outlineAlpha * (1 - graphicAlphaOutline)
+                );
+
+                effects = lerp(effects, _CircleColor, circleAASDF * _CircleAlpha * graphicAlphaOutline);
 
                 // Unity stuff
                 #ifdef UNITY_UI_CLIP_RECT
