@@ -47,8 +47,8 @@ public class SettingsPanel : LayoutBaker
                         new MaterialUI.RadioGroup(
                             new Vertical(
                                 new Element[] {
-                                    new MaterialUI.LabeledRadio("Something", true),
-                                    new MaterialUI.LabeledRadio("Something else", false),
+                                    new MaterialUI.LabeledCheckbox("Salsa", true),
+                                    new MaterialUI.LabeledCheckbox("Tomato", false),
                                 },
                                 spacing: 20f
                             )

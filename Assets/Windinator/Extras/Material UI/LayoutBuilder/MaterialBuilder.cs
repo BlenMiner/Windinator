@@ -31,6 +31,18 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
 
+        private static GameObject _MaterialCheckbox;
+
+        public static GameObject MaterialCheckbox
+        {
+            get
+            {
+                if (_MaterialCheckbox == null)
+                    _MaterialCheckbox = Resources.Load<GameObject>("Windinator.Material.UI/Material Checkbox");
+                return _MaterialCheckbox;
+            }
+        }
+
         private static GameObject _MaterialLabel;
 
         public static GameObject MaterialLabel
@@ -195,6 +207,102 @@ namespace Riten.Windinator.LayoutBuilder
                         new FlexibleSpace(),
                         Separator ? new Separator(true) : null,
                         new Radio(Value)
+                    },
+                    alignment: TextAnchor.MiddleCenter,
+                    spacing: 20f
+                );
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                return Bake().Build(parent);
+            }
+        }
+
+        public class LabeledCheckbox : Element
+        {
+            public string Text { get; }
+            public string SubTitle { get; }
+            public bool Separator { get; }
+            public bool Value { get; }
+            public MaterialIcons Prepend { get; }
+
+            public LabeledCheckbox(string text, bool value = false,
+                MaterialIcons prepend = MaterialIcons.none,
+                string subTitle = null,
+                bool separator = false) : base(default)
+            {
+                Text = text;
+                Value = value;
+                Prepend = prepend;
+                SubTitle = subTitle;
+                Separator = separator;
+            }
+
+            Element Bake()
+            {
+                return new Horizontal(
+                    new Element[] {
+                        new Icon(Prepend, color: Colors.OnSurface.ToColor()),
+                        new Vertical(
+                            new Element[]
+                            {
+                                new Label(Text, color: Colors.OnSurface),
+                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialLabelStyle.Label),
+                            },
+                            alignment: TextAnchor.MiddleLeft
+                        ),
+                        new FlexibleSpace(),
+                        Separator ? new Separator(true) : null,
+                        new Checkbox(Value)
+                    },
+                    alignment: TextAnchor.MiddleCenter,
+                    spacing: 20f
+                );
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                return Bake().Build(parent);
+            }
+        }
+
+        public class LabeledControl : Element
+        {
+            public string Text { get; }
+            public string SubTitle { get; }
+            public bool Separator { get; }
+            public Element Child { get; }
+            public MaterialIcons Prepend { get; }
+
+            public LabeledControl(string text, Element child = null,
+                MaterialIcons prepend = MaterialIcons.none,
+                string subTitle = null,
+                bool separator = false) : base(default)
+            {
+                Text = text;
+                Child = child;
+                Prepend = prepend;
+                SubTitle = subTitle;
+                Separator = separator;
+            }
+
+            Element Bake()
+            {
+                return new Horizontal(
+                    new Element[] {
+                        new Icon(Prepend, color: Colors.OnSurface.ToColor()),
+                        new Vertical(
+                            new Element[]
+                            {
+                                new Label(Text, color: Colors.OnSurface),
+                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialLabelStyle.Label),
+                            },
+                            alignment: TextAnchor.MiddleLeft
+                        ),
+                        new FlexibleSpace(),
+                        Separator ? new Separator(true) : null,
+                        Child
                     },
                     alignment: TextAnchor.MiddleCenter,
                     spacing: 20f
@@ -563,6 +671,34 @@ namespace Riten.Windinator.LayoutBuilder
                 if (prefab == null) return null;
 
                 var field = prefab.GetComponentInChildren<MaterialRadio>();
+
+                field.Value = m_value;
+                field.SnapTarget();
+
+                SetReference(field);
+
+                return prefab;
+            }
+        }
+
+        public class Checkbox : PrefabRef<MaterialCheckbox>
+        {
+            readonly bool m_value;
+
+            public Checkbox(
+                bool value
+            ) : base(LayoutMaterialPrefabs.MaterialCheckbox)
+            {
+                m_value = value;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var prefab = base.Build(parent);
+
+                if (prefab == null) return null;
+
+                var field = prefab.GetComponentInChildren<MaterialCheckbox>();
 
                 field.Value = m_value;
                 field.SnapTarget();

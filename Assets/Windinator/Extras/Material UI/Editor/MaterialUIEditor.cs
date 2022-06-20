@@ -33,6 +33,12 @@ public static class MaterialUIEditor
 		CreateShapeGO("Switch", "Material Switch", menuCommand);
 	}
 
+    [MenuItem("GameObject/UI/Material/Checkbox", false, 1)]
+	public static void AddCheckbox(MenuCommand menuCommand)
+	{
+		CreateShapeGO("Checkbox", "Material Checkbox", menuCommand);
+	}
+
 	[MenuItem("GameObject/UI/Material/Button", false, 1)]
 	public static void AddButton(MenuCommand menuCommand)
 	{
