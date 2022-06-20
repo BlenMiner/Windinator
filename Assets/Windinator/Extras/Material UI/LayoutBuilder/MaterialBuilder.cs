@@ -159,6 +159,54 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
 
+        public class LabeledRadio : Element
+        {
+            public string Text { get; }
+            public string SubTitle { get; }
+            public bool Separator { get; }
+            public bool Value { get; }
+            public MaterialIcons Prepend { get; }
+
+            public LabeledRadio(string text, bool value = false,
+                MaterialIcons prepend = MaterialIcons.none,
+                string subTitle = null,
+                bool separator = false) : base(default)
+            {
+                Text = text;
+                Value = value;
+                Prepend = prepend;
+                SubTitle = subTitle;
+                Separator = separator;
+            }
+
+            Element Bake()
+            {
+                return new Horizontal(
+                    new Element[] {
+                        new Icon(Prepend, color: Colors.OnSurface.ToColor()),
+                        new Vertical(
+                            new Element[]
+                            {
+                                new Label(Text, color: Colors.OnSurface),
+                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialLabelStyle.Label),
+                            },
+                            alignment: TextAnchor.MiddleLeft
+                        ),
+                        new FlexibleSpace(),
+                        Separator ? new Separator(true) : null,
+                        new Radio(Value)
+                    },
+                    alignment: TextAnchor.MiddleCenter,
+                    spacing: 20f
+                );
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                return Bake().Build(parent);
+            }
+        }
+
         public class SegmentedButton : PrefabRef<MaterialButtonSegment>
         {
             string[] m_text;
@@ -299,6 +347,30 @@ namespace Riten.Windinator.LayoutBuilder
                 SetReference(btn);
 
                 return prefab;
+            }
+        }
+
+        public class RadioGroup : Element
+        {
+            private readonly Element m_child;
+
+            public RadioGroup(
+                Element child = null
+            )
+                : base()
+            {
+                m_child = child;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                if (m_child == null) return null;
+
+                var result = m_child.Build(parent);
+
+                result.gameObject.AddComponent<MaterialRadioGroup>();
+
+                return result;
             }
         }
 
@@ -466,6 +538,34 @@ namespace Riten.Windinator.LayoutBuilder
                 field.LabelColor = m_color;
                 field.LabelFontStyle = m_fontStyle;
                 field.ForceUpdate();
+
+                SetReference(field);
+
+                return prefab;
+            }
+        }
+
+        public class Radio : PrefabRef<MaterialRadio>
+        {
+            readonly bool m_value;
+
+            public Radio(
+                bool value
+            ) : base(LayoutMaterialPrefabs.MaterialRadio)
+            {
+                m_value = value;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var prefab = base.Build(parent);
+
+                if (prefab == null) return null;
+
+                var field = prefab.GetComponentInChildren<MaterialRadio>();
+
+                field.Value = m_value;
+                field.SnapTarget();
 
                 SetReference(field);
 

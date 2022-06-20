@@ -30,6 +30,17 @@ public class SettingsPanel : LayoutBaker
                         "Dark Mode", "Light Mode", "Invisible Mode"
                     }, startSelectedIndex: 1),
 
+                    new MaterialUI.RadioGroup(
+                        new Vertical(
+                            new Element[] {
+                                new MaterialUI.LabeledRadio("Dark Mode", false),
+                                new MaterialUI.LabeledRadio("Light Mode", true),
+                                new MaterialUI.LabeledRadio("Invisible Mode", false),
+                            },
+                            spacing: 20f
+                        )
+                    ),
+
                     new MaterialUI.Label("Volume Settings", style: MaterialLabelStyle.Label),
                     new Spacer(40f)
                 },

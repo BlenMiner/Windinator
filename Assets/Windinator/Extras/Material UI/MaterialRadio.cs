@@ -1,5 +1,6 @@
 using Riten.Windinator;
 using Riten.Windinator.Animation;
+using Riten.Windinator.Audio;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -29,6 +30,8 @@ public class MaterialRadio : MonoBehaviour,
     [SerializeField] Colors m_unselectedColor = Colors.Outline;
 
     [SerializeField] float m_animSpeed = 10f;
+
+    [SerializeField] SoundLibrary m_clickSound = null;
 
     VarAnimator<Color> m_outlineColor;
 
@@ -60,24 +63,38 @@ public class MaterialRadio : MonoBehaviour,
 
     void Awake()
     {
+        if (m_outlineColor != null) return;
+
         m_oldValue = Value;
         m_outlineColor = new VarAnimator<Color>(VarAnimator<Color>.Lerp, 
             color => {
-                m_outlineGraphic.OutlineColor = color;
-                m_knobGraphic.color = color;
+                if (m_outlineGraphic != null)
+                    m_outlineGraphic.OutlineColor = color;
 
-                color.a = m_selectionGraphic.color.a;
-                m_selectionGraphic.color = color;
+                if (m_knobGraphic != null)
+                    m_knobGraphic.color = color;
+
+                if (m_selectionGraphic != null)
+                {
+                    color.a = m_selectionGraphic.color.a;
+                    m_selectionGraphic.color = color;
+                }
             }, m_animSpeed);
 
         m_knobScale = new VarAnimator<float>(VarAnimator<float>.Lerp, 
-            scale => m_knobGraphic.transform.localScale = Vector3.one * scale, m_animSpeed);
+            scale => {
+                if (m_knobGraphic != null)
+                    m_knobGraphic.transform.localScale = Vector3.one * scale;
+            }, m_animSpeed);
 
         m_selectionAlpha = new VarAnimator<float>(VarAnimator<float>.Lerp, 
             alpha => {
-                var c = m_selectionGraphic.color;
-                c.a = alpha;
-                m_selectionGraphic.color = c;
+                if (m_selectionGraphic != null)
+                {
+                    var c = m_selectionGraphic.color;
+                    c.a = alpha;
+                    m_selectionGraphic.color = c;
+                }
             }, m_animSpeed);
 
         m_selectionAlpha.SetModifier(SelectionMod);
@@ -99,6 +116,8 @@ public class MaterialRadio : MonoBehaviour,
 
     void UpdateTarget()
     {
+        if (m_outlineColor == null) Awake();
+        
         m_outlineColor.AnimateToTarget(Value ? m_selectedColor.ToColor() : m_unselectedColor.ToColor());
         m_knobScale.AnimateToTarget(Value ? 1f : 0f);
     }
@@ -120,7 +139,7 @@ public class MaterialRadio : MonoBehaviour,
         m_selectionAlpha.Update(Time.deltaTime);
     }
 
-    void SnapTarget()
+    public void SnapTarget()
     {
         UpdateTarget();
 
@@ -161,6 +180,7 @@ public class MaterialRadio : MonoBehaviour,
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        m_clickSound?.PlayRandom();
         Value = true;
     }
 }
