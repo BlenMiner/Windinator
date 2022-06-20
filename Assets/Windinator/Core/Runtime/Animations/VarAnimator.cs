@@ -77,6 +77,18 @@ namespace Riten.Windinator.Animation
             m_time = 0f;
         }
 
+        public void Snap()
+        {
+            m_time = 1f;
+            
+            m_current = m_target;
+
+            if (m_modifier != null)
+                m_current = m_modifier.Invoke(m_current, m_time);
+
+            m_updateValue?.Invoke(m_current);
+        }
+
         public void SnapToTarget(T target)
         {
             m_target = target;

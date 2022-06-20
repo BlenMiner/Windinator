@@ -21,6 +21,18 @@ public static class MaterialUIEditor
 		CreateShapeGO("Action Button", "Action Button", menuCommand);
 	}
 
+    [MenuItem("GameObject/UI/Material/Radio", false, 1)]
+	public static void AddRadio(MenuCommand menuCommand)
+	{
+		CreateShapeGO("Radio", "Material Radio", menuCommand);
+	}
+
+    [MenuItem("GameObject/UI/Material/Switch", false, 1)]
+	public static void AddSwitch(MenuCommand menuCommand)
+	{
+		CreateShapeGO("Switch", "Material Switch", menuCommand);
+	}
+
 	[MenuItem("GameObject/UI/Material/Button", false, 1)]
 	public static void AddButton(MenuCommand menuCommand)
 	{

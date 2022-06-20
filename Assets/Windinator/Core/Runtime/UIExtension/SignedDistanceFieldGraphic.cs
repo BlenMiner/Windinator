@@ -10,7 +10,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     [SerializeField] Texture m_texture;
 
-    [SerializeField] float m_graphicBlur = 0f;
+    [SerializeField, Range(0f, 1f)] float m_graphicAlphaMult = 1f;
 
     [Header("Circle")]
 
@@ -49,6 +49,12 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
     protected event Action<float, float> onMaterialUpdate;
 
     public override Texture mainTexture => m_texture;
+
+    public float Alpha {get => m_graphicAlphaMult; set
+    {
+        m_graphicAlphaMult = value;
+        SetAllDirty();
+    }}
 
     public override Material defaultMaterial
     {
@@ -177,21 +183,30 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
         defaultMaterial.SetTexture("_MainTex", mainTexture);
 
-        defaultMaterial.SetFloat("_GraphicBlur", m_graphicBlur);
+        defaultMaterial.SetFloat("_GraphicBlur", 0f);
+
+        var outlineCol = m_outlineColor;
+        outlineCol.a *= m_graphicAlphaMult;
 
         defaultMaterial.SetFloat("_OutlineSize", m_outlineSize);
-        defaultMaterial.SetColor("_OutlineColor", m_outlineColor);
+        defaultMaterial.SetColor("_OutlineColor", outlineCol);
+
+        var circleCol = m_circleColor;
+        circleCol.a *= m_graphicAlphaMult;
 
         defaultMaterial.SetVector("_MaskRect", m_maskRect);
         defaultMaterial.SetVector("_CirclePos", m_circlePos);
-        defaultMaterial.SetVector("_CircleColor", m_circleColor);
+        defaultMaterial.SetVector("_CircleColor", circleCol);
         defaultMaterial.SetFloat("_CircleRadius", m_circleRadius);
         defaultMaterial.SetFloat("_CircleAlpha", m_circleAlpha);
+
+        var shadowCol = m_shadowColor;
+        shadowCol.a *= m_graphicAlphaMult;
 
         defaultMaterial.SetFloat("_ShadowSize", m_shadowSize);
         defaultMaterial.SetFloat("_ShadowBlur", m_shadowBlur);
         defaultMaterial.SetFloat("_ShadowPow", m_shadowPower);
-        defaultMaterial.SetColor("_ShadowColor", m_shadowColor);
+        defaultMaterial.SetColor("_ShadowColor", shadowCol);
 
         defaultMaterial.SetFloat("_Padding", m_extraMargin);
     }

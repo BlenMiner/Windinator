@@ -19,6 +19,18 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
 
+        private static GameObject _MaterialRadio;
+
+        public static GameObject MaterialRadio
+        {
+            get
+            {
+                if (_MaterialRadio == null)
+                    _MaterialRadio = Resources.Load<GameObject>("Windinator.Material.UI/Material Radio");
+                return _MaterialRadio;
+            }
+        }
+
         private static GameObject _MaterialLabel;
 
         public static GameObject MaterialLabel

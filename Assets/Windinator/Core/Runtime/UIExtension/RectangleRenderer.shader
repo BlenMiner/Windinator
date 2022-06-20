@@ -158,7 +158,7 @@ Shader "Unlit/RectangleRenderer"
 
                 // Start with the background most layer, aka shadows
                 shadowAlpha *= (pow(shadowAlpha, _ShadowPow) * _ShadowColor.a) * step(0.001, _ShadowSize);
-                outlineAlpha = outlineAlpha * _OutlineColor.a * step(0.001, _OutlineSize);
+                outlineAlpha = outlineAlpha * step(0.001, _OutlineSize);
 
                 float4 baseColor = float4(0, 0, 0, 0);
                 float4 shadowColor = float4(_ShadowColor.rgb, shadowAlpha);
