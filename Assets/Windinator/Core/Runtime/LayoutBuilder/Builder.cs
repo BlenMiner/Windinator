@@ -405,9 +405,12 @@ namespace Riten.Windinator.LayoutBuilder
         {
             Element m_child;
 
-            public ScrollView(Element child) : base(LayoutPrefabs.ScrollView)
+            bool m_vertical;
+
+            public ScrollView(Element child, bool vertical = true) : base(LayoutPrefabs.ScrollView)
             {
                 m_child = child;
+                m_vertical = vertical;
             }
 
             public override RectTransform Build(RectTransform parent)
@@ -420,7 +423,33 @@ namespace Riten.Windinator.LayoutBuilder
                 transform.sizeDelta = Vector2.zero;
 
                 var scrollRect = transform.GetComponent<ScrollRect>();
+                var contentSize = scrollRect.content.GetComponent<ContentSizeFitter>();
 
+                if (m_vertical)
+                {
+                    var content = scrollRect.content;
+
+                    contentSize.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                    contentSize.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+                    content.anchorMin = Vector2.up;
+                    content.anchorMax = Vector2.one;
+                    content.anchoredPosition = Vector2.zero;
+                    content.sizeDelta = Vector2.zero;
+                }
+                else
+                {
+                    var content = scrollRect.content;
+
+                    contentSize.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+                    contentSize.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+                    content.anchorMin = Vector2.zero;
+                    content.anchorMax = Vector2.up;
+                    content.anchoredPosition = Vector2.zero;
+                    content.sizeDelta = Vector2.zero;
+                }
+                
                 SetReference(scrollRect);
 
                 var nextParent = scrollRect.content;

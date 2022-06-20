@@ -86,16 +86,19 @@ public class MaterialCircleClick : MonoBehaviour, IPointerDownHandler, IPointerU
             float newSize = m_size + Time.deltaTime * m_sizeSpeed * speedMult;
             float newAlpha = Mathf.MoveTowards(m_alpha, 1f, Time.deltaTime * m_alphaSpeed);
 
-            m_alpha = newAlpha;
-            m_size = newSize;
-            m_dirty = true;
+            if (newAlpha != m_alpha || newSize != m_size)
+            {
+                m_alpha = newAlpha;
+                m_size = newSize;
+                m_dirty = true;
+            }
         }
         else
         {
             float newSize = Mathf.Max(0f, m_size + Time.deltaTime * m_sizeSpeed * speedMult);
             float newAlpha = Mathf.MoveTowards(m_alpha, 0f, Time.deltaTime * m_alphaSpeed);
 
-            if (newAlpha != m_alpha)
+            if (newAlpha != m_alpha || newSize != m_size)
             {
                 m_alpha = newAlpha;
                 m_size = newSize;
