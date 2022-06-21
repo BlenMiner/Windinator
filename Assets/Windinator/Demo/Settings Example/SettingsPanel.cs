@@ -68,7 +68,6 @@ public class SettingsPanel : LayoutBaker
             shape: new ShapeProperties
             {
                 Color = Colors.Surface.ToColor(),
-                Roundness = Vector4.one * 40,
                 Shadow = new ShadowProperties
                 {
                     Blur = 30f,
