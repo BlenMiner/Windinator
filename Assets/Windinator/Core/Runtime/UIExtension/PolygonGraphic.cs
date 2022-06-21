@@ -2,12 +2,45 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public struct StaticArray<T>
+{
+    public T[] Array;
+
+    public int Length;
+
+    public StaticArray(int count)
+    {
+        Array = new T[count];
+        Length = 0;
+    }
+
+    public T this[int i]
+    {
+        get { return Array[i]; }
+        set { Array[i] = value; }
+    }
+
+    public void SetLength(int len)
+    {
+        Length = len;
+    }
+
+    public void Add(T data)
+    {
+        Array[Length++] = data;
+    }
+
+    public void Clear()
+    {
+        Length = 0;
+    }
+}
+
 public class PolygonGraphic : SignedDistanceFieldGraphic
 {
     [SerializeField] float m_roudness;
-    [SerializeField] Vector2 point0 = new Vector2(0.5f, 1f);
-    [SerializeField] Vector2 point1 = new Vector2(0f, 0f);
-    [SerializeField] Vector2 point2 = new Vector2(1f, 0f);
+    [SerializeField] StaticArray<Vector4> points = new StaticArray<Vector4>(100);
 
     Material m_poly_material;
     
@@ -43,13 +76,7 @@ public class PolygonGraphic : SignedDistanceFieldGraphic
     {
         defaultMaterial.SetVector("_Roundness", new Vector4(m_roudness, 0, 0, 0));
 
-        defaultMaterial.SetVectorArray("_Points", new List<Vector4>
-        {
-            point0,
-            point1,
-            point2
-        });
-
-        defaultMaterial.SetInt("_PointsCount", 3);
+        defaultMaterial.SetVectorArray("_Points", points.Array);
+        defaultMaterial.SetInt("_PointsCount", points.Length);
     }
 }
