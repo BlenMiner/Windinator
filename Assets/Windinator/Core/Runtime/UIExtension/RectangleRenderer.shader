@@ -160,21 +160,29 @@ Shader "Unlit/RectangleRenderer"
                 shadowAlpha *= (pow(shadowAlpha, _ShadowPow) * _ShadowColor.a) * step(0.001, _ShadowSize);
                 outlineAlpha = outlineAlpha * step(0.001, _OutlineSize);
 
-                float4 baseColor = float4(0, 0, 0, 0);
                 float4 shadowColor = float4(_ShadowColor.rgb, shadowAlpha);
                 float4 outlineColor = float4(_OutlineColor.rgb, outlineAlpha);
                 float4 graphicColor = float4(_GraphicColor.rgb, graphicAlpha * _GraphicColor.a);
 
+                float shadowInvisible = step(shadowAlpha * shadowAlpha, 0.01);
+                float4 baseColor = lerp(float4(_ShadowColor.rgb, 0), float4(_GraphicColor.rgb, 0), shadowInvisible);
+
                 float4 shadows = lerp(
                     baseColor,
                     shadowColor,
-                    shadowColor.a * _GraphicColor.a
+                    shadowAlpha
                 );
 
                 float4 shadowWithOutline = lerp(
                     shadows,
                     graphicColor,
                     graphicColor.a
+                );
+
+                float4 outlineWithShadow = lerp(
+                    shadows,
+                    graphicColor,
+                    shadowColor.a
                 );
 
                 float4 effects = lerp(
