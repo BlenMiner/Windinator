@@ -61,7 +61,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         get
         {
             if (m_material == null)
-                m_material = new Material(Shader.Find("Unlit/RectangleRenderer"));
+                m_material = new Material(Shader.Find("UI/Windinator/RectangleRenderer"));
             return m_material;
         }
     }

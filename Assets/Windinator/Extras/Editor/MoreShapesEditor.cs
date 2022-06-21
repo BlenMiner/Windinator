@@ -1,0 +1,46 @@
+using UnityEditor;
+using UnityEngine;
+
+public static class MoreShapesEditor
+{
+	[MenuItem("GameObject/UI/More Shapes/Rectangle", false, 1)]
+	public static void AddRectangle(MenuCommand menuCommand)
+	{
+		CreateShapeGO("Rectangle", "Rectangle", menuCommand);
+	}
+
+    [MenuItem("GameObject/UI/More Shapes/Triangle", false, 1)]
+	public static void AddTriangle(MenuCommand menuCommand)
+	{
+		CreateShapeGO("Triangle", "Triangle", menuCommand);
+	}
+
+	public static GameObject CreateShapeGO(string name, string prefab, MenuCommand menuCommand)
+	{
+		GameObject shapeGO = Object.Instantiate(Resources.Load<GameObject>($"Windinator.Presets/{prefab}"));
+		shapeGO.name = name;
+		Undo.RegisterCreatedObjectUndo(shapeGO, "Created " + name + " shape");
+
+		GameObject parent = (GameObject)menuCommand.context;
+
+		if (
+			parent != null &&
+			(parent.GetComponent<Canvas>() || parent.GetComponentInParent<Canvas>())
+		)
+		{
+			Undo.SetTransformParent(
+				shapeGO.transform,
+				parent.transform,
+				"Set " + name + " parent"
+			);
+
+			Undo.RecordObject(shapeGO.transform, "centered " + name);
+			shapeGO.transform.localPosition = Vector3.zero;
+			shapeGO.transform.localScale = Vector3.one;
+		}
+
+		Selection.activeGameObject = shapeGO;
+
+		return shapeGO;
+	}
+}
