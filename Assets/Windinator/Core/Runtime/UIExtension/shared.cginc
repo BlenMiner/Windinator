@@ -60,37 +60,37 @@ fixed4 fragFunction(float2 uv, float4 worldPosition, float4 color, float dist, f
     float circleAASDF = 1 - smoothstep(-fwidth(circleSDF), 0, circleSDF);
 
     // Start with the background most layer, aka shadows
-    shadowAlpha *= (pow(shadowAlpha, _ShadowPow) * _ShadowColor.a) * step(0.001, _ShadowSize);
+    shadowAlpha = shadowAlpha * step(0.001, _ShadowSize);
     outlineAlpha = outlineAlpha * step(0.001, _OutlineSize);
 
     float4 shadowColor = float4(_ShadowColor.rgb, shadowAlpha);
     float4 outlineColor = float4(_OutlineColor.rgb, outlineAlpha);
     float4 graphicColor = float4(_GraphicColor.rgb, graphicAlpha * _GraphicColor.a);
 
-    float shadowInvisible = step(shadowAlpha * shadowAlpha, 0.01);
-    float4 baseColor = lerp(float4(_ShadowColor.rgb, 0), float4(_GraphicColor.rgb, 0), shadowInvisible);
+    float shadowInvisible = step(shadowAlpha, 0.001);
+    float shapeInvisible = step(0.001, graphicAlphaOutline);
 
-    float4 shadows = lerp(
+    float4 baseColor = lerp(float4(_ShadowColor.rgb, 0), float4(_GraphicColor.rgb, 0), max(shadowInvisible, shapeInvisible));
+
+    float4 graphic = lerp(
         baseColor,
-        shadowColor,
-        shadowAlpha
-    );
-
-    float4 shadowWithOutline = lerp(
-        shadows,
         graphicColor,
         graphicColor.a
     );
 
-    float4 outlineWithShadow = lerp(
-        shadows,
-        graphicColor,
-        shadowColor.a
+    float4 shadowWithGraphic = lerp(
+        graphic,
+        _ShadowColor,
+        shadowAlpha * (1 - graphicAlphaOutline)
     );
 
+    shapeInvisible = step(0.001, shadowWithGraphic.a);
+
+    float4 shapeColor = lerp(float4(_OutlineColor.rgb, 0), shadowWithGraphic, shapeInvisible);
+
     float4 effects = lerp(
-        shadowWithOutline,
-        outlineColor,
+        shapeColor,
+        _OutlineColor,
         outlineAlpha * (1 - graphicAlphaOutline)
     );
 
