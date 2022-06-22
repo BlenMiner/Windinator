@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -54,11 +52,10 @@ public class PolygonGraphic : SignedDistanceFieldGraphic
         }
     } 
 
-    public void SetRoundness(float roundness)
-    {
-        m_roudness = roundness;
+    public float Roundness {get => m_roudness; set {
+        m_roudness = value;
         SetMaterialDirty();
-    }
+    }}
 
     override protected void OnEnable()
     {

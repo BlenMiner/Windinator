@@ -43,6 +43,11 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
     [SerializeField] Vector4 m_maskRect;
 
     private Material m_material;
+
+    public Texture Texture {
+        get => m_texture;
+        set {m_texture = value; SetMaterialDirty();}
+    }
      
     private float m_extraMargin => Mathf.Max(m_outlineSize, m_shadowSize) + 1;
 
@@ -54,6 +59,9 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
     {
         m_graphicAlphaMult = value;
         SetAllDirty();
+
+        if (value == 0) canvasRenderer.cull = true;
+        else            canvasRenderer.cull = false;
     }}
 
     public override Material defaultMaterial
@@ -66,7 +74,35 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         }
     }
 
-    public Color CircleColor;
+    public Color CircleColor
+    {
+        get => m_circleColor;
+        set
+        {
+            m_circleColor = value;
+            SetMaterialDirty();
+        }
+    }
+
+    public float CircleAlpha
+    {
+        get => m_circleAlpha;
+        set
+        {
+            m_circleAlpha = value;
+            SetMaterialDirty();
+        }
+    }
+
+    public float CircleSize
+    {
+        get => m_circleRadius;
+        set
+        {
+            m_circleRadius = value;
+            SetMaterialDirty();
+        }
+    }
 
     public Color OutlineColor
     {
@@ -74,15 +110,69 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set
         {
             m_outlineColor = value;
+            SetMaterialDirty();
+        }
+    }
+
+    public float OutlineSize
+    {
+        get => m_outlineSize;
+        set
+        {
+            m_outlineSize = value;
             SetAllDirty();
         }
     }
+
+    public Color ShadowColor
+    {
+        get => m_shadowColor;
+        set
+        {
+            m_shadowColor = value;
+            SetMaterialDirty();
+        }
+    }
+
+    public float ShadowSize
+    {
+        get => m_shadowSize;
+        set
+        {
+            m_shadowSize = value;
+            SetAllDirty();
+        }
+    }
+
+    public float ShadowBlur
+    {
+        get => m_shadowBlur;
+        set
+        {
+            m_shadowBlur = value;
+            SetMaterialDirty();
+        }
+    }
+
+    public float ShadowPower
+    {
+        get => m_shadowPower;
+        set
+        {
+            m_shadowPower = value;
+            SetMaterialDirty();
+        }
+    }
+
+    public Vector2 CirclePos { get => m_circlePos; set { m_circlePos = value; SetMaterialDirty();} }
+
+    public Vector4 MaskRect { get => m_maskRect; set { m_maskRect = value; SetMaterialDirty(); } }
 
     public void SetCircle(Vector2 pos, Color color, float size, float alpha)
     {
         m_circleAlpha = alpha;
         m_circleRadius = size;
-        m_circlePos = pos;
+        CirclePos = pos;
         m_circleColor = color;
 
         SetAllDirty();
@@ -98,7 +188,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     public void SetMask(Vector4 mask)
     {
-        m_maskRect = mask;
+        MaskRect = mask;
         SetAllDirty();
     }
 
@@ -182,26 +272,24 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         UpdateShaderDimensions();
 
         defaultMaterial.SetTexture("_MainTex", mainTexture);
+        defaultMaterial.SetFloat("_Alpha", m_graphicAlphaMult);
 
         defaultMaterial.SetFloat("_GraphicBlur", 0f);
 
         var outlineCol = m_outlineColor;
-        outlineCol.a *= m_graphicAlphaMult;
 
         defaultMaterial.SetFloat("_OutlineSize", m_outlineSize);
         defaultMaterial.SetColor("_OutlineColor", outlineCol);
 
         var circleCol = m_circleColor;
-        circleCol.a *= m_graphicAlphaMult;
 
-        defaultMaterial.SetVector("_MaskRect", m_maskRect);
-        defaultMaterial.SetVector("_CirclePos", m_circlePos);
+        defaultMaterial.SetVector("_MaskRect", MaskRect);
+        defaultMaterial.SetVector("_CirclePos", CirclePos);
         defaultMaterial.SetVector("_CircleColor", circleCol);
         defaultMaterial.SetFloat("_CircleRadius", m_circleRadius);
         defaultMaterial.SetFloat("_CircleAlpha", m_circleAlpha);
 
         var shadowCol = m_shadowColor;
-        shadowCol.a *= m_graphicAlphaMult;
 
         defaultMaterial.SetFloat("_ShadowSize", m_shadowSize);
         defaultMaterial.SetFloat("_ShadowBlur", m_shadowBlur);

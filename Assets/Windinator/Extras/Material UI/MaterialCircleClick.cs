@@ -113,5 +113,5 @@ public class MaterialCircleClick : MonoBehaviour, IPointerDownHandler, IPointerU
         }
     }
 
-    Color GetColor() => m_graphic.CircleColor * 1.25f;
+    Color GetColor() => m_graphic.CircleColor;
 }

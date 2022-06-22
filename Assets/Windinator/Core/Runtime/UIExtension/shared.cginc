@@ -21,6 +21,7 @@ float2 _CirclePos;
 float _CircleAlpha;
 float4 _MaskRect;
 
+float _Alpha;
 float2 _Size;
 
 void GetRect(float2 uv, out float2 position, out float2 halfSize)
@@ -38,7 +39,6 @@ void GetRect(float2 uv, out float2 position, out float2 halfSize)
         position.x >= _MaskRect.x && position.x <= _MaskRect.x + _MaskRect.z &&
         position.y >= _MaskRect.y && position.y <= _MaskRect.y + _MaskRect.w)
     {
-
         clip(-1);
     }
 }
@@ -60,7 +60,7 @@ fixed4 fragFunction(float2 uv, float4 worldPosition, float4 color, float dist, f
     float circleAASDF = 1 - smoothstep(-fwidth(circleSDF), 0, circleSDF);
 
     // Start with the background most layer, aka shadows
-    shadowAlpha = shadowAlpha * step(0.001, _ShadowSize);
+    shadowAlpha = pow(shadowAlpha, _ShadowPow) * step(0.001, _ShadowSize);
     outlineAlpha = outlineAlpha * step(0.001, _OutlineSize);
 
     float4 shadowColor = float4(_ShadowColor.rgb, shadowAlpha);
@@ -77,6 +77,7 @@ fixed4 fragFunction(float2 uv, float4 worldPosition, float4 color, float dist, f
         graphicColor,
         graphicColor.a
     );
+    graphic = lerp(graphic, float4(_CircleColor.rgb, 1), circleAASDF * _CircleAlpha * graphicAlpha);
 
     float4 shadowWithGraphic = lerp(
         graphic,
@@ -94,8 +95,8 @@ fixed4 fragFunction(float2 uv, float4 worldPosition, float4 color, float dist, f
         outlineAlpha * (1 - graphicAlphaOutline)
     );
 
-    effects = lerp(effects, _CircleColor, circleAASDF * _CircleAlpha * graphicAlphaOutline);
 
+    effects.a *= _Alpha;
     // Unity stuff
     #ifdef UNITY_UI_CLIP_RECT
     effects.a *= UnityGet2DClipping(worldPosition.xy, _ClipRect);

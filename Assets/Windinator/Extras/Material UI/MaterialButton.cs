@@ -230,6 +230,8 @@ namespace Riten.Windinator.Material
                     }
             }
 
+            m_graphic.CircleColor *= 1.25f;
+
             if (m_buttonType != MaterialButtonType.Manual)
                 m_graphic.SetMaxRoundness(true);
             m_graphic.SetAllDirty();

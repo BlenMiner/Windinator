@@ -14,6 +14,21 @@ public class RectangleGraphic : SignedDistanceFieldGraphic
 
     [SerializeField] Vector4 m_roudnessInPixels;
 
+    public Vector4 Roundness {get => m_roudnessInPixels; set {
+        m_roudnessInPixels = value;
+        SetMaterialDirty();
+    }}
+
+    public bool UniformRoundness {get => m_uniformRoundness; set {
+        m_uniformRoundness = value;
+        SetMaterialDirty();
+    }}
+
+    public bool MaxRoundess {get => m_useMaxRoundness; set {
+        m_useMaxRoundness = value;
+        SetMaterialDirty();
+    }}
+
     public void SetRoundness(Vector4 roundness)
     {
         m_roudnessInPixels = roundness;
