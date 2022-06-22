@@ -188,7 +188,7 @@ public class SDFGraphicEditor : Editor
 
         if (Event.current.type == EventType.MouseUp)
         {
-            Undo.RecordObject(graphic, "Polygon Updated");
+            Undo.RecordObject(graphic, "SDF Updated From Scene");
         }
     }
 
@@ -300,11 +300,13 @@ public class PolygonGraphicEditor : Editor
 
     void OnDisable()
     {
-        Tools.current = prevTool;
+        if (prevTool != default)
+            Tools.current = prevTool;
     }
 
     public void OnSceneGUI()
     {
+        EditorGUI.BeginChangeCheck();
         PolygonGraphic graphic = target as PolygonGraphic;
         SDFGraphicEditor.DrawSDFScene(target as SignedDistanceFieldGraphic);
 
@@ -317,8 +319,6 @@ public class PolygonGraphicEditor : Editor
                 prevTool = Tools.current;
                 Tools.current = Tool.None;
             }
-
-            bool dirty = false;
 
             for (int i = 0; i < graphic.Points.Length; ++i)
             {
@@ -334,24 +334,30 @@ public class PolygonGraphicEditor : Editor
                     pivotY + localPoint.y
                 ));
 
+                if (i == graphic.Points.Length - 1)
+                {
+                    Color.RGBToHSV(Handles.color, out var H, out var S, out var V);
+                    H += 90f / 360f;
+                    Handles.color = Color.HSVToRGB(H % 1f, 1f, V);
+                }
+
                 actualPos = Handles.FreeMoveHandle(actualPos, Quaternion.identity, 5f, Vector3.zero, Handles.SphereHandleCap);
-                graphic.Points[i] = Vector2.Scale(graphic.transform.InverseTransformPoint(new Vector2(
+                var p = Vector2.Scale(graphic.transform.InverseTransformPoint(new Vector2(
                     actualPos.x - pivotX,
                     actualPos.y - pivotY
                 )), new Vector2(1f / rectTransform.rect.size.x, 1f / rectTransform.rect.size.y));
 
-                graphic.Points[i] = Vector4.Max(graphic.Points[i], default);
-                graphic.Points[i] = Vector4.Min(graphic.Points[i], Vector4.one);
+                p = Vector4.Max(p, default);
+                p = Vector4.Min(p, Vector4.one);
 
-                if (point != (Vector2)graphic.Points[i])
-                    dirty = true;
+                if (p != point)
+                {
+                    Undo.RecordObject(graphic, "Polygon Updated From Scene");
+                    graphic.Points[i] = p;
+                }
             }
 
-            if (dirty)
-            {
-                graphic.SetAllDirty();
-                EditorUtility.SetDirty(graphic);
-            }
+            graphic.SetAllDirty();
         }
         else
         {
@@ -361,9 +367,9 @@ public class PolygonGraphicEditor : Editor
             }
         }
 
-        if (Event.current.type == EventType.MouseUp)
+        if (Event.current.type == EventType.MouseUp || EditorGUI.EndChangeCheck())
         {
-            Undo.RecordObject(graphic, "Polygon Updated");
+            EditorUtility.SetDirty(graphic);
         }
     }
 }
