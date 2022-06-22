@@ -15,6 +15,12 @@ public static class MoreShapesEditor
 		CreateShapeGO("Triangle", "Triangle", menuCommand);
 	}
 
+    [MenuItem("GameObject/UI/More Shapes/Polygon", false, 1)]
+	public static void AddPolygon(MenuCommand menuCommand)
+	{
+		CreateShapeGO("Polygon", "Polygon", menuCommand);
+	}
+
 	public static GameObject CreateShapeGO(string name, string prefab, MenuCommand menuCommand)
 	{
 		GameObject shapeGO = Object.Instantiate(Resources.Load<GameObject>($"Windinator.Presets/{prefab}"));

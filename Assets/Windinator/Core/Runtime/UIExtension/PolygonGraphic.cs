@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public struct StaticArray<T>
+public class StaticArray<T>
 {
     public T[] Array;
 
@@ -41,6 +41,14 @@ public class PolygonGraphic : SignedDistanceFieldGraphic
     [SerializeField] StaticArray<Vector4> points = new StaticArray<Vector4>(100);
 
     Material m_poly_material;
+
+    public StaticArray<Vector4> Points
+    {
+        get => points;
+        set {
+            points = value;
+        }
+    }
     
     public override Material defaultMaterial
     {

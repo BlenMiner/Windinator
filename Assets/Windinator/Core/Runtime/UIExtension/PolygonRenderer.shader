@@ -79,18 +79,23 @@ Shader "UI/Windinator/PolygonRenderer"
 
             int _PointsCount;
 
-            float sdPolygon(in float2 p, float r)
+            float2 GetPoint(int id, float2 size)
             {
-                float d = dot(p - _Points[0] * r, p - _Points[0] * r);
+                return (_Points[id] - 0.5f) * size * 2;
+            }
+
+            float sdPolygon(in float2 p, float r, float2 size)
+            {
+                float d = dot(p - GetPoint(0, size) * r, p - GetPoint(0, size) * r);
                 float s = 1.0;
 
                 for (int i = 0, j = _PointsCount - 1; i < _PointsCount; j = i, i++)
                 {
-                    float2 e = _Points[j] * r - _Points[i] * r;
-                    float2 w = (p - _Points[i] * r);
+                    float2 e = GetPoint(j, size) * r - GetPoint(i, size) * r;
+                    float2 w = (p - GetPoint(i, size) * r);
                     float2 b = w - e * clamp(dot(w, e) / dot(e, e), 0.0, 1.0);
                     d = min(d, dot(b, b));
-                    bool3 c = bool3(p.y >= (_Points[i].y * r), p.y<(_Points[j].y* r), e.x* w.y>e.y * w.x);
+                    bool3 c = bool3(p.y >= (GetPoint(i, size).y * r), p.y<(GetPoint(j, size).y* r), e.x* w.y>e.y * w.x);
                     if (all(c) || all(!(c))) s *= -1.0;
                     // if (all(c) || all(not(c))) s *= -1.0;
                 }
@@ -120,9 +125,8 @@ Shader "UI/Windinator/PolygonRenderer"
 
                 float2 size = halfSize - 0.5;
 
-                float maxSize = min(size.x + 0.0001, size.y + 0.0001);
+                float maxSize = min(size.x , size.y);
                 float roundness = max(min(maxSize, _Roundness.x), 0);
-
                 size -= roundness;
 
                 float2 dsize = float2(size.x, -size.y);
@@ -131,8 +135,9 @@ Shader "UI/Windinator/PolygonRenderer"
                 // Signed distance field calculation
 
                 float multiplier = 1 - (roundness / maxSize);
+                halfSize -= roundness;
                 
-                float dist = sdPolygon(dpos, multiplier) - roundness;
+                float dist = sdPolygon(dpos, 1, halfSize) - roundness;
 
                 // float dist = sdTriangleIsosceles(dpos, dsize) - roundness;
 

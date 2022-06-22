@@ -114,7 +114,10 @@ public class SDFGraphicEditor : Editor
         EndGroup();
 
         if (EditorGUI.EndChangeCheck())
+        {
             graphic.SetAllDirty();
+            Undo.RecordObject(graphic, "SDF Changed");
+        }
 
         EditorUtility.SetDirty(graphic);
     }
@@ -122,8 +125,6 @@ public class SDFGraphicEditor : Editor
     public static void DrawSDFScene(SignedDistanceFieldGraphic graphic)
     {
         RectTransform rt = graphic.transform as RectTransform;
-
-        EditorGUI.BeginChangeCheck();
 
         float pivotX = (0.5f - rt.pivot.x);
         float pivotY = (0.5f - rt.pivot.y);
@@ -185,9 +186,9 @@ public class SDFGraphicEditor : Editor
             graphic.MaskRect = new Vector4(pos.x, pos.y, size.x, size.y);
         }
 
-        if (EditorGUI.EndChangeCheck())
+        if (Event.current.type == EventType.MouseUp)
         {
-            Undo.RecordObject(graphic, "Move point");
+            Undo.RecordObject(graphic, "Polygon Updated");
         }
     }
 
@@ -241,21 +242,128 @@ public class RectangleGraphicEditor : Editor
 [CustomEditor(typeof(PolygonGraphic), true)]
 public class PolygonGraphicEditor : Editor
 {
+    bool m_showPoints = false;
+
     public override void OnInspectorGUI()
     {
+        EditorGUI.BeginChangeCheck();
         SDFGraphicEditor.DrawSDFGUI(target as SignedDistanceFieldGraphic);
 
         PolygonGraphic graphic = target as PolygonGraphic;
 
-        SDFGraphicEditor.BeginGroup("Roundness Settings");
+        SDFGraphicEditor.BeginGroup("Polygon Settings");
 
         graphic.Roundness = EditorGUILayout.FloatField("Roundness", graphic.Roundness);
+
+        m_showPoints = EditorGUILayout.Foldout(m_showPoints, "Points List");
+
+        Rect foldRect = GUILayoutUtility.GetLastRect();
+        if (Event.current.type == EventType.MouseUp && foldRect.Contains (Event.current.mousePosition)) 
+        {
+            m_showPoints = !m_showPoints;
+            GUI.changed = true;
+            Event.current.Use ();
+        }
+
+        EditorGUI.indentLevel += 1;
+        if (m_showPoints)
+        {
+            GUI.SetNextControlName("MyTextField");
+            graphic.Points.Length = EditorGUILayout.IntField("Count", graphic.Points.Length);
+
+            EditorGUI.indentLevel += 1;
+            for (int i = 0; i < graphic.Points.Length; ++i)
+            {
+                graphic.Points[i] = EditorGUILayout.Vector2Field("Point " + i, graphic.Points[i]);
+
+                graphic.Points[i] = Vector4.Max(graphic.Points[i], default);
+                graphic.Points[i] = Vector4.Min(graphic.Points[i], Vector4.one);
+            }
+            EditorGUI.indentLevel -= 1;
+
+            if (GUILayout.Button("Add Point"))
+            {
+                graphic.Points.Add(graphic.Points.Length == 0 ? default : graphic.Points[graphic.Points.Length - 1]);
+            }
+        }
+        EditorGUI.indentLevel -= 1;
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            Undo.RecordObject(graphic, "Polygon Point Updated");
+        }
 
         SDFGraphicEditor.EndGroup();
     }
 
+    Tool prevTool;
+
+    void OnDisable()
+    {
+        Tools.current = prevTool;
+    }
+
     public void OnSceneGUI()
     {
+        PolygonGraphic graphic = target as PolygonGraphic;
         SDFGraphicEditor.DrawSDFScene(target as SignedDistanceFieldGraphic);
+
+        RectTransform rectTransform = graphic.transform as RectTransform;
+
+        if (m_showPoints)
+        {
+            if (Tools.current != Tool.None)
+            {
+                prevTool = Tools.current;
+                Tools.current = Tool.None;
+            }
+
+            bool dirty = false;
+
+            for (int i = 0; i < graphic.Points.Length; ++i)
+            {
+                Vector2 point = graphic.Points[i];
+
+                Vector2 localPoint = Vector2.Scale(point, rectTransform.rect.size);
+                
+                float pivotX = (-rectTransform.pivot.x) * rectTransform.rect.width;
+                float pivotY = (-rectTransform.pivot.y) * rectTransform.rect.height;
+
+                Vector3 actualPos = graphic.transform.TransformPoint(new Vector3(
+                    pivotX + localPoint.x,
+                    pivotY + localPoint.y
+                ));
+
+                actualPos = Handles.FreeMoveHandle(actualPos, Quaternion.identity, 5f, Vector3.zero, Handles.SphereHandleCap);
+                graphic.Points[i] = Vector2.Scale(graphic.transform.InverseTransformPoint(new Vector2(
+                    actualPos.x - pivotX,
+                    actualPos.y - pivotY
+                )), new Vector2(1f / rectTransform.rect.size.x, 1f / rectTransform.rect.size.y));
+
+                graphic.Points[i] = Vector4.Max(graphic.Points[i], default);
+                graphic.Points[i] = Vector4.Min(graphic.Points[i], Vector4.one);
+
+                if (point != (Vector2)graphic.Points[i])
+                    dirty = true;
+            }
+
+            if (dirty)
+            {
+                graphic.SetAllDirty();
+                EditorUtility.SetDirty(graphic);
+            }
+        }
+        else
+        {
+            if (Tools.current == Tool.None)
+            {
+                Tools.current = prevTool;
+            }
+        }
+
+        if (Event.current.type == EventType.MouseUp)
+        {
+            Undo.RecordObject(graphic, "Polygon Updated");
+        }
     }
 }
