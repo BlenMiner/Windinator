@@ -81,7 +81,7 @@ namespace Riten.Windinator.Material
         {
             m_style.OutlineSize = 1.5f;
             m_style.ShadowSize = 15f;
-            m_style.ShadowBlur = 25f;
+            m_style.ShadowBlur = 80f;
             m_style.FitToContent = true;
 
             OnValidate();

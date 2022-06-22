@@ -70,8 +70,8 @@ public class SettingsPanel : LayoutBaker
                 Color = Colors.Surface.ToColor(),
                 Shadow = new ShadowProperties
                 {
-                    Blur = 30f,
-                    Size = 20f
+                    Blur = 80,
+                    Size = 20
                 }
             }
         ).Flexible(-1, 1f);

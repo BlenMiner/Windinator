@@ -76,8 +76,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4280228636
+  m_fontColor: {r: 0.10980393, g: 0.10588236, b: 0.121568635, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -228,7 +228,7 @@ MonoBehaviour:
     m_label: {fileID: 3058997128090774680}
     m_iconRenderer: {fileID: 2469805560939382434}
     m_icon: {fileID: 6416454176524889903}
-  m_buttonType: 1
+  m_buttonType: 0
   m_icon: 0
   m_text: Button
   m_style:
@@ -239,7 +239,7 @@ MonoBehaviour:
       m_Bottom: 0
     OutlineSize: 1.5
     ShadowSize: 15
-    ShadowBlur: 25
+    ShadowBlur: 80
     FitToContent: 1
   onClick:
     m_PersistentCalls:
@@ -257,7 +257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4039216, g: 0.3137255, b: 0.6431373, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -265,19 +265,19 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_texture: {fileID: 0}
-  m_graphicBlur: 0
+  m_graphicAlphaMult: 1
   m_circleAlpha: 0
   m_circlePos: {x: 0, y: 0}
   m_circleColor: {r: 0, g: 0, b: 0, a: 0}
   m_circleRadius: 0
   m_outlineSize: 0
   m_outlineColor: {r: 0, g: 0, b: 0, a: 0}
-  m_shadowSize: 0
-  m_shadowBlur: 0
+  m_shadowSize: 15
+  m_shadowBlur: 80
   m_shadowPower: 1
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 0}
+  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
-  CircleColor: {r: 0.4039216, g: 0.3137255, b: 0.6431373, a: 1}
+  CircleColor: {r: 0.909804, g: 0.8705883, b: 0.9725491, a: 1}
   m_useMaxRoundness: 1
   m_uniformRoundness: 1
   m_roudnessInPixels: {x: 5, y: 5, z: 5, w: 5}
