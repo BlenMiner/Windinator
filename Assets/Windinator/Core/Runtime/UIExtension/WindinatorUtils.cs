@@ -4,6 +4,7 @@ using UnityEngine;
 
 public static class WindinatorUtils
 {
+
     public static Vector3 ScreenToCanvasPosition(this Canvas canvas, Vector2 screenPosition)
     {
         return ScreenToCanvasPosition(canvas, canvas.transform as RectTransform, screenPosition);
