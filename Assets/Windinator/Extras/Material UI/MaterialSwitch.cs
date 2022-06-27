@@ -61,7 +61,6 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
 
     [SerializeField] Colors m_IconUnselected = Colors.OnPrimaryContainer;
     [SerializeField] Colors m_IconSelected = Colors.OnSurfaceVariant;
-    [SerializeField] MaterialIcons m_IconContent = MaterialIcons.none;
 
     [Header("Sound")]
 

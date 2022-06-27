@@ -447,6 +447,7 @@ namespace Riten.Windinator.LayoutBuilder
 
                 var btn = prefab.GetComponentInChildren<MaterialButton>();
 
+                btn.FitToContent = false;
                 btn.SetText(m_text);
                 btn.SetIcon(m_icon);
                 btn.SetPadding(new RectOffset((int)m_padding.x, (int)m_padding.y, (int)m_padding.z, (int)m_padding.w));

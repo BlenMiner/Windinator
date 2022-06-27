@@ -5,7 +5,9 @@ public class StaticArray<T>
 {
     public T[] Array;
 
-    public int Length;
+    private int len;
+
+    public int Length { get => len; set => SetLength(value); }
 
     public StaticArray(int count)
     {
@@ -21,7 +23,9 @@ public class StaticArray<T>
 
     public void SetLength(int len)
     {
-        Length = len;
+        if (len > Array.Length)
+            System.Array.Resize(ref Array, len);
+        this.len = len;
     }
 
     public void Add(T data)
@@ -38,7 +42,7 @@ public class StaticArray<T>
 public class PolygonGraphic : SignedDistanceFieldGraphic
 {
     [SerializeField] float m_roudness;
-    [SerializeField] StaticArray<Vector4> points = new StaticArray<Vector4>(100);
+    [SerializeField] StaticArray<Vector4> points = new StaticArray<Vector4>(1023);
 
     Material m_poly_material;
 

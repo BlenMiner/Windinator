@@ -338,7 +338,7 @@ public class PolygonGraphicEditor : Editor
                 {
                     Color.RGBToHSV(Handles.color, out var H, out var S, out var V);
                     H += 90f / 360f;
-                    Handles.color = Color.HSVToRGB(H % 1f, 1f, V);
+                    Handles.color = Color.HSVToRGB(H % 1f, 1f, 1f);
                 }
 
                 actualPos = Handles.FreeMoveHandle(actualPos, Quaternion.identity, 5f, Vector3.zero, Handles.SphereHandleCap);

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using System;
+using UnityEngine.Events;
 
 namespace Riten.Windinator.LayoutBuilder
 {
@@ -107,7 +108,7 @@ namespace Riten.Windinator.LayoutBuilder
         {
             protected Vector4 m_padding;
 
-            protected float m_flexibleWidth = -1f, m_flexibleHeight;
+            protected float m_flexibleWidth = -1f, m_flexibleHeight = -1f;
 
             protected LayoutElement m_layout;
 
@@ -176,14 +177,69 @@ namespace Riten.Windinator.LayoutBuilder
                 transform.anchorMax = center;
 
                 m_layout = transform.gameObject.AddComponent<LayoutElement>();
-                m_layout.flexibleWidth = m_flexibleWidth;
-                m_layout.flexibleHeight = m_flexibleHeight;
+
+                return transform;
+            }
+
+            public void Setup(RectTransform transform)
+            {
+                if (!transform.gameObject.TryGetComponent<LayoutElement>(out var layout))
+                    layout = transform.gameObject.AddComponent<LayoutElement>();
+
+                layout.flexibleWidth = m_flexibleWidth;
+                layout.flexibleHeight = m_flexibleHeight;
+            }
+        }
+
+        [Serializable]
+        public class AddComponent<T> : PrefabRef<T> where T : Component
+        {
+            Element m_child;
+
+            public AddComponent(Element child = null)
+            {
+                m_child = child;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                if (m_child == null) return null;
+
+                var child = m_child.Build(parent);
+
+                var comp = child.gameObject.AddComponent<T>();
+
+                SetReference(comp);
+
+                return child;
+            }
+        }
+
+        [Serializable]
+        public class AddButton : AddComponent<Button>
+        {
+            UnityAction m_action;
+
+            public AddButton(Element child = null, UnityAction action = null)
+                : base(child)
+            {
+                m_action = action;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var transform = base.Build(parent);
+
+                if (transform != null && m_action != null)
+                {
+                    ReferenceValue.onClick.AddListener(m_action);
+                }
 
                 return transform;
             }
         }
 
-        [System.Serializable]
+        [Serializable]
         public class Container : Element
         {
             readonly Element m_child;
@@ -266,7 +322,9 @@ namespace Riten.Windinator.LayoutBuilder
 
             public override RectTransform Build(RectTransform parent)
             {
-                return base.Build(parent);
+                var b = base.Build(parent);
+                Setup(b);
+                return b;
             }
         }
 
@@ -274,6 +332,8 @@ namespace Riten.Windinator.LayoutBuilder
         public class PrefabRef<T> : Prefab where T : Component
         {
             Reference<T> m_reference;
+
+            public T ReferenceValue => m_reference.Value;
 
             public PrefabRef(GameObject prefab = null) : base(prefab)
             {
@@ -293,7 +353,9 @@ namespace Riten.Windinator.LayoutBuilder
 
             public override RectTransform Build(RectTransform parent)
             {
-                return base.Build(parent);
+                var b = base.Build(parent);
+                Setup(b);
+                return b;
             }
         }
 
@@ -315,7 +377,9 @@ namespace Riten.Windinator.LayoutBuilder
 
             public override RectTransform Build(RectTransform parent)
             {
-                return base.Build(parent);
+                var b = base.Build(parent);
+                Setup(b);
+                return b;
             }
         }
 
@@ -700,8 +764,12 @@ namespace Riten.Windinator.LayoutBuilder
 
             readonly static Dictionary<Texture2D, Sprite> m_cache = new Dictionary<Texture2D, Sprite>();
 
-            public Graphic(Sprite sprite = null, Texture2D texture = null, Color? color = null, float pixelsPerUnitScaler = 1f, bool preserveAspect = true) : base(default)
+            readonly Image.Type m_type;
+
+            public Graphic(Sprite sprite = null, Texture2D texture = null, Color? color = null, float pixelsPerUnitScaler = 1f, bool preserveAspect = true,
+                            Image.Type imageType = Image.Type.Sliced) : base(default)
             {
+                m_type = imageType;
                 m_preserveAspect = preserveAspect;
                 m_pixelScaler = pixelsPerUnitScaler;
                 m_sprite = sprite;
@@ -730,6 +798,7 @@ namespace Riten.Windinator.LayoutBuilder
                 img.sprite = m_sprite;
                 img.preserveAspect = m_preserveAspect;
                 img.color = m_color;
+                img.type = m_type;
 
                 SetReference(img);
 

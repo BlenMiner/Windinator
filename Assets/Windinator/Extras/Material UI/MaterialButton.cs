@@ -77,6 +77,11 @@ namespace Riten.Windinator.Material
             return c;
         }
 
+        public bool FitToContent
+        {
+            set { m_style.FitToContent = false; m_contentFitter.enabled = m_style.FitToContent & enabled; }
+        }
+
         private void Reset()
         {
             m_style.OutlineSize = 1.5f;

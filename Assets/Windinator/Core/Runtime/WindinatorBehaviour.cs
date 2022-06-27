@@ -184,8 +184,8 @@ namespace Riten.Windinator
                 m_windowSettings.BackgroundSettings.BackgroundColor = Windinator.WindinatorConfig.DefaultBackgroundColor;
                 m_windowSettings.AnimationSettings.AnimatedByDefault = true;
                 m_windowSettings.AnimationSettings.TransitionAnimDuration = 0.1f;
-                m_windowSettings.WindowFlowSettings.CanCloseWindow = false;
-                m_windowSettings.OptimizationSettings.CullBackgroundWindows = true;
+                m_windowSettings.WindowFlowSettings.CanCloseWindow = true;
+                m_windowSettings.OptimizationSettings.CullBackgroundWindows = false;
             }
         }
 
@@ -245,7 +245,7 @@ namespace Riten.Windinator
             var btn = background.GetComponent<Button>();
 
             if (m_windowSettings.BackgroundSettings.BackgroundClosesWindow)
-                btn.onClick.AddListener(() => PopWindow());
+                btn.onClick.AddListener(() => ForcePopWindow());
 
             btn.transition = Selectable.Transition.None;
             btn.onClick.AddListener(() => onBackgroundClicked?.Invoke());

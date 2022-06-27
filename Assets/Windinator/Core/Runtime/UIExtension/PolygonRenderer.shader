@@ -75,7 +75,7 @@ Shader "UI/Windinator/PolygonRenderer"
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
-            uniform float2 _Points[100];
+            uniform float2 _Points[2048];
 
             int _PointsCount;
 
