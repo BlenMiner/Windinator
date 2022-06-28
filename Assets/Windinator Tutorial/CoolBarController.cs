@@ -12,7 +12,7 @@ public class CoolBarController : MonoBehaviour
     {
         var rect = (m_bar[0].transform as RectTransform).rect;
 
-        float p = (Mathf.Sin(Time.time * 0.5f) + 1f) * 0.5f;
+        float p = (Mathf.Sin(Time.time) + 1f) * 0.5f;
 
         UpdateBarPos(p);
 
