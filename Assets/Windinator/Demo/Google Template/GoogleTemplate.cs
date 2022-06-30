@@ -20,11 +20,11 @@ public class GoogleTemplate : LayoutBaker
         return new Vertical(
             new Element[]
             {
-                new Graphic(sprite: m_logo, color: Windinator.GetColor(Colors.OnBackground)),
+                new Graphic(sprite: m_logo, color: new Swatch(Colors.OnBackground)),
                 new MaterialUI.Label("Guuglio", style: MaterialLabelStyle.Headline, fontStyle: TMPro.FontStyles.Bold, color: Colors.OnBackground),
 
                 new Spacer(25f),
-
+ 
                 new MaterialUI.InputField(labelText: "Search", style: MaterialTextFieldType.Filled)
                     .GetReference(out m_field),
 

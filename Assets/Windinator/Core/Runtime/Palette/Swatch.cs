@@ -41,6 +41,16 @@ namespace Riten.Windinator
 
         public Color UnityColor => TransformColor(UseCustomColor ? CustomColor : PaletteColor.ToColor());
 
+        public Swatch(Color color, float saturation = 1f)
+        {
+            this = FromColor(color, saturation);
+        }
+
+        public Swatch(Colors color, float alpha = 1, float saturation = 1f)
+        {
+            this = FromTheme(color, alpha, saturation);
+        }
+
         public static Swatch FromColor(Color color, float saturation = 1f)
         {
             return new Swatch{

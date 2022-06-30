@@ -760,20 +760,20 @@ namespace Riten.Windinator.LayoutBuilder
 
             readonly bool m_preserveAspect;
 
-            readonly Color m_color;
+            readonly Swatch m_color;
 
             readonly static Dictionary<Texture2D, Sprite> m_cache = new Dictionary<Texture2D, Sprite>();
 
             readonly Image.Type m_type;
 
-            public Graphic(Sprite sprite = null, Texture2D texture = null, Color? color = null, float pixelsPerUnitScaler = 1f, bool preserveAspect = true,
-                            Image.Type imageType = Image.Type.Sliced) : base(default)
+            public Graphic(Sprite sprite = null, Texture2D texture = null, Swatch? color = null, float pixelsPerUnitScaler = 1f, bool preserveAspect = true,
+                            Image.Type imageType = Image.Type.Simple) : base(default)
             {
                 m_type = imageType;
                 m_preserveAspect = preserveAspect;
                 m_pixelScaler = pixelsPerUnitScaler;
                 m_sprite = sprite;
-                m_color = color.GetValueOrDefault(Color.white);
+                m_color = color.GetValueOrDefault(Swatch.FromColor(Color.white));
 
                 if (texture != null && !m_cache.TryGetValue(texture, out m_sprite))
                 {
@@ -793,12 +793,15 @@ namespace Riten.Windinator.LayoutBuilder
                 var transform = Create("#Layout-Image", parent);
 
                 var img = transform.gameObject.AddComponent<Image>();
+                var colorAssigner = transform.gameObject.AddComponent<ColorPalette>();
 
                 img.pixelsPerUnitMultiplier = m_pixelScaler;
                 img.sprite = m_sprite;
                 img.preserveAspect = m_preserveAspect;
-                img.color = m_color;
+                img.color = m_color.UnityColor;
                 img.type = m_type;
+
+                colorAssigner.Color = m_color;
 
                 SetReference(img);
 

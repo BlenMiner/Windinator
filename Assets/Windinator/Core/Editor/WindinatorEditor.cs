@@ -104,7 +104,7 @@ public class {0} : LayoutBaker
             }
             catch
             {
-                // Error("Failed to clean prefabs, make sure 'WindinatorConfig' exists in a Resources folder.");
+                Error("Failed to clean prefabs, make sure 'WindinatorConfig' exists in a Resources folder.");
             }
         }
 
@@ -115,13 +115,7 @@ public class {0} : LayoutBaker
             {
                 WindinatorConfig config = Resources.Load<WindinatorConfig>("WindinatorConfig");
 
-                if (config.Windows == null) config.Windows = new List<WindinatorBehaviour>();
-
-                for (int i = 0; i < config.Windows.Count; ++i)
-                {
-                    if (config.Windows[i] == null)
-                        config.Windows.RemoveAt(i--);
-                }
+                CleanList();
 
                 if (!config.Windows.Contains(comp))
                     config.Windows.Add(comp);
@@ -185,10 +179,14 @@ public class {0} : LayoutBaker
         }
 
         [UnityEditor.Callbacks.DidReloadScripts]
-        static async void OnScriptsReloaded()
+        static void OnScriptsReloaded()
         {
-            await Task.Delay(200);
-
+            if(EditorApplication.isCompiling || EditorApplication.isUpdating)
+            {
+                EditorApplication.delayCall += OnScriptsReloaded;
+                return;
+            }
+        
             LoadWindow();
 
             LoadElement();
