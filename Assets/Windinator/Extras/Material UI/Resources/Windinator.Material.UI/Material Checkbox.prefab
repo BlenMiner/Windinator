@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4039216, g: 0.3137255, b: 0.6431373, a: 0}
+  m_Color: {r: 1, g: 0.7019608, b: 0.7137255, a: 0}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -175,7 +175,10 @@ MonoBehaviour:
   m_shadowPower: 1
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
-  CircleColor: {r: 0, g: 0, b: 0, a: 0}
+  m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
+  m_rightUpColor: {r: 1, g: 1, b: 1, a: 1}
+  m_rightDownColor: {r: 1, g: 1, b: 1, a: 1}
+  m_leftDownColor: {r: 1, g: 1, b: 1, a: 1}
   m_useMaxRoundness: 1
   m_uniformRoundness: 0
   m_roudnessInPixels: {x: 0, y: 0, z: 0, w: 0}
@@ -238,7 +241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4039216, g: 0.3137255, b: 0.6431373, a: 1}
+  m_Color: {r: 1, g: 0.7019608, b: 0.7137255, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -258,7 +261,10 @@ MonoBehaviour:
   m_shadowPower: 1
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
-  CircleColor: {r: 0, g: 0, b: 0, a: 0}
+  m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
+  m_rightUpColor: {r: 1, g: 1, b: 1, a: 1}
+  m_rightDownColor: {r: 1, g: 1, b: 1, a: 1}
+  m_leftDownColor: {r: 1, g: 1, b: 1, a: 1}
   m_useMaxRoundness: 0
   m_uniformRoundness: 0
   m_roudnessInPixels: {x: 0, y: 0, z: 0, w: 0}
@@ -335,13 +341,16 @@ MonoBehaviour:
   m_circleColor: {r: 0.4039216, g: 0.3137255, b: 0.6431373, a: 0}
   m_circleRadius: 0
   m_outlineSize: 2
-  m_outlineColor: {r: 0.4039216, g: 0.3137255, b: 0.6431373, a: 1}
+  m_outlineColor: {r: 1, g: 0.7019608, b: 0.7137255, a: 1}
   m_shadowSize: 0
   m_shadowBlur: 0
   m_shadowPower: 1
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
-  CircleColor: {r: 0, g: 0, b: 0, a: 0}
+  m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
+  m_rightUpColor: {r: 1, g: 1, b: 1, a: 1}
+  m_rightDownColor: {r: 1, g: 1, b: 1, a: 1}
+  m_leftDownColor: {r: 1, g: 1, b: 1, a: 1}
   m_useMaxRoundness: 0
   m_uniformRoundness: 1
   m_roudnessInPixels: {x: 3, y: 3, z: 3, w: 3}
@@ -358,6 +367,7 @@ GameObject:
   - component: {fileID: 5048909138401844190}
   - component: {fileID: 5048909138401844191}
   - component: {fileID: 5048909138401844176}
+  - component: {fileID: 506884478001134166}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -407,8 +417,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_text: {fileID: 5048909138401844191}
   m_icon: 300
-  m_color: {r: 1, g: 1, b: 1, a: 1}
   m_layout: {fileID: 5048909138401844176}
+  m_palette: {fileID: 506884478001134166}
 --- !u!114 &5048909138401844191
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -438,8 +448,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4280030047
+  m_fontColor: {r: 0.37254903, g: 0.07450981, b: 0.10980393, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -518,3 +528,22 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &506884478001134166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5048909138401844178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba4b0bfaaa0d4f346acf20ef0ea72d2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetGraphic: {fileID: 5048909138401844191}
+  m_color:
+    CustomColor: {r: 0.37254903, g: 0.07450981, b: 0.10980393, a: 1}
+    PaletteColor: 0
+    UseCustomColor: 1
+    Alpha: 1
+    Saturation: 1

@@ -3,8 +3,8 @@ using UnityEngine.EventSystems;
 
 public class MaterialCircleClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    [SerializeField] float m_sizeSpeed = 250f;
-    [SerializeField] float m_alphaSpeed = 2f;
+    [SerializeField] float m_sizeSpeed = 5f;
+    [SerializeField] float m_alphaSpeed = 10f;
 
     SignedDistanceFieldGraphic _graphic;
 

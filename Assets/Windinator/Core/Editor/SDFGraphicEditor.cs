@@ -5,6 +5,8 @@ using UnityEditor.IMGUI.Controls;
 [CustomEditor(typeof(SignedDistanceFieldGraphic), true)]
 public class SDFGraphicEditor : Editor
 {
+    static bool gradientSettings;
+
     static bool circleSettings;
 
     static bool maskSettings;
@@ -111,6 +113,28 @@ public class SDFGraphicEditor : Editor
         }
         EditorGUI.indentLevel -= 1;
 
+        gradientSettings = EditorGUILayout.Foldout(gradientSettings, "Gradient Effect");
+
+        foldRect = GUILayoutUtility.GetLastRect();
+        if (Event.current.type == EventType.MouseUp && foldRect.Contains (Event.current.mousePosition)) 
+        {
+            gradientSettings = !gradientSettings;
+            GUI.changed = true;
+            Event.current.Use ();
+        }
+
+        EditorGUI.indentLevel += 1;
+
+        if (gradientSettings)
+        {
+            graphic.LeftUpColor = EditorGUILayout.ColorField("Top Left", graphic.LeftUpColor);
+            graphic.RightUpColor = EditorGUILayout.ColorField("Top Right", graphic.RightUpColor);
+            graphic.RightDownColor = EditorGUILayout.ColorField("Bottom Right", graphic.RightDownColor);
+            graphic.LeftDownColor = EditorGUILayout.ColorField("Bottom Left",graphic.LeftDownColor);
+        }
+
+        EditorGUI.indentLevel -= 1;
+
         EndGroup();
 
         if (EditorGUI.EndChangeCheck())
@@ -126,8 +150,8 @@ public class SDFGraphicEditor : Editor
     {
         RectTransform rt = graphic.transform as RectTransform;
 
-        float pivotX = (0.5f - rt.pivot.x);
-        float pivotY = (0.5f - rt.pivot.y);
+        float pivotX = 0.5f - rt.pivot.x;
+        float pivotY = 0.5f - rt.pivot.y;
 
         Vector3 actualPos = graphic.transform.TransformPoint(new Vector3(
             pivotX * rt.rect.width + graphic.CirclePos.x,

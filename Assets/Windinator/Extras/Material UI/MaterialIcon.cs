@@ -12,9 +12,9 @@ public class MaterialIcon : MonoBehaviour
 
     [SerializeField, Searchable] MaterialIcons m_icon = MaterialIcons.plus;
 
-    [SerializeField] Color m_color = Color.white;
-
     [SerializeField] LayoutElement m_layout;
+
+    [SerializeField] ColorPalette m_palette;
 
     TMP_FontAsset m_mdiFont;
 
@@ -6728,24 +6728,18 @@ public class MaterialIcon : MonoBehaviour
         }
     }
 
-    public Color IconColor
+    public Swatch IconColor
     {
-        get => m_color;
-        set
-        {
-            m_color = value;
-            UpdateColor(value);
-        }
+        get => m_palette.Color;
+        set { UpdateColor(value); }
     }
 
-    internal void UpdateColor(Color color)
+    internal void UpdateColor(Swatch color)
     {
         if (m_text == null) InitializeTMP();
 
-        m_color = color;
-        m_text.color = color;
-
-        m_text.SetAllDirty();
+        m_palette.Color = color;
+        m_palette.UpdateColor();
     }
 
     void InitializeTMP()
@@ -6778,6 +6772,8 @@ public class MaterialIcon : MonoBehaviour
 
     private void Reset()
     {
+        if (!TryGetComponent(out m_palette))
+            m_palette = gameObject.AddComponent<ColorPalette>();
         OnValidate();
     }
 
@@ -6785,16 +6781,12 @@ public class MaterialIcon : MonoBehaviour
     {
         InitializeTMP();
 
-        UpdateIcon(m_icon, m_color);
+        UpdateIcon(m_icon, m_palette.Color);
     }
 
-    public void UpdateIcon(MaterialIcons icon, Color color)
+    public void UpdateIcon(MaterialIcons icon, Swatch color)
     {
-        if (m_text == null) InitializeTMP();
-
-        m_color = color;
-        m_text.color = color;
-        
+        UpdateColor(color);
         UpdateIcon(icon);
     }
 

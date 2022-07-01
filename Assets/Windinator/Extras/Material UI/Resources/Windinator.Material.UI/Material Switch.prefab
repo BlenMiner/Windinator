@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.37254903, g: 0.07450981, b: 0.10980393, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -68,7 +68,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_texture: {fileID: 0}
-  m_graphicBlur: 0
+  m_graphicAlphaMult: 1
   m_circleAlpha: 0.2
   m_circlePos: {x: 0, y: 0}
   m_circleColor: {r: 0, g: 0, b: 0, a: 0}
@@ -80,7 +80,10 @@ MonoBehaviour:
   m_shadowPower: 1
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
-  CircleColor: {r: 0, g: 0, b: 0, a: 0}
+  m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
+  m_rightUpColor: {r: 1, g: 1, b: 1, a: 1}
+  m_rightDownColor: {r: 1, g: 1, b: 1, a: 1}
+  m_leftDownColor: {r: 1, g: 1, b: 1, a: 1}
   m_useMaxRoundness: 1
   m_uniformRoundness: 0
   m_roudnessInPixels: {x: 0, y: 0, z: 0, w: 0}
@@ -97,6 +100,7 @@ GameObject:
   - component: {fileID: 72380810428693404}
   - component: {fileID: 72380810428693379}
   - component: {fileID: 72380810428693378}
+  - component: {fileID: 116727580194480281}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -146,7 +150,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_text: {fileID: 72380810428693379}
   m_icon: 1044
-  m_color: {r: 0.12941177, g: 0, b: 0.36862746, a: 1}
+  m_layout: {fileID: 72380810428693378}
+  m_palette: {fileID: 116727580194480281}
 --- !u!114 &72380810428693379
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -176,8 +181,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4284350497
-  m_fontColor: {r: 0.12941177, g: 0, b: 0.36862746, a: 1}
+    rgba: 4290163711
+  m_fontColor: {r: 1, g: 0.854902, b: 0.8588236, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -256,6 +261,25 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &116727580194480281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72380810428693383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba4b0bfaaa0d4f346acf20ef0ea72d2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetGraphic: {fileID: 72380810428693379}
+  m_color:
+    CustomColor: {r: 1, g: 0.854902, b: 0.8588236, a: 1}
+    PaletteColor: 0
+    UseCustomColor: 1
+    Alpha: 1
+    Saturation: 1
 --- !u!1 &72380810560866256
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,7 +339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4039216, g: 0.3137255, b: 0.6431373, a: 1}
+  m_Color: {r: 1, g: 0.7019608, b: 0.7137255, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -323,19 +347,22 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_texture: {fileID: 0}
-  m_graphicBlur: 0
+  m_graphicAlphaMult: 1
   m_circleAlpha: 0.2
   m_circlePos: {x: 0, y: 0}
   m_circleColor: {r: 0, g: 0, b: 0, a: 0}
   m_circleRadius: 0
   m_outlineSize: 3
-  m_outlineColor: {r: 0.4039216, g: 0.3137255, b: 0.6431373, a: 1}
+  m_outlineColor: {r: 1, g: 0.7019608, b: 0.7137255, a: 1}
   m_shadowSize: 0
   m_shadowBlur: 0
   m_shadowPower: 1
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
-  CircleColor: {r: 0, g: 0, b: 0, a: 0}
+  m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
+  m_rightUpColor: {r: 1, g: 1, b: 1, a: 1}
+  m_rightDownColor: {r: 1, g: 1, b: 1, a: 1}
+  m_leftDownColor: {r: 1, g: 1, b: 1, a: 1}
   m_useMaxRoundness: 1
   m_uniformRoundness: 0
   m_roudnessInPixels: {x: 0, y: 0, z: 0, w: 0}
@@ -472,7 +499,6 @@ MonoBehaviour:
   m_Icon: {fileID: 72380810428693404}
   m_IconUnselected: 10
   m_IconSelected: 14
-  m_IconContent: 0
   m_TapSound: {fileID: 11400000, guid: ff00e5ddf9113384f8633c442d774495, type: 2}
   onValueChanged:
     m_PersistentCalls:

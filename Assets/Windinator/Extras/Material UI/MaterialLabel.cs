@@ -21,15 +21,13 @@ public class MaterialLabel : MonoBehaviour
 
     [SerializeField] FontStyles FontStyle;
 
-    [SerializeField] Colors Color;
+    [SerializeField] Swatch Color;
 
     [SerializeField] string Text;
 
     [SerializeField, Header("References")]
 
     TMP_Text m_text;
-
-    ColorAssigner m_palette => Windinator.WindinatorConfig == null ? null : Windinator.WindinatorConfig.ColorPalette;
 
     public MaterialLabelStyle LabelStyle
     {
@@ -43,7 +41,7 @@ public class MaterialLabel : MonoBehaviour
         set { Text = value; SetDirty(); }
     }
 
-    public Colors LabelColor
+    public Swatch LabelColor
     {
         get => Color;
         set { Color = value; SetDirty(); }
@@ -68,9 +66,7 @@ public class MaterialLabel : MonoBehaviour
     {
         m_text.text = Text;
         m_text.fontSize = (int)Style;
-
-        if (m_palette != null) m_text.color = m_palette[Color];
-
+        m_text.color = Color.UnityColor;
         m_text.fontStyle = FontStyle;
         m_dirty = false;
     }

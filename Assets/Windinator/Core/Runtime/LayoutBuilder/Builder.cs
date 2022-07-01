@@ -52,6 +52,17 @@ namespace Riten.Windinator.LayoutBuilder
         public Color? Color;
     }
 
+    public struct GradientProperties
+    {
+        public Color? TopLeft;
+
+        public Color? TopRight;
+
+        public Color? BottomRight;
+
+        public Color? BottomLeft;
+    }
+
     public struct ShapeProperties
     {
         public Color? Color;
@@ -61,6 +72,8 @@ namespace Riten.Windinator.LayoutBuilder
         public OutlineProperties Outline;
 
         public ShadowProperties Shadow;
+
+        public GradientProperties Gradient;
     }
 
     public class Builder : Layout.Element
@@ -635,14 +648,17 @@ namespace Riten.Windinator.LayoutBuilder
 
             private readonly ShapeProperties m_shape;
 
+            private readonly Texture m_texture;
+
             public Rectangle(Element child = null, Vector2? size = null,
                 Vector4 padding = default,
-                ShapeProperties shape = default) : base()
+                ShapeProperties shape = default, Texture texture = null) : base()
             {
                 m_child = child;
                 m_size = size;
                 m_padding = padding;
                 m_shape = shape;
+                m_texture = texture;
             }
 
             public override RectTransform Build(RectTransform parent)
@@ -670,6 +686,11 @@ namespace Riten.Windinator.LayoutBuilder
                 layout.flexibleHeight = m_flexibleHeight;
                 layout.flexibleWidth = m_flexibleWidth;
 
+                graphic.LeftDownColor = m_shape.Gradient.BottomLeft.GetValueOrDefault(Color.white);
+                graphic.LeftUpColor = m_shape.Gradient.TopLeft.GetValueOrDefault(Color.white);
+                graphic.RightDownColor = m_shape.Gradient.BottomRight.GetValueOrDefault(Color.white);
+                graphic.RightUpColor = m_shape.Gradient.TopRight.GetValueOrDefault(Color.white);
+
                 graphic.SetRoundness(m_shape.Roundness);
                 graphic.SetOutline(m_shape.Outline.Color.GetValueOrDefault(Color.black), m_shape.Outline.Size);
                 graphic.SetShadow(
@@ -677,7 +698,9 @@ namespace Riten.Windinator.LayoutBuilder
                     m_shape.Shadow.Size,
                     m_shape.Shadow.Blur
                 );
+
                 graphic.color = m_shape.Color.GetValueOrDefault(Color.white);
+                graphic.Texture = m_texture;
 
                 SetReference(graphic);
 

@@ -1,21 +1,4 @@
-using Riten.Windinator.Internal;
 using UnityEngine;
-
-namespace Riten.Windinator.Internal
-{
-    public struct SwatchInternal
-    {
-        public Color CustomColor;
-
-        public Colors PaletteColor;
-
-        public bool UseCustomColor;
-
-        public float Alpha;
-
-        public float Saturation;
-    }
-}
 
 namespace Riten.Windinator
 {
@@ -40,6 +23,12 @@ namespace Riten.Windinator
         }
 
         public Color UnityColor => TransformColor(UseCustomColor ? CustomColor : PaletteColor.ToColor());
+
+        public static implicit operator Swatch(Color d) => new Swatch(d);
+
+        public static implicit operator Swatch(Colors d) => new Swatch(d);
+
+        public static implicit operator Color(Swatch swatch) => swatch.UnityColor;
 
         public Swatch(Color color, float saturation = 1f)
         {
@@ -70,28 +59,6 @@ namespace Riten.Windinator
                 UseCustomColor = false,
                 PaletteColor = color,
                 CustomColor = default
-            };
-        }
-
-        public static Swatch FromInternal(SwatchInternal val)
-        {
-            return new Swatch{
-                Alpha = val.Alpha,
-                CustomColor = val.CustomColor,
-                PaletteColor = val.PaletteColor,
-                Saturation = val.Saturation,
-                UseCustomColor = val.UseCustomColor
-            };
-        }
-
-        public SwatchInternal ToInternal()
-        {
-            return new SwatchInternal{
-                Alpha = Alpha,
-                CustomColor = CustomColor,
-                PaletteColor = PaletteColor,
-                Saturation = Saturation,
-                UseCustomColor = UseCustomColor
             };
         }
     }

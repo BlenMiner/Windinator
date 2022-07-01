@@ -24,6 +24,11 @@ float4 _MaskRect;
 float _Alpha;
 float2 _Size;
 
+float4 _LU;
+float4 _RU;
+float4 _LD;
+float4 _RD;
+
 void GetRect(float2 uv, out float2 position, out float2 halfSize)
 {
     float2 normalizedPadding = float2(_Padding / _Size.x, _Padding / _Size.y);
@@ -46,6 +51,11 @@ void GetRect(float2 uv, out float2 position, out float2 halfSize)
 fixed4 fragFunction(float2 uv, float4 worldPosition, float4 color, float dist, float2 position, float2 halfSize)
 {
     half4 _GraphicColor = (tex2D(_MainTex, uv) + _TextureSampleAdd) * color;
+
+    float4 top = lerp(_LU, _RU, uv.x);
+    float4 bottom = lerp(_LD, _RD, uv.x);
+
+    _GraphicColor *= lerp(bottom, top, uv.y);
 
     float delta = fwidth(dist);
     float delta1 = fwidth(dist + 1);

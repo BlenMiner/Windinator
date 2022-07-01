@@ -93,7 +93,7 @@ public class MaterialCheckbox : MonoBehaviour,
 
                 if (m_iconGraphic != null)
                 {
-                    var c = m_iconGraphic.IconColor;
+                    Color c = m_iconGraphic.IconColor;
                     c.a = scale;
                     m_iconGraphic.IconColor = c;
                 }

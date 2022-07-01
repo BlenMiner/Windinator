@@ -618,20 +618,20 @@ namespace Riten.Windinator.LayoutBuilder
         {
             MaterialLabelStyle m_style;
             FontStyles m_fontStyle;
-            Colors m_color;
+            Swatch m_color;
             string m_text;
 
             public Label(
                 string text = "",
                 MaterialLabelStyle style = MaterialLabelStyle.Body,
                 FontStyles fontStyle = FontStyles.Normal,
-                Colors color = Colors.Primary
+                Swatch? color = null
             ) : base(LayoutMaterialPrefabs.MaterialLabel)
             {
                 m_text = text;
                 m_style = style;
                 m_fontStyle = fontStyle;
-                m_color = color;
+                m_color = color.GetValueOrDefault(new Swatch(Colors.Primary));
             }
 
             public override RectTransform Build(RectTransform parent)
@@ -751,11 +751,11 @@ namespace Riten.Windinator.LayoutBuilder
         public class Icon : PrefabRef<MaterialIcon>
         {
             MaterialIcons m_icon;
-            Color m_color;
+            Swatch m_color;
 
             public Icon(
                 MaterialIcons icon = MaterialIcons.plus,
-                Color? color = null
+                Swatch? color = null
             ) : base(LayoutMaterialPrefabs.MaterialIcon)
             {
                 m_icon = icon;
@@ -770,7 +770,7 @@ namespace Riten.Windinator.LayoutBuilder
 
                 var field = prefab.GetComponentInChildren<MaterialIcon>();
 
-                field.UpdateIcon(m_icon, m_color);
+                field.UpdateIcon(m_icon, m_color.UnityColor);
 
                 SetReference(field);
 

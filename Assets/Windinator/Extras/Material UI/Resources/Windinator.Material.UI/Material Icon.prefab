@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7323460894326507070}
   - component: {fileID: 2229133245609291699}
   - component: {fileID: 935047011971687902}
+  - component: {fileID: 7320959476058335486}
   m_Layer: 5
   m_Name: Material Icon
   m_TagString: Untagged
@@ -62,8 +63,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_text: {fileID: 2229133245609291699}
   m_icon: 1044
-  m_color: {r: 1, g: 1, b: 1, a: 1}
   m_layout: {fileID: 935047011971687902}
+  m_palette: {fileID: 7320959476058335486}
 --- !u!114 &2229133245609291699
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -173,3 +174,22 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &7320959476058335486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8338065037249393277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba4b0bfaaa0d4f346acf20ef0ea72d2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetGraphic: {fileID: 2229133245609291699}
+  m_color:
+    CustomColor: {r: 1, g: 1, b: 1, a: 1}
+    PaletteColor: 0
+    UseCustomColor: 1
+    Alpha: 1
+    Saturation: 1

@@ -44,6 +44,13 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     private Material m_material;
 
+    [Header("Gradient")]
+
+    [SerializeField] Color m_leftUpColor = Color.white;
+    [SerializeField] Color m_rightUpColor = Color.white;
+    [SerializeField] Color m_rightDownColor = Color.white;
+    [SerializeField] Color m_leftDownColor = Color.white;
+
     public Texture Texture {
         get => m_texture;
         set {m_texture = value; SetMaterialDirty();}
@@ -168,6 +175,14 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     public Vector4 MaskRect { get => m_maskRect; set { m_maskRect = value; SetMaterialDirty(); } }
 
+    public Color LeftUpColor { get => m_leftUpColor; set => m_leftUpColor = value; }
+    
+    public Color RightUpColor { get => m_rightUpColor; set => m_rightUpColor = value; }
+
+    public Color RightDownColor { get => m_rightDownColor; set => m_rightDownColor = value; }
+
+    public Color LeftDownColor { get => m_leftDownColor; set => m_leftDownColor = value; }
+
     public void SetCircle(Vector2 pos, Color color, float size, float alpha)
     {
         m_circleAlpha = alpha;
@@ -266,9 +281,6 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
     {
         base.SetMaterialDirty();
 
-        float width = rectTransform.rect.width;
-        float height = rectTransform.rect.height;
-
         UpdateShaderDimensions();
 
         defaultMaterial.SetTexture("_MainTex", mainTexture);
@@ -297,5 +309,10 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         defaultMaterial.SetColor("_ShadowColor", shadowCol);
 
         defaultMaterial.SetFloat("_Padding", m_extraMargin);
+
+        defaultMaterial.SetColor("_LU", LeftUpColor);
+        defaultMaterial.SetColor("_RU", RightUpColor);
+        defaultMaterial.SetColor("_LD", LeftDownColor);
+        defaultMaterial.SetColor("_RD", RightDownColor);
     }
 }
