@@ -21,7 +21,7 @@ public class GoogleTemplate : LayoutBaker
             new Element[]
             {
                 new Graphic(sprite: m_logo, color: new Swatch(Colors.OnBackground)),
-                new MaterialUI.Label("Guuglio", style: MaterialLabelStyle.Headline, fontStyle: TMPro.FontStyles.Bold, color: Colors.OnBackground),
+                new MaterialUI.Label("Guuglio", style: MaterialSize.Headline, fontStyle: TMPro.FontStyles.Bold, color: Colors.OnBackground),
 
                 new Spacer(25f),
  

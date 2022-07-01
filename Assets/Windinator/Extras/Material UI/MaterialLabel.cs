@@ -4,20 +4,22 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public enum MaterialLabelStyle
+public enum MaterialSize
 {
+    Gigantic = 57 * 2,
     Display = 57,
     Headline = 32,
     Title = 22,
     Body = 15,
-    Label = 12
+    Label = 12,
+    Expand = 0
 }
 
 public class MaterialLabel : MonoBehaviour
 {
     [Header("Settings")]
 
-    [SerializeField] MaterialLabelStyle Style;
+    [SerializeField] MaterialSize Style;
 
     [SerializeField] FontStyles FontStyle;
 
@@ -29,7 +31,9 @@ public class MaterialLabel : MonoBehaviour
 
     TMP_Text m_text;
 
-    public MaterialLabelStyle LabelStyle
+    public TMP_Text TMP => m_text;
+
+    public MaterialSize LabelStyle
     {
         get => Style;
         set { Style = value; SetDirty(); }

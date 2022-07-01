@@ -110,6 +110,14 @@ public class SDFGraphicEditor : Editor
             );
 
             graphic.MaskRect = new Vector4(rect.x, rect.y, rect.width, rect.height);
+
+            Rect offset = new Rect(graphic.MaskOffset.x, graphic.MaskOffset.y, graphic.MaskOffset.z, graphic.MaskOffset.w);
+
+            offset = EditorGUILayout.RectField(
+                "Mask Offset", offset
+            );
+
+            graphic.MaskOffset = new Vector4(offset.x, offset.y, offset.width, offset.height);
         }
         EditorGUI.indentLevel -= 1;
 

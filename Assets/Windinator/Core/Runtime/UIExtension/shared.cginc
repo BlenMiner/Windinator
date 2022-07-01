@@ -20,6 +20,7 @@ float _CircleRadius;
 float2 _CirclePos;
 float _CircleAlpha;
 float4 _MaskRect;
+float4 _MaskOffset;
 
 float _Alpha;
 float2 _Size;
@@ -33,16 +34,21 @@ void GetRect(float2 uv, out float2 position, out float2 halfSize)
 {
     float2 normalizedPadding = float2(_Padding / _Size.x, _Padding / _Size.y);
 
+    halfSize = (_Size + 1) * 0.5;
+
+
     // Transform UV based on padding so image stays inside its container
     uv = uv * (1 + normalizedPadding * 2) - normalizedPadding;
 
     // For simplicity, convert UV to pixel coordinates
     position = (uv - 0.5) * _Size;
-    halfSize = (_Size + 1) * 0.5;
+    float2 pos = position + halfSize;
 
-    if (_MaskRect.z > 0 && _MaskRect.w > 0 &&
+    if ((_MaskRect.z > 0 && _MaskRect.w > 0 &&
         position.x >= _MaskRect.x && position.x <= _MaskRect.x + _MaskRect.z &&
-        position.y >= _MaskRect.y && position.y <= _MaskRect.y + _MaskRect.w)
+        position.y >= _MaskRect.y && position.y <= _MaskRect.y + _MaskRect.w) ||
+        pos.x < _MaskOffset.x - _Padding + 1.5 || pos.x > _Size.x + _MaskOffset.z + _Padding - 0.5 ||
+        pos.y < _MaskOffset.y - _Padding + 1.5 || pos.y > _Size.y + _MaskOffset.w + _Padding - 0.5)
     {
         clip(-1);
     }

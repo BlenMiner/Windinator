@@ -6718,6 +6718,22 @@ public class MaterialIcon : MonoBehaviour
         {6680, 989936}
 };
 
+    public void UpdateSize(MaterialSize m_size)
+    {
+        m_layout.preferredHeight = -1f;
+        m_layout.preferredWidth = -1f;
+
+        if (m_size == MaterialSize.Expand)
+        {
+            m_text.enableAutoSizing = true;
+        }
+        else
+        {
+            m_text.enableAutoSizing = false;
+            m_text.fontSize = (int)m_size;
+        }
+    }
+
     public MaterialIcons Icon
     {
         get => m_icon;
@@ -6732,6 +6748,14 @@ public class MaterialIcon : MonoBehaviour
     {
         get => m_palette.Color;
         set { UpdateColor(value); }
+    }
+
+    public Vector4 Padding
+    {
+        get => m_text.margin;
+        set {
+            m_text.margin = value;
+        }
     }
 
     internal void UpdateColor(Swatch color)
@@ -6753,7 +6777,8 @@ public class MaterialIcon : MonoBehaviour
         if (m_mdiFont == null)
             m_mdiFont = Resources.Load<TMP_FontAsset>("Fonts & Materials/mdi");
 
-        m_text.hideFlags = HideFlags.HideInInspector;
+        //m_text.hideFlags = HideFlags.HideInInspector;
+        m_text.hideFlags = HideFlags.None;
         m_text.font = m_mdiFont;
         m_text.fontSizeMax = 32767;
     }
@@ -6809,8 +6834,8 @@ public class MaterialIcon : MonoBehaviour
         }
         else if (!m_text.enabled) m_text.enabled = true;
 
-        if (!m_text.enableAutoSizing)
-            m_text.enableAutoSizing = true;
+        /*if (!m_text.enableAutoSizing)
+            m_text.enableAutoSizing = true;*/
 
         m_text.SetText(char.ConvertFromUtf32(ID_TO_UNICODE[(int)m_icon]));
         m_text.alignment = TextAlignmentOptions.Center;

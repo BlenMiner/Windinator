@@ -22,6 +22,6 @@ public class GoogleResultEntry : LayoutBaker
                 new MaterialUI.Button(icon: MaterialIcons.pencil, type: MaterialButtonType.Text),
                 new MaterialUI.Button(icon: MaterialIcons.trash_can, type: MaterialButtonType.Text).GetReference(out DeleteButton)
             }
-        );
+        ).Flexible(1, 0);
     }
 }

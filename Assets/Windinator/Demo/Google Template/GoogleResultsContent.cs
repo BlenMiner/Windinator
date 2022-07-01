@@ -28,11 +28,11 @@ public class GoogleResultsContent : LayoutBaker
                 new MaterialUI.Label(
                     "Sample Text",
                     color: Colors.OnBackground,
-                    style: MaterialLabelStyle.Title
+                    style: MaterialSize.Title
                 ).GetReference(out m_title),
 
                 new Rectangle(
-                    new ScrollViewDynamic().GetReference(out m_scrollview),
+                    new ScrollViewDynamic().GetReference(out m_scrollview).Flexible(),
                     padding: new Vector4(30f, 30f, 30f, 30f),
                     shape: new ShapeProperties
                     {
@@ -45,7 +45,7 @@ public class GoogleResultsContent : LayoutBaker
             alignment: TextAnchor.MiddleCenter,
             padding: new Vector4(20, 20, 20, 20),
             spacing: 20f
-        );
+        ).Flexible();
     }
 
     public void Setup(string searchStr)

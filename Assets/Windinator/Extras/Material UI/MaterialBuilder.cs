@@ -152,7 +152,7 @@ namespace Riten.Windinator.LayoutBuilder
                             new Element[]
                             {
                                 new Label(Text, color: Colors.OnSurface),
-                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialLabelStyle.Label),
+                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialSize.Label),
                             },
                             alignment: TextAnchor.MiddleLeft
                         ),
@@ -200,7 +200,7 @@ namespace Riten.Windinator.LayoutBuilder
                             new Element[]
                             {
                                 new Label(Text, color: Colors.OnSurface),
-                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialLabelStyle.Label),
+                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialSize.Label),
                             },
                             alignment: TextAnchor.MiddleLeft
                         ),
@@ -248,7 +248,7 @@ namespace Riten.Windinator.LayoutBuilder
                             new Element[]
                             {
                                 new Label(Text, color: Colors.OnSurface),
-                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialLabelStyle.Label),
+                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialSize.Label),
                             },
                             alignment: TextAnchor.MiddleLeft
                         ),
@@ -296,7 +296,7 @@ namespace Riten.Windinator.LayoutBuilder
                             new Element[]
                             {
                                 new Label(Text, color: Colors.OnSurface),
-                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialLabelStyle.Label),
+                                new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialSize.Label),
                             },
                             alignment: TextAnchor.MiddleLeft
                         ),
@@ -616,18 +616,22 @@ namespace Riten.Windinator.LayoutBuilder
 
         public class Label : PrefabRef<MaterialLabel>
         {
-            MaterialLabelStyle m_style;
-            FontStyles m_fontStyle;
+            readonly MaterialSize m_style;
+
+            readonly FontStyles m_fontStyle;
+
             Swatch m_color;
-            string m_text;
+
+            readonly string m_text;
 
             public Label(
                 string text = "",
-                MaterialLabelStyle style = MaterialLabelStyle.Body,
+                MaterialSize style = MaterialSize.Body,
                 FontStyles fontStyle = FontStyles.Normal,
-                Swatch? color = null
+                Swatch? color = null, Vector4 padding = default
             ) : base(LayoutMaterialPrefabs.MaterialLabel)
             {
+                m_padding = padding;
                 m_text = text;
                 m_style = style;
                 m_fontStyle = fontStyle;
@@ -642,6 +646,7 @@ namespace Riten.Windinator.LayoutBuilder
 
                 var field = prefab.GetComponentInChildren<MaterialLabel>();
 
+                field.TMP.margin = m_padding;
                 field.LabelText = m_text;
                 field.LabelStyle = m_style;
                 field.LabelColor = m_color;
@@ -750,14 +755,21 @@ namespace Riten.Windinator.LayoutBuilder
 
         public class Icon : PrefabRef<MaterialIcon>
         {
-            MaterialIcons m_icon;
-            Swatch m_color;
+            readonly MaterialIcons m_icon;
+
+            readonly Swatch m_color;
+
+            readonly MaterialSize m_size;
 
             public Icon(
                 MaterialIcons icon = MaterialIcons.plus,
-                Swatch? color = null
+                Swatch? color = null,
+                MaterialSize style = MaterialSize.Expand,
+                Vector4 padding = default
             ) : base(LayoutMaterialPrefabs.MaterialIcon)
             {
+                m_padding = padding;
+                m_size = style;
                 m_icon = icon;
                 m_color = color.GetValueOrDefault(Color.black);
             }
@@ -770,7 +782,10 @@ namespace Riten.Windinator.LayoutBuilder
 
                 var field = prefab.GetComponentInChildren<MaterialIcon>();
 
+                field.Padding = m_padding;
+
                 field.UpdateIcon(m_icon, m_color.UnityColor);
+                field.UpdateSize(m_size);
 
                 SetReference(field);
 

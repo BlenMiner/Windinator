@@ -14,7 +14,7 @@ public class SettingsPanel : LayoutBaker
                 new Vertical( 
                     new Element[]
                     {
-                        new MaterialUI.Label("General Settings", style: MaterialLabelStyle.Label),
+                        new MaterialUI.Label("General Settings", style: MaterialSize.Label),
                         new MaterialUI.LabeledSwitch(
                             "Wi-Fi", false, MaterialIcons.wifi,
                             MaterialIcons.wifi, MaterialIcons.wifi_off,
@@ -56,7 +56,7 @@ public class SettingsPanel : LayoutBaker
 
                         new MaterialUI.Separator(false),
 
-                        new MaterialUI.Label("Volume Settings", style: MaterialLabelStyle.Label),
+                        new MaterialUI.Label("Volume Settings", style: MaterialSize.Label),
                         new Spacer(40f)
                     },
                     spacing: 20f,

@@ -42,6 +42,8 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     [SerializeField] Vector4 m_maskRect;
 
+    [SerializeField] Vector4 m_maskOffset;
+
     private Material m_material;
 
     [Header("Gradient")]
@@ -175,6 +177,8 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     public Vector4 MaskRect { get => m_maskRect; set { m_maskRect = value; SetMaterialDirty(); } }
 
+    public Vector4 MaskOffset { get => m_maskOffset; set { m_maskOffset = value; SetMaterialDirty(); } }
+
     public Color LeftUpColor { get => m_leftUpColor; set => m_leftUpColor = value; }
     
     public Color RightUpColor { get => m_rightUpColor; set => m_rightUpColor = value; }
@@ -296,6 +300,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         var circleCol = m_circleColor;
 
         defaultMaterial.SetVector("_MaskRect", MaskRect);
+        defaultMaterial.SetVector("_MaskOffset", MaskOffset);
         defaultMaterial.SetVector("_CirclePos", CirclePos);
         defaultMaterial.SetVector("_CircleColor", circleCol);
         defaultMaterial.SetFloat("_CircleRadius", m_circleRadius);

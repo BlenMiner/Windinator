@@ -7,8 +7,6 @@ namespace Riten.Windinator.LayoutBuilder
     [ExecuteAlways]
     public class LayoutSizeMax : MonoBehaviour
     {
-        List<ContentSizeFitter> m_children = new List<ContentSizeFitter>();
-
         LayoutElement m_element;
 
         void Awake()
@@ -21,16 +19,18 @@ namespace Riten.Windinator.LayoutBuilder
         {
             RectTransform rectTransform = transform as RectTransform;
 
-            m_children.Clear();
-
-            GetComponentsInChildren<ContentSizeFitter>(false, m_children);
-
             Vector2 size = Vector2.zero;
 
-            foreach (var c in m_children)
+            for (int i = 0; i < transform.childCount; ++i)
             {
-                var rt = c.transform as RectTransform;
-                size = Vector2.Max(size, rt.rect.size);
+                var rt = transform.GetChild(i) as RectTransform;
+
+                float x = LayoutUtility.GetPreferredSize(rt, 0);
+                float y = LayoutUtility.GetPreferredSize(rt, 1);
+
+                var psize = new Vector2(x, y);
+
+                size = Vector2.Max(size, psize);
             }
 
             rectTransform.sizeDelta = size;
