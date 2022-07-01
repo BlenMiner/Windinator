@@ -44,7 +44,9 @@ public class MaterialCheckbox : MonoBehaviour,
     VarAnimator<float> m_selectionAlpha;
 
     bool m_oldValue;
+    
     bool m_selected, m_hovering;
+
     bool m_pressing;
 
     float m_selectionValue = 0f;
