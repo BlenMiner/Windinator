@@ -5,6 +5,7 @@ public class StaticArray<T>
 {
     public T[] Array;
 
+    [SerializeField]
     private int len;
 
     public int Length { get => len; set => SetLength(value); }

@@ -301,7 +301,7 @@ public class PolygonGraphicEditor : Editor
                 graphic.Points[i] = EditorGUILayout.Vector2Field("Point " + i, graphic.Points[i]);
 
                 graphic.Points[i] = Vector4.Max(graphic.Points[i], default);
-                graphic.Points[i] = Vector4.Min(graphic.Points[i], Vector4.one);
+                graphic.Points[i] = Vector4.Min(graphic.Points[i], Vector4.one); 
             }
             EditorGUI.indentLevel -= 1;
 
