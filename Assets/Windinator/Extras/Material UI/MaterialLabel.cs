@@ -63,7 +63,7 @@ public class MaterialLabel : MonoBehaviour
     {
         if (m_text == null) return;
 
-        SetDirty();
+        ForceUpdate();
     }
 
     public void ForceUpdate()

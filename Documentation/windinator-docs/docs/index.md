@@ -8,6 +8,7 @@ It provides tools to manage window flow and navigation as well as tools to creat
 ## Integrate in your Project
 
 Windinator works with the built-in Unity UI system, it was built to be compatible with existing workflows and other UI tools.
+You will need to have **TextMeshPro** imported inside your project since Windinator uses it for displaying text.
 
 ### What are Windows?
 
@@ -96,4 +97,4 @@ public class GoogleTemplate : LayoutBaker
 
 The code above gets translated into this (with a dark theme applied):
 
-![Drag Racing](images/Guuglio.png)
+![Baked Element](images/Guuglio.png)

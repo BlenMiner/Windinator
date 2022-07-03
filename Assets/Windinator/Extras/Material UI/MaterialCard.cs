@@ -40,7 +40,7 @@ public class MaterialCard : MonoBehaviour
     public void SetDirty()
     {
         m_graphic.SetOutline(Colors.Outline.ToColor(), Style == MaterialCardStyle.Outlined ? 1f : 0f);
-        m_graphic.SetShadow(Color.black, Style == MaterialCardStyle.Elevated ? 5f : 0f, 9f);
+        m_graphic.SetShadow(Color.black, Style == MaterialCardStyle.Elevated ? 15f : 0f, 80f);
 
         m_graphic.color = Style switch
         {
