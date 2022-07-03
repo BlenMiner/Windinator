@@ -305,6 +305,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#fixing-linking-issues" class="md-nav__link">
+    Fixing Linking Issues
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -370,6 +377,34 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../windinator-class/" class="md-nav__link">
+        Layout
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../windinator-class/" class="md-nav__link">
+        MaterialUI
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -416,6 +451,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#fixing-linking-issues" class="md-nav__link">
+    Fixing Linking Issues
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -432,7 +474,49 @@
 
 <h1 id="windows">Windows</h1>
 <h2 id="creating-a-window">Creating a Window</h2>
+<p><img alt="" src="../images/Windows/NewWindow.png" /></p>
+<p>Once you create a new window, it will generate two files.
+One prefab which is going to be your UI content.
+And a controller which is a script with the same name, if no errors happened during creation the controller will automatically be attached to the prefab.</p>
+<p><img alt="" src="../images/Windows/Files.png" /></p>
+<p>To edit the window's content double click the prefab ([W] ExampleWindow) file and start populating your canvas.</p>
+<p>If you want to show your window during runtime you just have to push it:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Windinator</span><span class="p">.</span><span class="n">Push</span><span class="p">&lt;</span><span class="n">ExampleWindow</span><span class="p">&gt;();</span><span class="w"></span>
+</code></pre></div>
 <h2 id="window-settings">Window Settings</h2>
+<p><img alt="" src="../images/Windows/WindowSettings.png" /></p>
+<ul>
+<li>
+<p><strong>Should Block Game Flow</strong>: This lets the system know that you want your game to enter a pause state or impede player controls when this window is open.</p>
+</li>
+<li>
+<p><strong>Can Close Window</strong>: If this is enabled your window might be closed by external actions, for example pressing escape or the back button on a mobile phone. Otherwise you are in full control for when it should close (Can only be closed with <em>ForcePopWindow()</em> function).</p>
+</li>
+<li>
+<p><strong>Auto Assign Background</strong>: If you are creating a pop-up, this will add a transparent background behind your window automatically.</p>
+</li>
+<li>
+<p><strong>Background Closes Window</strong>: If background is assigned, once the user clicks it during runtime it will Pop the current window.</p>
+</li>
+<li>
+<p><strong>Background Color</strong>: Customize the background color, the default value of this can be customized via the Windinator Config file.</p>
+</li>
+<li>
+<p><strong>Animated By Default</strong>: If true, apply simple fade in/out effect.</p>
+</li>
+<li>
+<p><strong>Transition Anim Duration</strong>: Duration of animations.</p>
+</li>
+<li>
+<p><strong>Warmup Count</strong>: Windows are recycled to avoid instantiating a new one every single time. This setting will create some copies at startup to avoid freezing during user interaction.</p>
+</li>
+<li>
+<p><strong>Cull Background Windows</strong>: If true, any window behind this one will be culled (not rendered). This helps performance.</p>
+</li>
+</ul>
+<h2 id="fixing-linking-issues">Fixing Linking Issues</h2>
+<p>If you get a missing reference error from Windinator you might have to re-link the window:</p>
+<p><img alt="" src="../images/Windows/Linking.png" /></p>
 
               
             </article>
