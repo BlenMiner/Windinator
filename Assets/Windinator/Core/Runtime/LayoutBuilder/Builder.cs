@@ -510,6 +510,8 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 m_child = child;
                 m_vertical = vertical;
+                m_flexibleHeight = 1f;
+                m_flexibleWidth = 1f;
             }
 
             public override RectTransform Build(RectTransform parent)

@@ -764,7 +764,7 @@ namespace Riten.Windinator.LayoutBuilder
             public Icon(
                 MaterialIcons icon = MaterialIcons.plus,
                 Swatch? color = null,
-                MaterialSize style = MaterialSize.Expand,
+                MaterialSize style = MaterialSize.Title,
                 Vector4 padding = default
             ) : base(LayoutMaterialPrefabs.MaterialIcon)
             {
