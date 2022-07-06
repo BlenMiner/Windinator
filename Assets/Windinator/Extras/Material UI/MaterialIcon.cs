@@ -6797,15 +6797,15 @@ public class MaterialIcon : MonoBehaviour
 
     private void Reset()
     {
-        if (!TryGetComponent(out m_palette))
-            m_palette = gameObject.AddComponent<ColorPalette>();
         OnValidate();
     }
 
     private void OnValidate()
     {
-        InitializeTMP();
+        if (!TryGetComponent(out m_palette))
+            m_palette = gameObject.AddComponent<ColorPalette>();
 
+        InitializeTMP();
         UpdateIcon(m_icon, m_palette.Color);
     }
 

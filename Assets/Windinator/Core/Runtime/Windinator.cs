@@ -79,7 +79,7 @@ namespace Riten.Windinator
             Instance.m_nextFrame.Enqueue(action);
         }
 
-        public static void Clear(WindinatorBehaviour window)
+        public static void ClearAnimations(WindinatorBehaviour window)
         {
             Instance.m_animator.Clear(window);
         }

@@ -116,7 +116,7 @@ namespace Riten.Windinator.Material
                 CurrentSnackbar = Queue.Dequeue();
                 CurrentSnackbar.CanvasGroup.blocksRaycasts = true;
 
-                Windinator.Clear(this);
+                Windinator.ClearAnimations(this);
                 Windinator.Animate(this, WindinatorAnimations.FadeInSin);
             }
 
@@ -133,7 +133,7 @@ namespace Riten.Windinator.Material
             m_blockUpdate = true;
             CanvasGroup.blocksRaycasts = false;
 
-            Windinator.Clear(this);
+            Windinator.ClearAnimations(this);
             Windinator.Animate(this, WindinatorAnimations.FadeOutSin, () =>
             {
                 PopWindow();
