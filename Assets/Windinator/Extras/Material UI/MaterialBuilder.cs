@@ -1,6 +1,7 @@
 using Riten.Windinator.Material;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static Riten.Windinator.LayoutBuilder.Layout;
 
 namespace Riten.Windinator.LayoutBuilder
@@ -112,6 +113,18 @@ namespace Riten.Windinator.LayoutBuilder
                 if (_SwitchField == null)
                     _SwitchField = Resources.Load<GameObject>("Windinator.Material.UI/Material Switch");
                 return _SwitchField;
+            }
+        }
+
+        private static GameObject _MaterialSlider;
+
+        public static GameObject MaterialSlider
+        {
+            get
+            {
+                if (_MaterialSlider == null)
+                    _MaterialSlider = Resources.Load<GameObject>("Windinator.Material.UI/Material Slider");
+                return _MaterialSlider;
             }
         }
     }
@@ -708,6 +721,50 @@ namespace Riten.Windinator.LayoutBuilder
 
                 field.Value = m_value;
                 field.SnapTarget();
+
+                SetReference(field);
+
+                return prefab;
+            }
+        }
+
+        public class Slider : PrefabRef<UnityEngine.UI.Slider>
+        {
+            readonly float m_value, m_min, m_max;
+
+            readonly bool m_integers;
+
+            public Slider(
+                float value = 0f,
+                float min = 0f,
+                float max = 1f,
+                bool integerValues = false
+            ) : base(LayoutMaterialPrefabs.MaterialSlider)
+            {
+                m_flexibleWidth = 1f;
+                m_integers = integerValues;
+                m_min = min;
+                m_max = max;
+                m_value = value;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var prefab = base.Build(parent);
+
+                if (prefab == null) return null;
+
+                var layoutElement = GetOrAdd<LayoutElement>(prefab);
+
+                layoutElement.flexibleHeight = m_flexibleHeight;
+                layoutElement.flexibleWidth = m_flexibleWidth;
+
+                var field = prefab.GetComponentInChildren<UnityEngine.UI.Slider>();
+
+                field.minValue = m_min;
+                field.maxValue = m_max;
+                field.wholeNumbers = m_integers;
+                field.value = m_value;
 
                 SetReference(field);
 

@@ -102,7 +102,7 @@ Shader "UI/Windinator/RectangleRenderer"
                 float2 position;
                 float2 halfSize;
 
-                GetRect(IN.texcoord, position, halfSize);
+                GetRect(IN.texcoord, position, halfSize, 0);
 
                 // Signed distance field calculation
                 float dist = sdRoundedBox(position, halfSize, _Roundness);

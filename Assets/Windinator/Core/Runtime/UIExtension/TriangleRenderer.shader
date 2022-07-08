@@ -124,7 +124,7 @@ Shader "UI/Windinator/TriangleRenderer"
                 float2 position;
                 float2 halfSize;
 
-                GetRect(IN.texcoord, position, halfSize);
+                GetRect(IN.texcoord, position, halfSize, 1);
 
                 float2 size = halfSize - 0.5;
 

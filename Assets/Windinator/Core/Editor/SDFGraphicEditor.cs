@@ -37,6 +37,7 @@ public class SDFGraphicEditor : Editor
         graphic.Texture = EditorGUILayout.ObjectField("Texture", graphic.Texture, typeof(Texture), allowSceneObjects: true) as Texture;
         graphic.color = EditorGUILayout.ColorField("Base Color", graphic.color);
         graphic.Alpha = EditorGUILayout.Slider("Alpha Multiplier", graphic.Alpha, 0, 1);
+        graphic.raycastTarget = EditorGUILayout.Toggle("Raycast Target", graphic.raycastTarget);
 
         GUILayout.Space(10f);
 

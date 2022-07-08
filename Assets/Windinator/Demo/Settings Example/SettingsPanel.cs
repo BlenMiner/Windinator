@@ -24,6 +24,13 @@ public class SettingsPanel : LayoutBaker
                         new MaterialUI.LabeledSwitch("Airplane Mode", true, MaterialIcons.airplane),
                         new MaterialUI.LabeledSwitch("Do not disturb", false, MaterialIcons.volume_mute),
 
+                        new MaterialUI.Separator(false), 
+ 
+                        new MaterialUI.LabeledControl("Volume", 
+                            child: new MaterialUI.Slider(0.5f).Flexible(2f, 0f),
+                            prepend: MaterialIcons.volume_source
+                        ),
+ 
                         new MaterialUI.Separator(false),
 
                         new MaterialUI.SegmentedButton(new string[]

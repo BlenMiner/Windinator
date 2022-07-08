@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.7019608, b: 0.7137255, a: 0}
+  m_Color: {r: 0.21960786, g: 0.4156863, b: 0.1254902, a: 0}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -175,6 +175,7 @@ MonoBehaviour:
   m_shadowPower: 1
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
   m_rightUpColor: {r: 1, g: 1, b: 1, a: 1}
   m_rightDownColor: {r: 1, g: 1, b: 1, a: 1}
@@ -241,7 +242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.7019608, b: 0.7137255, a: 1}
+  m_Color: {r: 0.21960786, g: 0.4156863, b: 0.1254902, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -261,6 +262,7 @@ MonoBehaviour:
   m_shadowPower: 1
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
   m_rightUpColor: {r: 1, g: 1, b: 1, a: 1}
   m_rightDownColor: {r: 1, g: 1, b: 1, a: 1}
@@ -341,12 +343,13 @@ MonoBehaviour:
   m_circleColor: {r: 0.4039216, g: 0.3137255, b: 0.6431373, a: 0}
   m_circleRadius: 0
   m_outlineSize: 2
-  m_outlineColor: {r: 1, g: 0.7019608, b: 0.7137255, a: 1}
+  m_outlineColor: {r: 0.21960786, g: 0.4156863, b: 0.1254902, a: 1}
   m_shadowSize: 0
   m_shadowBlur: 0
   m_shadowPower: 1
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
   m_rightUpColor: {r: 1, g: 1, b: 1, a: 1}
   m_rightDownColor: {r: 1, g: 1, b: 1, a: 1}
@@ -421,7 +424,7 @@ MonoBehaviour:
   m_palette: {fileID: 506884478001134166}
 --- !u!114 &5048909138401844191
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -448,8 +451,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4280030047
-  m_fontColor: {r: 0.37254903, g: 0.07450981, b: 0.10980393, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -542,7 +545,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_targetGraphic: {fileID: 5048909138401844191}
   m_color:
-    CustomColor: {r: 0.37254903, g: 0.07450981, b: 0.10980393, a: 1}
+    CustomColor: {r: 1, g: 1, b: 1, a: 1}
     PaletteColor: 0
     UseCustomColor: 1
     Alpha: 1

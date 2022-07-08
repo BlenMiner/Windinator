@@ -30,11 +30,11 @@ float4 _RU;
 float4 _LD;
 float4 _RD;
 
-void GetRect(float2 uv, out float2 position, out float2 halfSize)
+void GetRect(float2 uv, out float2 position, out float2 halfSize, float extra)
 {
     float2 normalizedPadding = float2(_Padding / _Size.x, _Padding / _Size.y);
 
-    halfSize = (_Size + 1) * 0.5;
+    halfSize = (_Size + extra) * 0.5;
 
 
     // Transform UV based on padding so image stays inside its container
