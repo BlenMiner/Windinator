@@ -9,12 +9,6 @@ public static class MoreShapesEditor
 		CreateShapeGO("Rectangle", "Rectangle", menuCommand);
 	}
 
-    [MenuItem("GameObject/UI/More Shapes/Triangle", false, 1)]
-	public static void AddTriangle(MenuCommand menuCommand)
-	{
-		CreateShapeGO("Triangle", "Triangle", menuCommand);
-	}
-
     [MenuItem("GameObject/UI/More Shapes/Polygon", false, 1)]
 	public static void AddPolygon(MenuCommand menuCommand)
 	{
