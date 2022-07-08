@@ -1,7 +1,5 @@
 # Windinator.cs
 
-
-
 ## Properties
 
 | Declaration | Description |
