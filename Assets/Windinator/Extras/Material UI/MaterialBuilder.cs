@@ -80,6 +80,18 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
 
+        private static GameObject _MaterialKeyButton;
+
+        public static GameObject MaterialKeyButton
+        {
+            get
+            {
+                if (_MaterialKeyButton == null)
+                    _MaterialKeyButton = Resources.Load<GameObject>("Windinator.Material.UI/Material Key Button");
+                return _MaterialKeyButton;
+            }
+        }
+
         private static GameObject _ActionButton;
 
         public static GameObject ActionButton
@@ -697,6 +709,46 @@ namespace Riten.Windinator.LayoutBuilder
                 SetReference(field);
 
                 return prefab;
+            }
+        }
+
+        public class KeyButton : PrefabRef<MaterialKeyButton>
+        {
+            readonly KeyCode m_defaultKey;
+
+            MaterialIcons m_icon;
+
+            MaterialButtonType m_type;
+
+            public KeyButton(KeyCode defaultKey, MaterialIcons icon = MaterialIcons.none,
+                MaterialButtonType type = MaterialButtonType.Text,
+                Vector4 padding = default) : base(LayoutMaterialPrefabs.MaterialKeyButton)
+            {
+                m_defaultKey = defaultKey;
+                m_icon = icon;
+                m_padding = padding;
+                m_type = type;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var btnTransform = base.Build(parent);
+                if (btnTransform == null) return null;
+
+                var btn = btnTransform.GetComponentInChildren<MaterialButton>();
+
+                btn.FitToContent = false;
+                btn.SetIcon(m_icon);
+                btn.SetPadding(new RectOffset((int)m_padding.x, (int)m_padding.y, (int)m_padding.z, (int)m_padding.w));
+                btn.SetButtonType(m_type);
+
+                var field = btnTransform.GetComponentInChildren<MaterialKeyButton>();
+
+                field.KeyCode = m_defaultKey;
+
+                SetReference(field);
+
+                return btnTransform;
             }
         }
 

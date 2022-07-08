@@ -29,6 +29,16 @@ public class SettingsPanel : LayoutBaker
                         new MaterialUI.LabeledControl("Volume", 
                             child: new MaterialUI.Slider(0.5f).Flexible(2f, 0f),
                             prepend: MaterialIcons.volume_source
+                        ), 
+
+                        new MaterialUI.LabeledControl("Move Forward", 
+                            child: new MaterialUI.KeyButton(KeyCode.W).Small(),
+                            prepend: MaterialIcons.controller_classic 
+                        ),
+
+                        new MaterialUI.LabeledControl("Sprint", 
+                            child: new MaterialUI.KeyButton(KeyCode.LeftShift).Small(),
+                            prepend: MaterialIcons.controller_classic
                         ),
  
                         new MaterialUI.Separator(false),

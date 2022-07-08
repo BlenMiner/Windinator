@@ -51,6 +51,12 @@ public static class MaterialUIEditor
 		CreateShapeGO("Button", "Material Button", menuCommand);
 	}
 
+    [MenuItem("GameObject/UI/Material/Key Button", false, 1)]
+	public static void AddKeyButton(MenuCommand menuCommand)
+	{
+		CreateShapeGO("Key Button", "Material Key Button", menuCommand);
+	}
+
 	[MenuItem("GameObject/UI/Material/Label", false, 1)]
 	public static void AddLabel(MenuCommand menuCommand)
 	{

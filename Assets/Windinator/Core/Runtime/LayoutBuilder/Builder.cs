@@ -127,6 +127,8 @@ namespace Riten.Windinator.LayoutBuilder
 
             protected float m_flexibleWidth = 0f, m_flexibleHeight = 0f;
 
+            protected float m_preferredWidth = -1f, m_preferredHeight = -1f;
+
             protected LayoutElement m_layout;
 
             public Element(Vector4 padding = default)
@@ -152,6 +154,12 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 m_flexibleWidth = horizontal;
                 m_flexibleHeight = vertical;
+                return this;
+            }
+
+            public Element Small()
+            {
+                m_preferredHeight = 32f;
                 return this;
             }
 
@@ -214,6 +222,9 @@ namespace Riten.Windinator.LayoutBuilder
 
                 layout.flexibleWidth = m_flexibleWidth;
                 layout.flexibleHeight = m_flexibleHeight;
+
+                layout.preferredWidth = m_preferredWidth;
+                layout.preferredHeight = m_preferredHeight;
             }
         }
 
