@@ -21,6 +21,12 @@ public static class MaterialUIEditor
 		CreateShapeGO("Action Button", "Action Button", menuCommand);
 	}
 
+    [MenuItem("GameObject/UI/Material/Slider", false, 1)]
+	public static void AddSlider(MenuCommand menuCommand)
+	{
+		CreateShapeGO("Slider", "Material Slider", menuCommand);
+	}
+
     [MenuItem("GameObject/UI/Material/Radio", false, 1)]
 	public static void AddRadio(MenuCommand menuCommand)
 	{
