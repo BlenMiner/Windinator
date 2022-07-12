@@ -129,6 +129,8 @@ namespace Riten.Windinator.LayoutBuilder
 
             protected float m_preferredWidth = -1f, m_preferredHeight = -1f;
 
+            protected Vector2? m_pivot = null;
+
             protected LayoutElement m_layout;
 
             public Element(Vector4 padding = default)
@@ -154,6 +156,12 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 m_flexibleWidth = horizontal;
                 m_flexibleHeight = vertical;
+                return this;
+            }
+
+            public Element Pivot(Vector2 newPivot)
+            {
+                m_pivot = newPivot;
                 return this;
             }
 
@@ -225,6 +233,9 @@ namespace Riten.Windinator.LayoutBuilder
 
                 layout.preferredWidth = m_preferredWidth;
                 layout.preferredHeight = m_preferredHeight;
+
+                if (m_pivot.HasValue)
+                    transform.pivot = m_pivot.Value;
             }
         }
 
