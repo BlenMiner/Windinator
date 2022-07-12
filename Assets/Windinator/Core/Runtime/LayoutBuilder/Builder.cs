@@ -231,11 +231,14 @@ namespace Riten.Windinator.LayoutBuilder
         [Serializable]
         public class AddComponent<T> : PrefabRef<T> where T : Component
         {
-            Element m_child;
+            readonly Element m_child;
 
-            public AddComponent(Element child = null)
+            readonly Action<T> m_config;
+
+            public AddComponent(Element child = null, Action<T> setup = null)
             {
                 m_child = child;
+                m_config = setup;
             }
 
             public override RectTransform Build(RectTransform parent)
@@ -245,6 +248,7 @@ namespace Riten.Windinator.LayoutBuilder
                 var child = m_child.Build(parent);
 
                 var comp = GetOrAdd<T>(child);
+                m_config?.Invoke(comp);
 
                 SetReference(comp);
 
