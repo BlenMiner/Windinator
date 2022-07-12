@@ -257,30 +257,6 @@ namespace Riten.Windinator.LayoutBuilder
         }
 
         [Serializable]
-        public class AddButton : AddComponent<Button>
-        {
-            UnityAction m_action;
-
-            public AddButton(Element child = null, UnityAction action = null)
-                : base(child)
-            {
-                m_action = action;
-            }
-
-            public override RectTransform Build(RectTransform parent)
-            {
-                var transform = base.Build(parent);
-
-                if (transform != null && m_action != null)
-                {
-                    ReferenceValue.onClick.AddListener(m_action);
-                }
-
-                return transform;
-            }
-        }
-
-        [Serializable]
         public class Container : Element
         {
             readonly Element m_child;
