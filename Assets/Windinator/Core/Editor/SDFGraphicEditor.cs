@@ -406,3 +406,140 @@ public class PolygonGraphicEditor : Editor
         }
     }
 }
+
+
+[CustomEditor(typeof(LineGraphic), true)]
+public class LineGraphicEditor : Editor
+{
+    bool m_showPoints = false;
+
+    public override void OnInspectorGUI()
+    {
+        EditorGUI.BeginChangeCheck();
+        SDFGraphicEditor.DrawSDFGUI(target as SignedDistanceFieldGraphic);
+
+        LineGraphic graphic = target as LineGraphic;
+
+        SDFGraphicEditor.BeginGroup("Line Settings");
+
+        graphic.Roundness = EditorGUILayout.FloatField("Roundness", graphic.Roundness);
+        graphic.Size = EditorGUILayout.FloatField("Size", graphic.Size);
+
+        m_showPoints = EditorGUILayout.Foldout(m_showPoints, "Points List");
+
+        Rect foldRect = GUILayoutUtility.GetLastRect();
+        if (Event.current.type == EventType.MouseUp && foldRect.Contains (Event.current.mousePosition)) 
+        {
+            m_showPoints = !m_showPoints;
+            GUI.changed = true;
+            Event.current.Use ();
+        }
+
+        EditorGUI.indentLevel += 1;
+        if (m_showPoints)
+        {
+            GUI.SetNextControlName("MyTextField");
+            graphic.Points.Length = EditorGUILayout.IntField("Count", graphic.Points.Length);
+
+            EditorGUI.indentLevel += 1;
+            for (int i = 0; i < graphic.Points.Length; ++i)
+            {
+                graphic.Points[i] = EditorGUILayout.Vector2Field("Point " + i, graphic.Points[i]);
+
+                graphic.Points[i] = Vector4.Max(graphic.Points[i], default);
+                graphic.Points[i] = Vector4.Min(graphic.Points[i], Vector4.one); 
+            }
+            EditorGUI.indentLevel -= 1;
+
+            if (GUILayout.Button("Add Point"))
+            {
+                graphic.Points.Add(graphic.Points.Length == 0 ? default : graphic.Points[graphic.Points.Length - 1]);
+            }
+        }
+        EditorGUI.indentLevel -= 1;
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            Undo.RecordObject(graphic, "Line Point Updated");
+        }
+
+        SDFGraphicEditor.EndGroup();
+    }
+
+    Tool prevTool;
+
+    void OnDisable()
+    {
+        if (prevTool != default)
+            Tools.current = prevTool;
+    }
+
+    public void OnSceneGUI()
+    {
+        EditorGUI.BeginChangeCheck();
+        LineGraphic graphic = target as LineGraphic;
+        SDFGraphicEditor.DrawSDFScene(target as SignedDistanceFieldGraphic);
+
+        RectTransform rectTransform = graphic.transform as RectTransform;
+
+        if (m_showPoints)
+        {
+            if (Tools.current != Tool.None)
+            {
+                prevTool = Tools.current;
+                Tools.current = Tool.None;
+            }
+
+            for (int i = 0; i < graphic.Points.Length; ++i)
+            {
+                Vector2 point = graphic.Points[i];
+
+                Vector2 localPoint = Vector2.Scale(point, rectTransform.rect.size);
+                
+                float pivotX = (-rectTransform.pivot.x) * rectTransform.rect.width;
+                float pivotY = (-rectTransform.pivot.y) * rectTransform.rect.height;
+
+                Vector3 actualPos = graphic.transform.TransformPoint(new Vector3(
+                    pivotX + localPoint.x,
+                    pivotY + localPoint.y
+                ));
+
+                if (i == graphic.Points.Length - 1)
+                {
+                    Color.RGBToHSV(Handles.color, out var H, out var S, out var V);
+                    H += 90f / 360f;
+                    Handles.color = Color.HSVToRGB(H % 1f, 1f, 1f);
+                }
+
+                actualPos = Handles.FreeMoveHandle(actualPos, Quaternion.identity, 5f, Vector3.zero, Handles.SphereHandleCap);
+                var p = Vector2.Scale(graphic.transform.InverseTransformPoint(new Vector2(
+                    actualPos.x - pivotX,
+                    actualPos.y - pivotY
+                )), new Vector2(1f / rectTransform.rect.size.x, 1f / rectTransform.rect.size.y));
+
+                p = Vector4.Max(p, default);
+                p = Vector4.Min(p, Vector4.one);
+
+                if (p != point)
+                {
+                    Undo.RecordObject(graphic, "Line Updated From Scene");
+                    graphic.Points[i] = p;
+                }
+            }
+
+            graphic.SetAllDirty();
+        }
+        else
+        {
+            if (Tools.current == Tool.None)
+            {
+                Tools.current = prevTool;
+            }
+        }
+
+        if (Event.current.type == EventType.MouseUp || EditorGUI.EndChangeCheck())
+        {
+            EditorUtility.SetDirty(graphic);
+        }
+    }
+}
