@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://gameobject.xyz/windinator/windinator-class/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.9">
     
     
       
@@ -330,8 +330,8 @@
   
   
     <li class="md-nav__item">
-      <a href="./" class="md-nav__link">
-        Layout
+      <a href="../WindinatorBehaviour-class/" class="md-nav__link">
+        WindinatorBehaviour
       </a>
     </li>
   
@@ -353,9 +353,61 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          MaterialUI
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         MaterialUI
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    Properties
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stack-management-functions" class="md-nav__link">
+    Stack Management Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manual-animation-management" class="md-nav__link">
+    Manual Animation Management
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#helpful-functions" class="md-nav__link">
+    Helpful Functions
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -388,6 +440,42 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    Properties
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stack-management-functions" class="md-nav__link">
+    Stack Management Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manual-animation-management" class="md-nav__link">
+    Manual Animation Management
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#helpful-functions" class="md-nav__link">
+    Helpful Functions
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -401,6 +489,118 @@
 
 
 <h1 id="windinatorcs">Windinator.cs</h1>
+<h2 id="properties">Properties</h2>
+<table>
+<thead>
+<tr>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>static readonly int <strong>WindowCount</strong></td>
+<td>Gets the number of pushed windows.</td>
+</tr>
+<tr>
+<td>static readonly bool <strong>IsEmpty</strong></td>
+<td>Is the window stack empty. Same thing as checking if <strong>WindowCount</strong> is 0.</td>
+</tr>
+<tr>
+<td>static readonly Canvas <strong>Canvas</strong></td>
+<td>Get root canvas, this canvas holds all other windows. If no window was ever pushed, this value can be null</td>
+</tr>
+<tr>
+<td>static readonly bool <strong>ShoudBlockGameFlow</strong></td>
+<td>Use this to block input for your player controllers when true.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="stack-management-functions">Stack Management Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>static <strong>Push</strong>&lt;<em>T</em>&gt;(AnimationDelegade?)</td>
+<td>Pushes a window of type T to the stack. This will instantiate or pool the window and animate it if specified.</td>
+</tr>
+<tr>
+<td>static <strong>PushPrefab</strong>(WindinatorBehaviour, AnimationDelegade?)</td>
+<td>Same as Push, except it accepts a reference to a WindinatorBehaviour prefab (this reference has to be from your projects folder, not from your scene).</td>
+</tr>
+<tr>
+<td>static <strong>Pop</strong>(bool? <em>force</em>, AnimationDelegade?)</td>
+<td>This will Pop (remove) the top most window, which is usually the active window. If the window can't be closed it won't do anything unless <em>force</em> is true.</td>
+</tr>
+<tr>
+<td>static <strong>MoveToTop</strong>(WindinatorBehaviour)</td>
+<td>This will move the window reference to the top of the stack. This affects rendering order and input priotity.</td>
+</tr>
+<tr>
+<td>static <strong>Replace</strong>&lt;<em>T</em>&gt;(WindinatorBehaviour)</td>
+<td>Same as Push but it will automatically remove the top most window.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="manual-animation-management">Manual Animation Management</h2>
+<table>
+<thead>
+<tr>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>static <strong>Animate</strong>(WindinatorBehaviour, AnimationDelegade, Action? <em>onDone</em>)</td>
+<td>Plays animation for window instance based on its <a href="../windows/#window-settings">config</a> settings. Once animation finishes, <em>onDone</em> callback will be invoked.</td>
+</tr>
+<tr>
+<td>static <strong>ClearAnimations</strong>(WindinatorBehaviour)</td>
+<td>If there are any animations being played for the specified window, stop them and don't invoke <em>onDone</em> callback.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="helpful-functions">Helpful Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>static bool <strong>Warmup</strong>()</td>
+<td>Warmup the Windinator system. This will create the root Canvas, create all the window pools and get the reference to the WindinatorConfig resource file.</td>
+</tr>
+<tr>
+<td>static <strong>RunNextFrame</strong>(Action?)</td>
+<td>Simply queue an Action that will be executed one time next frame and then discarded. This will warmup the system if it wasn't already.</td>
+</tr>
+<tr>
+<td>static Color <strong>GetColor</strong>(Colors)</td>
+<td>Convert Material Color to Unity3D Color, a preffered way of doing it would be: Colors.Background.ToColor() which has the same effect.</td>
+</tr>
+<tr>
+<td>static GameObject <strong>GetElementPrefab</strong>&lt;<em>T</em>&gt;()</td>
+<td>Accepts a LayoutBaker type and returns its corresponding Prefab. Use it to Instantiate other copies.</td>
+</tr>
+<tr>
+<td>static <strong>SetupCanvas</strong>(Canvas, CanvasScaler)</td>
+<td>Configure the canvas and canvas scaler based on the WindinatorConfig resource file settings.</td>
+</tr>
+<tr>
+<td>static <strong>UpdateVisibility</strong>()</td>
+<td>Force Windindator to recheck which windows are visible or not. A window is not visible if another window that culls background windows is in front of it.</td>
+</tr>
+</tbody>
+</table>
 
               
             </article>
@@ -416,7 +616,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="./" class="md-footer__link md-footer__link--prev" aria-label="Previous: Layout" rel="prev">
+        <a href="../WindinatorBehaviour-class/" class="md-footer__link md-footer__link--prev" aria-label="Previous: WindinatorBehaviour" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -425,7 +625,7 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Layout
+              WindinatorBehaviour
             </div>
           </div>
         </a>
@@ -456,7 +656,7 @@
     <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.0238f547.min.js"></script>
+      <script src="../assets/javascripts/bundle.6c7ad80a.min.js"></script>
       
     
   </body>
