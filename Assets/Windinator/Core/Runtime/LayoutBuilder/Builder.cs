@@ -129,6 +129,8 @@ namespace Riten.Windinator.LayoutBuilder
 
             protected float m_preferredWidth = -1f, m_preferredHeight = -1f;
 
+            protected Vector2? m_pivot = null;
+
             protected LayoutElement m_layout;
 
             public Element(Vector4 padding = default)
@@ -154,6 +156,12 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 m_flexibleWidth = horizontal;
                 m_flexibleHeight = vertical;
+                return this;
+            }
+
+            public Element Pivot(Vector2 newPivot)
+            {
+                m_pivot = newPivot;
                 return this;
             }
 
@@ -225,17 +233,23 @@ namespace Riten.Windinator.LayoutBuilder
 
                 layout.preferredWidth = m_preferredWidth;
                 layout.preferredHeight = m_preferredHeight;
+
+                if (m_pivot.HasValue)
+                    transform.pivot = m_pivot.Value;
             }
         }
 
         [Serializable]
         public class AddComponent<T> : PrefabRef<T> where T : Component
         {
-            Element m_child;
+            readonly Element m_child;
 
-            public AddComponent(Element child = null)
+            readonly Action<T> m_config;
+
+            public AddComponent(Element child = null, Action<T> setup = null)
             {
                 m_child = child;
+                m_config = setup;
             }
 
             public override RectTransform Build(RectTransform parent)
@@ -245,34 +259,11 @@ namespace Riten.Windinator.LayoutBuilder
                 var child = m_child.Build(parent);
 
                 var comp = GetOrAdd<T>(child);
+                m_config?.Invoke(comp);
 
                 SetReference(comp);
 
                 return child;
-            }
-        }
-
-        [Serializable]
-        public class AddButton : AddComponent<Button>
-        {
-            UnityAction m_action;
-
-            public AddButton(Element child = null, UnityAction action = null)
-                : base(child)
-            {
-                m_action = action;
-            }
-
-            public override RectTransform Build(RectTransform parent)
-            {
-                var transform = base.Build(parent);
-
-                if (transform != null && m_action != null)
-                {
-                    ReferenceValue.onClick.AddListener(m_action);
-                }
-
-                return transform;
             }
         }
 

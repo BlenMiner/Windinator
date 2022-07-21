@@ -67,9 +67,9 @@ fixed4 fragFunction(float2 uv, float4 worldPosition, float4 color, float dist, f
     float delta1 = fwidth(dist + 1);
 
     // Calculate the different masks based on the SDF
-    float graphicAlpha = 1 - smoothstep(-delta, 0, dist);
+    float graphicAlpha = 1 - smoothstep(-delta, delta * 0.5, dist);
     float graphicAlphaOutline = 1 - smoothstep(-delta1, 0, dist + 1);
-    float outlineAlpha = (1 - smoothstep(_OutlineSize - 1 - delta, _OutlineSize - 1 + delta, dist)) * _OutlineColor.a;
+    float outlineAlpha = (1 - smoothstep(_OutlineSize - 1 - delta, _OutlineSize - 1 + delta * 0.5, dist)) * _OutlineColor.a;
     float shadowAlpha = (1 - smoothstep(_ShadowSize - _ShadowBlur - delta, _ShadowSize, dist));
 
     float circleSDF = distance(position, _CirclePos) - _CircleRadius;
