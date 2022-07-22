@@ -1,6 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum DrawOperation
+{
+    Union = 0,
+    Substract = 1,
+    Intersect = 2
+}
+
 public class CanvasGraphic : SignedDistanceFieldGraphic
 {
     RenderTexture m_buffer, m_backBuffer;
@@ -10,6 +17,21 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
     Material m_canvas_material;
 
     Material m_drawCircle;
+
+    Material m_drawLine;
+
+    Material m_clearCircle;
+
+    [SerializeField] float m_union;
+
+    public float SmoothUnion
+    {
+        get => m_union;
+        set {
+            m_union = value;
+            SetMaterialDirty();
+        }
+    }
     
     RenderTexture CurrentBuffer => m_useBackBuffer ? m_backBuffer : m_buffer;
 
@@ -34,7 +56,7 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
         }
     }
 
-    Material drawCircle
+    Material DrawCircleOp
     {
         get
         {
@@ -44,6 +66,26 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
         }
     }
 
+    Material ClearCircleOp
+    {
+        get
+        {
+            if (m_clearCircle == null)
+                m_clearCircle = new Material(Shader.Find("UI/Windinator/ClearOp"));
+            return m_clearCircle;
+        }
+    }
+
+    Material DrawLineOp
+    {
+        get
+        {
+            if (m_drawLine == null)
+                m_drawLine = new Material(Shader.Find("UI/Windinator/DrawLine"));
+            return m_drawLine;
+        }
+    }
+    
     override protected void OnEnable()
     {
         onMaterialUpdate += UpdateShader;
@@ -75,7 +117,7 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
             if (m_backBuffer != null && m_backBuffer.IsCreated())
                 m_backBuffer.Release();
 
-            m_buffer = new RenderTexture(w, h, 1, RenderTextureFormat.ARGB32);
+            m_buffer = new RenderTexture(w, h, 1, RenderTextureFormat.ARGBFloat);
             m_backBuffer = new RenderTexture(m_buffer);
             m_finalBuffer = new RenderTexture(m_buffer);
 
@@ -93,24 +135,40 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
         }
     }
 
-    public void Begin(Color color = default)
+    public void Begin()
     {
-        RenderTexture rt = RenderTexture.active;
-        RenderTexture.active = CurrentBuffer;
-        GL.Clear(false, true, color);
-        RenderTexture.active = rt;
+        Graphics.Blit(CurrentBuffer, BackBuffer, ClearCircleOp);
+        SwitchBuffers();
     }
 
-    public void DrawCircle(Vector2 position, float size)
+    void FeedMaterialBasics(Material mat, DrawOperation operation)
     {
-        drawCircle.SetTexture("_MainTexture", CurrentBuffer);
-        drawCircle.SetVector("_OpPosition", position);
-        drawCircle.SetFloat("_OpSize", size);
+        mat.SetTexture("_MainTexture", CurrentBuffer);
+        mat.SetFloat("_Union", m_union);
+        mat.SetVector("_Size", m_size);
+        mat.SetInt("_Operation", (int)operation);
+    }
 
-        drawCircle.SetVector("_Size", m_size);
-        drawCircle.SetFloat("_Padding", Margin);
+    public void DrawCircle(Vector2 position, float size, DrawOperation op = DrawOperation.Union)
+    {
+        FeedMaterialBasics(DrawCircleOp, op);
 
-        Graphics.Blit(CurrentBuffer, BackBuffer, drawCircle);
+        DrawCircleOp.SetVector("_OpPosition", position);
+        DrawCircleOp.SetFloat("_OpSize", size);
+
+        Graphics.Blit(CurrentBuffer, BackBuffer, DrawCircleOp);
+        SwitchBuffers();
+    }
+
+    public void DrawLine(Vector2 a, Vector2 b, float thickness = 2f, DrawOperation op = DrawOperation.Union)
+    {
+        FeedMaterialBasics(DrawLineOp, op);
+
+        DrawLineOp.SetVector("_Point0", a);
+        DrawLineOp.SetVector("_Point1", b);
+        DrawLineOp.SetFloat("_LineThickness", thickness);
+
+        Graphics.Blit(CurrentBuffer, BackBuffer, DrawLineOp);
         SwitchBuffers();
     }
 

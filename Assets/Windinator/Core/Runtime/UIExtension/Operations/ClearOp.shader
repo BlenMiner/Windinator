@@ -1,4 +1,4 @@
-Shader "UI/Windinator/CanvasProceduralRenderer"
+Shader "UI/Windinator/ClearOp"
 {
     Properties
     {
@@ -56,7 +56,7 @@ Shader "UI/Windinator/CanvasProceduralRenderer"
             #pragma multi_compile_local _ UNITY_UI_CLIP_RECT
             #pragma multi_compile_local _ UNITY_UI_ALPHACLIP
 
-            #include "shared.cginc"
+            #include "../shared.cginc"
             
             struct appdata
             {
@@ -89,19 +89,9 @@ Shader "UI/Windinator/CanvasProceduralRenderer"
                 return OUT;
             }
 
-            fixed4 frag (v2f IN) : SV_Target
+            float4 frag (v2f IN) : SV_Target
             {
-                float2 position;
-                float2 halfSize;
-
-                GetRect(IN.texcoord, position, halfSize, 1);
-
-                float4 color = tex2D(_MainTex, IN.texcoord);
-
-                float dist = color.r;
-
-                return fragFunctionRaw(IN.texcoord, IN.worldPosition, IN.color, dist, position, halfSize);
-                //return float4(dist, 0, 0, 1);
+                return float4(16384, 1, 1, 1);
             }
             ENDCG
         }

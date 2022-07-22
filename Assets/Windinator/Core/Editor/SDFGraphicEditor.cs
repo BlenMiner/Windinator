@@ -2,21 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 
-[CustomEditor(typeof(CanvasGraphic), true)]
-public class CanvasGraphicEditor : Editor
-{
-    public void OnSceneGUI()
-    {
-        SDFGraphicEditor.DrawSDFScene(target as SignedDistanceFieldGraphic);
-    }
-
-    public override void OnInspectorGUI()
-    {
-        SDFGraphicEditor.DrawSDFGUI(target as SignedDistanceFieldGraphic);
-    }
-}
-
-[CustomEditor(typeof(SignedDistanceFieldGraphic), true)]
+[CustomEditor(typeof(SignedDistanceFieldGraphic))]
 public class SDFGraphicEditor : Editor
 {
     static bool gradientSettings;
@@ -247,6 +233,23 @@ public class SDFGraphicEditor : Editor
     public override void OnInspectorGUI()
     {
         DrawSDFGUI(target as SignedDistanceFieldGraphic);
+    }
+}
+
+[CustomEditor(typeof(CanvasGraphic), true)]
+public class CanvasGraphicEditor : Editor
+{
+    public void OnSceneGUI()
+    {
+        SDFGraphicEditor.DrawSDFScene(target as SignedDistanceFieldGraphic);
+    }
+
+    public override void OnInspectorGUI()
+    {
+        CanvasGraphic graphic = target as CanvasGraphic;
+        SDFGraphicEditor.DrawSDFGUI(target as SignedDistanceFieldGraphic);
+        graphic.SmoothUnion = EditorGUILayout.FloatField("Smooth Union", graphic.SmoothUnion);
+        if (graphic.SmoothUnion < 0) graphic.SmoothUnion = 0f;
     }
 }
 

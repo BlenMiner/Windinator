@@ -30,6 +30,37 @@ float4 _RU;
 float4 _LD;
 float4 _RD;
 
+float _Union;
+int _Operation;
+
+#define MIN_VAL 4096
+
+float opSmoothUnion( float d1, float d2, float k ) {
+    float h = clamp( 0.5 + 0.5*(d2-d1)/k, 0.0, 1.0 );
+    return lerp( d2, d1, h ) - k*h*(1.0-h); 
+}
+
+
+float opSmoothSubtraction( float d1, float d2, float k ) {
+    float h = clamp( 0.5 - 0.5*(d2+d1)/k, 0.0, 1.0 );
+    return lerp( d2, -d1, h ) + k*h*(1.0-h);
+}
+
+float opSmoothIntersection( float d1, float d2, float k ) {
+    float h = clamp( 0.5 - 0.5*(d2-d1)/k, 0.0, 1.0 );
+    return lerp( d2, d1, h ) + k*h*(1.0-h); 
+}
+
+float AddSDF(float sdf, float old) {
+    if (_Operation == 0) {
+        return opSmoothUnion(sdf, old, _Union);
+    } else if (_Operation == 1) {
+        return opSmoothSubtraction(sdf, old, _Union);
+    } else {
+        return opSmoothIntersection(sdf, old, _Union);
+    }
+}
+
 void GetRawRect(float2 uv, out float2 position, out float2 halfSize, float extra)
 {
     float2 normalizedPadding = float2(_Padding / _Size.x, _Padding / _Size.y);
@@ -60,9 +91,9 @@ void GetRect(float2 uv, out float2 position, out float2 halfSize, float extra)
     }
 }
 
-fixed4 fragFunction(float2 uv, float4 worldPosition, float4 color, float dist, float2 position, float2 halfSize)
+fixed4 fragFunctionRaw(float2 uv, float4 worldPosition, float4 color, float dist, float2 position, float2 halfSize)
 {
-    half4 _GraphicColor = (tex2D(_MainTex, uv) + _TextureSampleAdd) * color;
+    half4 _GraphicColor = color;
 
     float4 top = lerp(_LU, _RU, uv.x);
     float4 bottom = lerp(_LD, _RD, uv.x);
@@ -129,4 +160,9 @@ fixed4 fragFunction(float2 uv, float4 worldPosition, float4 color, float dist, f
     #endif
 
     return effects;
+}
+
+fixed4 fragFunction(float2 uv, float4 worldPosition, float4 color, float dist, float2 position, float2 halfSize)
+{
+    return (tex2D(_MainTex, uv) + _TextureSampleAdd) * fragFunctionRaw(uv, worldPosition, color, dist, position, halfSize);
 }

@@ -1,4 +1,4 @@
-Shader "UI/Windinator/CanvasProceduralRenderer"
+Shader "UI/Windinator/DrawLine"
 {
     Properties
     {
@@ -56,7 +56,7 @@ Shader "UI/Windinator/CanvasProceduralRenderer"
             #pragma multi_compile_local _ UNITY_UI_CLIP_RECT
             #pragma multi_compile_local _ UNITY_UI_ALPHACLIP
 
-            #include "shared.cginc"
+            #include "../shared.cginc"
             
             struct appdata
             {
@@ -89,19 +89,43 @@ Shader "UI/Windinator/CanvasProceduralRenderer"
                 return OUT;
             }
 
-            fixed4 frag (v2f IN) : SV_Target
+            float2 _Point0;
+            float2 _Point1;
+
+            float sdSegment( in float2 p, in float2 a, in float2 b )
             {
+                float2 pa = p-a, ba = b-a;
+                float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
+                return length( pa - ba*h );
+            }
+            
+            float _LineThickness;
+
+
+            float4 frag (v2f IN) : SV_Target
+            {
+                half4 color = tex2D(_MainTex, IN.texcoord);
+                
                 float2 position;
                 float2 halfSize;
 
-                GetRect(IN.texcoord, position, halfSize, 1);
+                GetRawRect(IN.texcoord, position, halfSize, 1);
 
-                float4 color = tex2D(_MainTex, IN.texcoord);
+                float2 size = halfSize - 0.5;
 
-                float dist = color.r;
+                float maxSize = min(size.x , size.y);
+                float roundness = max(min(maxSize, _Roundness.x), 0);
+                size -= roundness;
 
-                return fragFunctionRaw(IN.texcoord, IN.worldPosition, IN.color, dist, position, halfSize);
-                //return float4(dist, 0, 0, 1);
+                float2 dsize = float2(size.x, -size.y);
+
+                float multiplier = 1 - (roundness / maxSize);
+                halfSize -= roundness;
+
+                float dist = sdSegment(position, _Point0, _Point1) - _LineThickness;
+                float result = AddSDF(dist, color.r);
+
+                return float4(result, 1, 1, 1);
             }
             ENDCG
         }

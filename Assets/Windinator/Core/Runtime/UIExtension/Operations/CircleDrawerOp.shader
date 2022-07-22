@@ -69,7 +69,7 @@ Shader "UI/Windinator/DrawCircle"
             struct v2f
             {
                 float4 vertex           : SV_POSITION;
-                fixed4 color            : COLOR;
+                float4 color            : COLOR;
                 float2 texcoord         : TEXCOORD0;
                 float4 worldPosition    : TEXCOORD1;
                 UNITY_VERTEX_OUTPUT_STEREO
@@ -97,7 +97,7 @@ Shader "UI/Windinator/DrawCircle"
                 return distance(center, pos) - radius;
             }
 
-            fixed4 frag (v2f IN) : SV_Target
+            float4 frag (v2f IN) : SV_Target
             {
                 float2 position;
                 float2 halfSize;
@@ -107,15 +107,9 @@ Shader "UI/Windinator/DrawCircle"
                 half4 color = tex2D(_MainTex, IN.texcoord);
                 float sdf = circleSDF(_OpPosition, position, _OpSize);
 
-                float weight = color.a + sdf;
-                float cA = color.a / weight;
-                float cB = sdf / weight;
+                float result = AddSDF(sdf, color.r);
 
-                sdf = min(sdf, color.a);
-
-                float4 rgba = float4(cA * color.rgb + cB * float3(1, 1, 1), sdf);
-
-                return rgba;
+                return float4(result, 1, 1, 1);
             }
             ENDCG
         }
