@@ -58,7 +58,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set {m_texture = value; SetMaterialDirty();}
     }
      
-    private float m_extraMargin => Mathf.Max(m_outlineSize, m_shadowSize) + 2 + ExtraMargin;
+    protected virtual float Margin => Mathf.Max(m_outlineSize, m_shadowSize) + 2 + ExtraMargin;
 
     public virtual float ExtraMargin => 0;
 
@@ -263,19 +263,19 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         UIVertex vertex = UIVertex.simpleVert;
         vertex.color = color;
 
-        vertex.position = new Vector3(-m_extraMargin, -m_extraMargin) - pivot;
+        vertex.position = new Vector3(-Margin, -Margin) - pivot;
         vertex.uv0 = new Vector2(0, 0);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(-m_extraMargin, height + m_extraMargin) - pivot;
+        vertex.position = new Vector3(-Margin, height + Margin) - pivot;
         vertex.uv0 = new Vector2(0, 1);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(width + m_extraMargin, height + m_extraMargin) - pivot;
+        vertex.position = new Vector3(width + Margin, height + Margin) - pivot;
         vertex.uv0 = new Vector2(1, 1);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(width + m_extraMargin, -m_extraMargin) - pivot;
+        vertex.position = new Vector3(width + Margin, -Margin) - pivot;
         vertex.uv0 = new Vector2(1, 0);
         vh.AddVert(vertex);
 
@@ -315,7 +315,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         defaultMaterial.SetFloat("_ShadowPow", m_shadowPower);
         defaultMaterial.SetColor("_ShadowColor", shadowCol);
 
-        defaultMaterial.SetFloat("_Padding", m_extraMargin);
+        defaultMaterial.SetFloat("_Padding", Margin);
 
         defaultMaterial.SetColor("_LU", LeftUpColor);
         defaultMaterial.SetColor("_RU", RightUpColor);
