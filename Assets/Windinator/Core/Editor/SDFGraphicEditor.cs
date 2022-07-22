@@ -2,6 +2,20 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 
+[CustomEditor(typeof(CanvasGraphic), true)]
+public class CanvasGraphicEditor : Editor
+{
+    public void OnSceneGUI()
+    {
+        SDFGraphicEditor.DrawSDFScene(target as SignedDistanceFieldGraphic);
+    }
+
+    public override void OnInspectorGUI()
+    {
+        SDFGraphicEditor.DrawSDFGUI(target as SignedDistanceFieldGraphic);
+    }
+}
+
 [CustomEditor(typeof(SignedDistanceFieldGraphic), true)]
 public class SDFGraphicEditor : Editor
 {
