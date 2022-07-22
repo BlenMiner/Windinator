@@ -44,7 +44,7 @@ public class SwatchPropDrawer : PropertyDrawer
              CustomColor.colorValue = EditorGUI.ColorField(new Rect(pos, size), label, CustomColor.colorValue);
         else EditorGUI.PropertyField(new Rect(pos, size), PaletteColor, label);
 
-        UseCustomColor.boolValue = EditorGUI.Toggle(new Rect(pos + Vector2.right * (size.x + 5), new Vector2(10f, 20f)), UseCustomColor.boolValue);
+        UseCustomColor.boolValue = EditorGUI.Toggle(new Rect(pos + Vector2.right * (size.x), new Vector2(10f, 20f)), UseCustomColor.boolValue);
 
         pos.y += 22;
 
