@@ -246,10 +246,11 @@ public class CanvasGraphicEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        CanvasGraphic graphic = target as CanvasGraphic;
+        CanvasGraphic g = target as CanvasGraphic;
+
         SDFGraphicEditor.DrawSDFGUI(target as SignedDistanceFieldGraphic);
-        graphic.SmoothUnion = EditorGUILayout.FloatField("Smooth Union", graphic.SmoothUnion);
-        if (graphic.SmoothUnion < 0) graphic.SmoothUnion = 0f;
+
+        g.SetMargin(EditorGUILayout.FloatField("Expand Borders", g.Margin));
     }
 }
 

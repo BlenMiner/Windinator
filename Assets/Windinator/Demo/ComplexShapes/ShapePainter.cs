@@ -7,16 +7,22 @@ public class ShapePainter : MonoBehaviour
 {
     [SerializeField] CanvasGraphic m_canvas;
 
+    [SerializeField] RectTransform m_knob;
+
     void Update()
     {
         if (m_canvas == null) return;
 
         m_canvas.Begin();
-        m_canvas.DrawCircle(Vector2.zero, 20f);
-        m_canvas.DrawCircle(new Vector2(40f * Mathf.Sin(Time.time), 0), 20f);
-        m_canvas.DrawLine(new Vector2(-50, 0), new Vector2(-50, 50));
-        m_canvas.DrawLine(new Vector2(-50, 50), new Vector2(50, 50));
-        m_canvas.DrawLine(new Vector2(50, 50), new Vector2(50, 0));
+        
+        m_canvas.DrawRect(Vector2.zero, m_canvas.Size);
+
+        var knob = m_canvas.GetRect(m_knob);
+
+        float rad = Mathf.Min(knob.size.x, knob.size.y) * 0.5f;
+
+        m_canvas.DrawCircle(knob.center, rad, rad * 0.5f, DrawOperation.Substract);
+
         m_canvas.End();
     }
 }

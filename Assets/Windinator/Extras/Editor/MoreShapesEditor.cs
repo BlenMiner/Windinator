@@ -21,6 +21,12 @@ public static class MoreShapesEditor
 		CreateShapeGO("Line", "Line", menuCommand);
 	}
 
+    [MenuItem("GameObject/UI/More Shapes/Canvas", false, 1)]
+	public static void AddCanvas(MenuCommand menuCommand)
+	{
+		CreateShapeGO("Dynamic Canvas", "Canvas", menuCommand);
+	}
+
 	public static GameObject CreateShapeGO(string name, string prefab, MenuCommand menuCommand)
 	{
 		GameObject shapeGO = Object.Instantiate(Resources.Load<GameObject>($"Windinator.Presets/{prefab}"));

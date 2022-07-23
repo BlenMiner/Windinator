@@ -58,7 +58,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set {m_texture = value; SetMaterialDirty();}
     }
      
-    protected virtual float Margin => Mathf.Max(m_outlineSize, m_shadowSize) + 2 + ExtraMargin;
+    public virtual float Margin => Mathf.Max(m_outlineSize, m_shadowSize) + 2 + ExtraMargin;
 
     public virtual float ExtraMargin => 0;
 

@@ -12,7 +12,6 @@ public static class WindinatorUtils
 
     public static Vector3 ScreenToCanvasPosition(this Canvas canvas, RectTransform parent, Vector2 screenPosition)
     {
-        Vector3 Return = Vector3.zero;
         var camera = canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screenPosition, camera, out var tempVector);

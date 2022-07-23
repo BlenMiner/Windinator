@@ -14,30 +14,21 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
 
     RenderTexture m_finalBuffer;
 
-    Material m_canvas_material;
+    Material m_canvas_material, m_drawLine, m_drawRect, m_drawCircle, m_clearCircle;
 
-    Material m_drawCircle;
-
-    Material m_drawLine;
-
-    Material m_clearCircle;
-
-    [SerializeField] float m_union;
-
-    public float SmoothUnion
-    {
-        get => m_union;
-        set {
-            m_union = value;
-            SetMaterialDirty();
-        }
-    }
-    
     RenderTexture CurrentBuffer => m_useBackBuffer ? m_backBuffer : m_buffer;
 
     RenderTexture BackBuffer => m_useBackBuffer ? m_buffer : m_backBuffer;
 
-    protected override float Margin => 0f;
+    private float m_margin;
+
+    public override float Margin => m_margin;
+
+    public void SetMargin(float margin)
+    {
+        if (margin < 0) margin = 0;
+        m_margin = margin;
+    }
 
     private void SwitchBuffers()
     {
@@ -85,6 +76,16 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
             return m_drawLine;
         }
     }
+
+    Material DrawRectOp
+    {
+        get
+        {
+            if (m_drawRect == null)
+                m_drawRect = new Material(Shader.Find("UI/Windinator/DrawRect"));
+            return m_drawRect;
+        }
+    }
     
     override protected void OnEnable()
     {
@@ -99,6 +100,8 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
     }
 
     Vector2 m_size;
+
+    public Vector2 Size => m_size;
 
     void UpdateShader(float width, float height)
     {
@@ -141,17 +144,18 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
         SwitchBuffers();
     }
 
-    void FeedMaterialBasics(Material mat, DrawOperation operation)
+    void FeedMaterialBasics(Material mat, DrawOperation operation, float blend)
     {
         mat.SetTexture("_MainTexture", CurrentBuffer);
-        mat.SetFloat("_Union", m_union);
+        mat.SetFloat("_Union", blend);
         mat.SetVector("_Size", m_size);
         mat.SetInt("_Operation", (int)operation);
+        mat.SetFloat("_Padding", Margin);
     }
 
-    public void DrawCircle(Vector2 position, float size, DrawOperation op = DrawOperation.Union)
+    public void DrawCircle(Vector2 position, float size, float blend = 0f, DrawOperation op = DrawOperation.Union)
     {
-        FeedMaterialBasics(DrawCircleOp, op);
+        FeedMaterialBasics(DrawCircleOp, op, blend);
 
         DrawCircleOp.SetVector("_OpPosition", position);
         DrawCircleOp.SetFloat("_OpSize", size);
@@ -160,9 +164,9 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
         SwitchBuffers();
     }
 
-    public void DrawLine(Vector2 a, Vector2 b, float thickness = 2f, DrawOperation op = DrawOperation.Union)
+    public void DrawLine(Vector2 a, Vector2 b, float thickness = 2f, float blend = 0f, DrawOperation op = DrawOperation.Union)
     {
-        FeedMaterialBasics(DrawLineOp, op);
+        FeedMaterialBasics(DrawLineOp, op, blend);
 
         DrawLineOp.SetVector("_Point0", a);
         DrawLineOp.SetVector("_Point1", b);
@@ -172,8 +176,29 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
         SwitchBuffers();
     }
 
+    public void DrawRect(Vector2 position, Vector2 size, Vector4 roundness = default, float blend = 0f, DrawOperation op = DrawOperation.Union)
+    {
+        FeedMaterialBasics(DrawRectOp, op, blend);
+
+        DrawRectOp.SetVector("_OpPosition", position);
+        DrawRectOp.SetVector("_OpSize", size * 0.5f);
+        DrawRectOp.SetVector("_OpRoundness", roundness);
+
+        Graphics.Blit(CurrentBuffer, BackBuffer, DrawRectOp);
+        SwitchBuffers();
+    }
+
     public void End()
     {
         Graphics.CopyTexture(CurrentBuffer, m_finalBuffer);
+    }
+
+    public Rect GetRect(RectTransform transform)
+    {
+        Vector2 size = transform.rect.size;
+
+        Vector2 center =  (Vector2)rectTransform.InverseTransformPoint((Vector2)transform.position - (size * transform.pivot))
+                + (rectTransform.pivot - Vector2.one * 0.5f) * rectTransform.rect.size;
+        return new Rect(center, size);
     }
 }
