@@ -11,9 +11,9 @@ namespace Riten.Windinator
 
         [SerializeField] bool UseCustomColor;
 
-        [SerializeField, Range(0, 1)] float Alpha;
+        [SerializeField, Range(0, 1)] public float Alpha;
 
-        [SerializeField, Range(0, 1)] float Saturation;
+        [SerializeField, Range(0, 1)] public float Saturation;
 
         public Color TransformColor(Color c)
         {

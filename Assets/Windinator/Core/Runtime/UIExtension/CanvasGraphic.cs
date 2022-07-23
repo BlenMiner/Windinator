@@ -20,7 +20,7 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
 
     RenderTexture BackBuffer => m_useBackBuffer ? m_buffer : m_backBuffer;
 
-    private float m_margin;
+    [SerializeField] float m_margin;
 
     public override float Margin => m_margin;
 
@@ -197,8 +197,15 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
     {
         Vector2 size = transform.rect.size;
 
-        Vector2 center =  (Vector2)rectTransform.InverseTransformPoint((Vector2)transform.position - (size * transform.pivot))
+        Vector2 center = (Vector2)rectTransform.InverseTransformPoint((Vector2)transform.position - (size * transform.pivot))
                 + (rectTransform.pivot - Vector2.one * 0.5f) * rectTransform.rect.size;
+
         return new Rect(center, size);
+    }
+
+    public void SetRect(RectTransform rect, Vector2 position, Vector2 size)
+    {
+        rect.position = (Vector2)rectTransform.position + position - (rectTransform.pivot - Vector2.one * 0.5f) * rectTransform.rect.size;
+        rect.sizeDelta = size;
     }
 }
