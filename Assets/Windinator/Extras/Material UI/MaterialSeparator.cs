@@ -26,11 +26,13 @@ public class MaterialSeparator : Image
         }
     }
 
+#if UNITY_EDITOR
     protected override void OnValidate()
     {
         base.OnValidate();
         UpdateVisuals();
     }
+#endif
 
     public void UpdateVisuals()
     {
