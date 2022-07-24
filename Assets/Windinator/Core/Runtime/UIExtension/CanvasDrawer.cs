@@ -2,14 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CanvasRefreshMode
+{
+    Once,
+    OnDirty,
+    Always
+}
+
 [ExecuteAlways]
 public abstract class CanvasDrawer : MonoBehaviour
 {
-    [SerializeField] bool m_drawOnlyOnce;
+    [SerializeField] CanvasRefreshMode m_drawRefreshMode = CanvasRefreshMode.Always;
 
     Vector2 m_lastSize;
 
     CanvasGraphic m_canvas;
+
+    bool m_dirty = false;
+
+    public void SetDirty()
+    {
+        m_dirty = true;
+    }
 
     protected abstract void Draw(CanvasGraphic canvas, Vector2 size);
 
@@ -23,7 +37,7 @@ public abstract class CanvasDrawer : MonoBehaviour
 
         var size = m_canvas.Size;
 
-        if (!m_drawOnlyOnce)
+        if (m_drawRefreshMode == CanvasRefreshMode.Always)
         {
             m_canvas.Begin();
             Draw(m_canvas, size);
@@ -33,11 +47,23 @@ public abstract class CanvasDrawer : MonoBehaviour
         }
         else if (m_lastSize != size)
         {
+            if (m_drawRefreshMode == CanvasRefreshMode.Once ||
+                m_drawRefreshMode == CanvasRefreshMode.OnDirty)
+            {
+                m_canvas.Begin();
+                Draw(m_canvas, size);
+                m_canvas.End();
+                m_dirty = false;
+            }
+            
+            m_lastSize = size;
+        }
+        else if (m_dirty)
+        {
             m_canvas.Begin();
             Draw(m_canvas, size);
             m_canvas.End();
-            
-            m_lastSize = size;
+            m_dirty = false;
         }
     }
 }
