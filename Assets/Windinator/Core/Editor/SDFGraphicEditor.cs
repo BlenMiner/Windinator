@@ -251,6 +251,7 @@ public class CanvasGraphicEditor : Editor
         SDFGraphicEditor.DrawSDFGUI(target as SignedDistanceFieldGraphic);
 
         g.SetMargin(EditorGUILayout.FloatField("Expand Borders", g.Margin));
+        g.Quality = EditorGUILayout.Slider("Quality", g.Quality, 0.001f, 4f);
     }
 }
 

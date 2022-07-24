@@ -22,7 +22,14 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
 
     [SerializeField] float m_margin;
 
+    [SerializeField] float m_quality = 1f;
+
     public override float Margin => m_margin;
+
+    public float Quality {
+        get => m_quality;
+        set {m_quality = value;}
+    }
 
     public void SetMargin(float margin)
     {
@@ -107,8 +114,8 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
     {
         m_size = new Vector2(width, height);
 
-        int w = Mathf.CeilToInt(width);
-        int h = Mathf.CeilToInt(height);
+        int w = Mathf.CeilToInt(width * Quality);
+        int h = Mathf.CeilToInt(height * Quality);
 
         if (w <= 0 || h <= 0) return;
 
