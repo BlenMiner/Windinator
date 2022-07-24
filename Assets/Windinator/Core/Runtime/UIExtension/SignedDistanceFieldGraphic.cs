@@ -44,7 +44,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     [SerializeField] Vector4 m_maskOffset;
 
-    private Material m_material;
+    Material m_material;
 
     [Header("Gradient")]
 
