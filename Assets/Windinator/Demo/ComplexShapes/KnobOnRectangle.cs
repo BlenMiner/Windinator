@@ -7,7 +7,14 @@ public class KnobOnRectangle : MonoBehaviour
 {
     [SerializeField] CanvasGraphic m_canvas;
 
-    void Update()
+    int m_stage = 0;
+    
+    void OnValidate()
+    {
+        Start();
+    }
+
+    void Start()
     {
         if (m_canvas == null) return;
 
@@ -15,7 +22,6 @@ public class KnobOnRectangle : MonoBehaviour
 
         var size = m_canvas.Size;
         const float expand = 200f;
-
         m_canvas.DrawRect(new Vector2(0, -expand * 0.5f), new Vector2(size.x, size.y + expand));
         m_canvas.DrawCircle(Vector2.zero, 70f, 80f, DrawOperation.Substract);
 

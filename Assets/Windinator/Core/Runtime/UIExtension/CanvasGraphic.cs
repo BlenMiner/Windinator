@@ -120,9 +120,13 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
             if (m_backBuffer != null && m_backBuffer.IsCreated())
                 m_backBuffer.Release();
 
-            m_buffer = new RenderTexture(w, h, 1, RenderTextureFormat.ARGBFloat);
+            m_buffer = new RenderTexture(w, h, 0, RenderTextureFormat.ARGBFloat);
             m_backBuffer = new RenderTexture(m_buffer);
             m_finalBuffer = new RenderTexture(m_buffer);
+
+            m_buffer.useMipMap = false;
+            m_backBuffer.useMipMap = false;
+            m_finalBuffer.useMipMap = false;
 
             m_buffer.filterMode = FilterMode.Bilinear;
             m_backBuffer.filterMode = FilterMode.Bilinear;
@@ -140,6 +144,9 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
 
     public void Begin()
     {
+        if (Texture != m_finalBuffer)
+            Texture = m_finalBuffer;
+
         Graphics.Blit(CurrentBuffer, BackBuffer, ClearCircleOp);
         SwitchBuffers();
     }
@@ -190,7 +197,8 @@ public class CanvasGraphic : SignedDistanceFieldGraphic
 
     public void End()
     {
-        Graphics.CopyTexture(CurrentBuffer, m_finalBuffer);
+        Graphics.Blit(CurrentBuffer, m_finalBuffer);
+        // Graphics.CopyTexture(CurrentBuffer, m_finalBuffer);
     }
 
     public Rect GetRect(RectTransform transform)
