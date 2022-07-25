@@ -3,28 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteAlways]
-public class KnobOnRectangle : MonoBehaviour
+public class KnobOnRectangle : CanvasDrawer
 {
-    [SerializeField] CanvasGraphic m_canvas;
-
-    int m_stage = 0;
-    
-    void OnValidate()
+    protected override void Draw(CanvasGraphic canvas, Vector2 size)
     {
-        Start();
-    }
-
-    void Start()
-    {
-        if (m_canvas == null) return;
-
-        m_canvas.Begin();
-
-        var size = m_canvas.Size;
         const float expand = 200f;
-        m_canvas.DrawRect(new Vector2(0, -expand * 0.5f), new Vector2(size.x, size.y + expand));
-        m_canvas.DrawCircle(Vector2.zero, 70f, 80f, DrawOperation.Substract);
-
-        m_canvas.End();
+        canvas.DrawRect(new Vector2(0, -expand * 0.5f), new Vector2(size.x, size.y + expand));
+        canvas.DrawCircle(Vector2.zero, 70f, 80f, DrawOperation.Substract);
     }
 }

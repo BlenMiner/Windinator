@@ -5,10 +5,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 [ExecuteAlways]
-public class ShapePainter : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ShapePainter : CanvasDrawer, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] CanvasGraphic m_canvas;
-
     [Header("Main Blob")]
     [SerializeField] float m_offset = 0f;
 
@@ -38,27 +36,14 @@ public class ShapePainter : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     bool m_hovering = false;
 
-    void Update()
-    {
-        if (m_canvas == null) return;
-
-        m_canvas.Begin();
-        Draw();
-        m_canvas.End();
-
-        if (m_hovering)
-             m_anim = Mathf.Lerp(m_anim, 1f, Time.deltaTime * m_animSpeed);
-        else m_anim = Mathf.Lerp(m_anim, 0f, Time.deltaTime * m_animSpeed);
-    }
-
     [System.Serializable]
     struct Particle
     {
         [HideInInspector] public float LastTime;
 
-        [HideInInspector] public float Distortion;
+        [HideInInspector] public float Wobble;
 
-        [HideInInspector] public float LerpedDistortion;
+        [HideInInspector] public float LerpedWobble;
 
         public ColorPalette Color;
 
@@ -67,12 +52,15 @@ public class ShapePainter : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     [SerializeField] Particle[] particles = new Particle[3];
 
-    void Draw()
+
+    protected override void Draw(CanvasGraphic canvas, Vector2 size)
     {
-        Vector2 bottom = new Vector2(0, -m_canvas.Size.y * 0.5f + m_offset);
+        Vector2 bottom = new Vector2(0, -canvas.Size.y * 0.5f + m_offset);
 
-        m_canvas.DrawCircle(bottom, m_radius);
+        // Draw main circle
+        canvas.DrawCircle(bottom, m_radius);
 
+        // Draw smaller circles
         for (int i = 0; i < 3; ++i)
         {
             float normalized = i / 2f;
@@ -83,23 +71,23 @@ public class ShapePainter : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             float anim = m_expandMovement.Evaluate(Mathf.Max(0f, m_expandTiming.Evaluate(m_anim) - normalized * 0.5f) * 2f);
             float space = Mathf.Lerp(-m_radius, m_spacing, anim);
 
-            // Draw actual circle
-
             var circlePos = bottom + nPos * (m_radius + m_others_radius + space);
 
-            m_canvas.SetRect(particles[i].Transform, circlePos, new Vector2(m_others_radius, m_others_radius));
+            // Set icon position
+            canvas.SetRect(particles[i].Transform, circlePos, new Vector2(m_others_radius, m_others_radius));
 
-            m_canvas.DrawCircle(
+            // Draw the actual circle
+            canvas.DrawCircle(
                 circlePos,
                 m_others_radius,
                 m_blending * m_others_radius
             );
 
+            // Wobble when the ball is moving up passing by the center or down passing by the center
             if (particles[i].LastTime < 0.5f && anim >= 0.5f ||
                 particles[i].LastTime > 0.5f && anim <= 0.5f)
             {
-                // Passed circle
-                particles[i].Distortion = 1f;
+                particles[i].Wobble = 1f;
             }
             
 
@@ -110,22 +98,41 @@ public class ShapePainter : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             particles[i].Color.Color = c;
             particles[i].Color.UpdateColor();
 
-            float displacementStrength = particles[i].LerpedDistortion;
+            float displacementStrength = particles[i].LerpedWobble;
 
             float disortionRad = m_radius * 0.3f;
             float noiseY = Mathf.PerlinNoise(Time.time * 4f, i * 1000) * displacementStrength * disortionRad * m_noiseMult;
             float noiseX = (Mathf.PerlinNoise(i * 1000, Time.time * 5f) - 0.5f) * 2 * displacementStrength * disortionRad * m_noiseMult;
             
             // Draw shackiness
-            m_canvas.DrawCircle(
+            canvas.DrawCircle(
                 bottom + nPos * (disortionRad + noiseY) + new Vector2(noiseX, 0),
                 disortionRad,
                 disortionRad * 3
             );
 
-            particles[i].LerpedDistortion = Mathf.Lerp(particles[i].LerpedDistortion, particles[i].Distortion, Time.deltaTime * 10f);
-            particles[i].Distortion = Mathf.MoveTowards(particles[i].Distortion, 0f, Time.deltaTime * 1.5f);
+            particles[i].LerpedWobble = Mathf.Lerp(particles[i].LerpedWobble, particles[i].Wobble, Time.deltaTime * 10f);
+            particles[i].Wobble = Mathf.MoveTowards(particles[i].Wobble, 0f, Time.deltaTime * 1.5f);
             particles[i].LastTime = anim;
+        }
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        float anim = m_anim;
+
+        if (m_hovering)
+             m_anim = Mathf.Lerp(m_anim, 1f, Time.deltaTime * m_animSpeed);
+        else m_anim = Mathf.Lerp(m_anim, 0f, Time.deltaTime * m_animSpeed);
+
+        if (m_anim != anim)
+        {
+            if      (m_anim < 0.01f) m_anim = 0f;
+            else if (m_anim > 0.99f) m_anim = 1f;
+
+            SetDirty();
         }
     }
 
