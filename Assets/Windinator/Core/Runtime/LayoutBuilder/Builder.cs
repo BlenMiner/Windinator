@@ -246,11 +246,11 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 var layout = GetOrAdd<LayoutElement>(transform);
 
-                layout.flexibleWidth = m_flexibleWidth;
-                layout.flexibleHeight = m_flexibleHeight;
+                if (m_flexibleWidth != -1) layout.flexibleWidth = m_flexibleWidth;
+                if (m_flexibleHeight != -1) layout.flexibleHeight = m_flexibleHeight;
 
-                layout.preferredWidth = m_preferredWidth;
-                layout.preferredHeight = m_preferredHeight;
+                if (m_preferredWidth != -1) layout.preferredWidth = m_preferredWidth;
+                if (m_preferredHeight != -1) layout.preferredHeight = m_preferredHeight;
 
                 if (m_pivot.HasValue)
                     transform.pivot = m_pivot.Value;
@@ -651,7 +651,7 @@ namespace Riten.Windinator.LayoutBuilder
                 m_aligmnet = alignment;
                 m_children = children;
 
-                m_flexibleWidth = 1;
+                m_flexibleWidth = 0;
                 m_flexibleHeight = 1;
             }
 

@@ -45,7 +45,7 @@ public class Benchmark02Controls : LayoutBaker
                     ),
                 },
                 spacing: 15f
-            ), 
+            ).Flexible(), 
             padding: Vector4.one * 20f,
             shape: new ShapeProperties{
                 Roundness = Vector4.one * 20f,
