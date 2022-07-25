@@ -1,226 +1,196 @@
 using UnityEngine;
-using UnityEngine.UI;
 
-public enum DrawOperation
+namespace Riten.Windinator.Shapes
 {
-    Union = 0,
-    Substract = 1,
-    Intersect = 2
-}
-
-public class CanvasGraphic : SignedDistanceFieldGraphic
-{
-    RenderTexture m_buffer, m_backBuffer;
-
-    RenderTexture m_finalBuffer;
-
-    Material m_canvas_material, m_drawLine, m_drawRect, m_drawCircle, m_clearCircle;
-
-    RenderTexture CurrentBuffer => m_useBackBuffer ? m_backBuffer : m_buffer;
-
-    RenderTexture BackBuffer => m_useBackBuffer ? m_buffer : m_backBuffer;
-
-    [SerializeField] float m_margin;
-
-    [SerializeField] float m_quality = 1f;
-
-    public override float Margin => m_margin;
-
-    public float Quality {
-        get => m_quality;
-        set {m_quality = value;}
+    public enum DrawOperation
+    {
+        Union = 0,
+        Substract = 1,
+        Intersect = 2
     }
 
-    public void SetMargin(float margin)
+    public class CanvasGraphic : SignedDistanceFieldGraphic
     {
-        if (margin < 0) margin = 0;
-        m_margin = margin;
-    }
+        RenderTexture m_buffer, m_backBuffer;
 
-    private void SwitchBuffers()
-    {
-        m_useBackBuffer = !m_useBackBuffer;
-    }
+        RenderTexture m_finalBuffer;
 
-    bool m_useBackBuffer = false;
+        Material m_canvas_material, m_clearCircle;
 
-    public override Material defaultMaterial
-    {
-        get
-        {
-            if (m_canvas_material == null)
-                m_canvas_material = new Material(Shader.Find("UI/Windinator/CanvasProceduralRenderer"));
-            return m_canvas_material;
+        public RenderTexture CurrentBuffer => m_useBackBuffer ? m_backBuffer : m_buffer;
+
+        public RenderTexture BackBuffer => m_useBackBuffer ? m_buffer : m_backBuffer;
+
+        [SerializeField] float m_margin;
+
+        [SerializeField] float m_quality = 1f;
+
+        public override float Margin => m_margin;
+
+        public float Quality {
+            get => m_quality;
+            set {m_quality = value;}
         }
-    }
 
-    Material DrawCircleOp
-    {
-        get
+        public void SetMargin(float margin)
         {
-            if (m_drawCircle == null)
-                m_drawCircle = new Material(Shader.Find("UI/Windinator/DrawCircle"));
-            return m_drawCircle;
+            if (margin < 0) margin = 0;
+            m_margin = margin;
         }
-    }
 
-    Material ClearCircleOp
-    {
-        get
+        public void SwitchBuffers()
         {
-            if (m_clearCircle == null)
-                m_clearCircle = new Material(Shader.Find("UI/Windinator/ClearOp"));
-            return m_clearCircle;
+            m_useBackBuffer = !m_useBackBuffer;
         }
-    }
 
-    Material DrawLineOp
-    {
-        get
+        bool m_useBackBuffer = false;
+
+        public override Material defaultMaterial
         {
-            if (m_drawLine == null)
-                m_drawLine = new Material(Shader.Find("UI/Windinator/DrawLine"));
-            return m_drawLine;
+            get
+            {
+                if (m_canvas_material == null)
+                    m_canvas_material = new Material(Shader.Find("UI/Windinator/CanvasProceduralRenderer"));
+                return m_canvas_material;
+            }
         }
-    }
 
-    Material DrawRectOp
-    {
-        get
+        Material ClearCircleOp
         {
-            if (m_drawRect == null)
-                m_drawRect = new Material(Shader.Find("UI/Windinator/DrawRect"));
-            return m_drawRect;
+            get
+            {
+                if (m_clearCircle == null)
+                    m_clearCircle = new Material(Shader.Find("UI/Windinator/ClearOp"));
+                return m_clearCircle;
+            }
         }
-    }
-    
-    override protected void OnEnable()
-    {
-        onMaterialUpdate += UpdateShader;
-        base.OnEnable();
-    }
 
-    override protected void OnDisable()
-    {
-        onMaterialUpdate -= UpdateShader;
-        base.OnDisable();
-    }
+        public LineDrawer LineBrush { get; private set; }
 
-    Vector2 m_size;
+        public CircleDrawer CircleBrush { get; private set; }
 
-    public Vector2 Size => m_size;
+        public Vector2 Size => m_size;
 
-    void UpdateShader(float width, float height)
-    {
-        m_size = new Vector2(width, height);
+        Vector2 m_size;
 
-        int w = Mathf.CeilToInt(width * Quality);
-        int h = Mathf.CeilToInt(height * Quality);
-
-        if (w <= 0 || h <= 0) return;
-
-        if (m_buffer == null || m_buffer.width != w || m_buffer.height != h)
+        protected override void Awake()
         {
-            if (m_buffer != null && m_buffer.IsCreated())
-                m_buffer.Release();
+            base.Awake();
 
-            if (m_backBuffer != null && m_backBuffer.IsCreated())
-                m_backBuffer.Release();
+            LineBrush = new LineDrawer(this);
+            CircleBrush = new CircleDrawer(this);
+        }
 
-            m_buffer = new RenderTexture(w, h, 0, RenderTextureFormat.ARGBFloat);
-            m_backBuffer = new RenderTexture(m_buffer);
-            m_finalBuffer = new RenderTexture(m_buffer);
+        #if UNITY_EDITOR
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            if (LineBrush == null) Awake();
+        }
+        #endif
 
-            m_buffer.useMipMap = false;
-            m_backBuffer.useMipMap = false;
-            m_finalBuffer.useMipMap = false;
+        override protected void OnEnable()
+        {
+            onMaterialUpdate += UpdateShader;
+            base.OnEnable();
+        }
 
-            m_buffer.filterMode = FilterMode.Bilinear;
-            m_backBuffer.filterMode = FilterMode.Bilinear;
-            m_finalBuffer.filterMode = FilterMode.Bilinear;
+        override protected void OnDisable()
+        {
+            onMaterialUpdate -= UpdateShader;
+            base.OnDisable();
+        }
 
-            m_buffer.Create();
-            m_backBuffer.Create();
-            m_finalBuffer.Create();
+        void UpdateShader(float width, float height)
+        {
+            m_size = new Vector2(width, height);
 
-            Texture = m_finalBuffer;
+            int w = Mathf.CeilToInt(width * Quality);
+            int h = Mathf.CeilToInt(height * Quality);
 
+            if (w <= 0 || h <= 0) return;
+
+            if (m_buffer == null || m_buffer.width != w || m_buffer.height != h)
+            {
+                if (m_buffer != null && m_buffer.IsCreated())
+                    m_buffer.Release();
+
+                if (m_backBuffer != null && m_backBuffer.IsCreated())
+                    m_backBuffer.Release();
+
+                m_buffer = new RenderTexture(w, h, 0, RenderTextureFormat.ARGBFloat);
+                m_backBuffer = new RenderTexture(m_buffer);
+                m_finalBuffer = new RenderTexture(m_buffer);
+
+                m_buffer.useMipMap = false;
+                m_backBuffer.useMipMap = false;
+                m_finalBuffer.useMipMap = false;
+
+                m_buffer.filterMode = FilterMode.Bilinear;
+                m_backBuffer.filterMode = FilterMode.Bilinear;
+                m_finalBuffer.filterMode = FilterMode.Bilinear;
+
+                m_buffer.Create();
+                m_backBuffer.Create();
+                m_finalBuffer.Create();
+
+                Texture = m_finalBuffer;
+
+                SwitchBuffers();
+            }
+        }
+
+        public void Begin()
+        {
+            if (Texture != m_finalBuffer)
+                Texture = m_finalBuffer;
+
+            Graphics.Blit(CurrentBuffer, BackBuffer, ClearCircleOp);
             SwitchBuffers();
         }
-    }
 
-    public void Begin()
-    {
-        if (Texture != m_finalBuffer)
-            Texture = m_finalBuffer;
+        public void DrawCircle(Vector2 position, float size, float blend = 0f, DrawOperation op = DrawOperation.Union)
+        {
+            /*FeedMaterialBasics(DrawCircleOp, op, blend);
 
-        Graphics.Blit(CurrentBuffer, BackBuffer, ClearCircleOp);
-        SwitchBuffers();
-    }
+            DrawCircleOp.SetVector("_OpPosition", position);
+            DrawCircleOp.SetFloat("_OpSize", size);
 
-    void FeedMaterialBasics(Material mat, DrawOperation operation, float blend)
-    {
-        mat.SetTexture("_MainTexture", CurrentBuffer);
-        mat.SetFloat("_Union", blend);
-        mat.SetVector("_Size", m_size);
-        mat.SetInt("_Operation", (int)operation);
-        mat.SetFloat("_Padding", Margin);
-    }
+            Graphics.Blit(CurrentBuffer, BackBuffer, DrawCircleOp);
+            SwitchBuffers();*/
+        }
 
-    public void DrawCircle(Vector2 position, float size, float blend = 0f, DrawOperation op = DrawOperation.Union)
-    {
-        FeedMaterialBasics(DrawCircleOp, op, blend);
+        public void DrawRect(Vector2 position, Vector2 size, Vector4 roundness = default, float blend = 0f, DrawOperation op = DrawOperation.Union)
+        {
+            /*FeedMaterialBasics(DrawRectOp, op, blend);
 
-        DrawCircleOp.SetVector("_OpPosition", position);
-        DrawCircleOp.SetFloat("_OpSize", size);
+            DrawRectOp.SetVector("_OpPosition", position);
+            DrawRectOp.SetVector("_OpSize", size * 0.5f);
+            DrawRectOp.SetVector("_OpRoundness", roundness);
 
-        Graphics.Blit(CurrentBuffer, BackBuffer, DrawCircleOp);
-        SwitchBuffers();
-    }
+            Graphics.Blit(CurrentBuffer, BackBuffer, DrawRectOp);
+            SwitchBuffers();*/
+        }
 
-    public void DrawLine(Vector2 a, Vector2 b, float thickness = 2f, float blend = 0f, DrawOperation op = DrawOperation.Union)
-    {
-        FeedMaterialBasics(DrawLineOp, op, blend);
+        public void End()
+        {
+            Graphics.Blit(CurrentBuffer, m_finalBuffer);
+        }
 
-        DrawLineOp.SetVector("_Point0", a);
-        DrawLineOp.SetVector("_Point1", b);
-        DrawLineOp.SetFloat("_LineThickness", thickness);
+        public Rect GetRect(RectTransform transform)
+        {
+            Vector2 size = transform.rect.size;
 
-        Graphics.Blit(CurrentBuffer, BackBuffer, DrawLineOp);
-        SwitchBuffers();
-    }
+            Vector2 center = (Vector2)rectTransform.InverseTransformPoint((Vector2)transform.position - (size * transform.pivot))
+                    + (rectTransform.pivot - Vector2.one * 0.5f) * rectTransform.rect.size;
 
-    public void DrawRect(Vector2 position, Vector2 size, Vector4 roundness = default, float blend = 0f, DrawOperation op = DrawOperation.Union)
-    {
-        FeedMaterialBasics(DrawRectOp, op, blend);
+            return new Rect(center, size);
+        }
 
-        DrawRectOp.SetVector("_OpPosition", position);
-        DrawRectOp.SetVector("_OpSize", size * 0.5f);
-        DrawRectOp.SetVector("_OpRoundness", roundness);
-
-        Graphics.Blit(CurrentBuffer, BackBuffer, DrawRectOp);
-        SwitchBuffers();
-    }
-
-    public void End()
-    {
-        Graphics.Blit(CurrentBuffer, m_finalBuffer);
-        // Graphics.CopyTexture(CurrentBuffer, m_finalBuffer);
-    }
-
-    public Rect GetRect(RectTransform transform)
-    {
-        Vector2 size = transform.rect.size;
-
-        Vector2 center = (Vector2)rectTransform.InverseTransformPoint((Vector2)transform.position - (size * transform.pivot))
-                + (rectTransform.pivot - Vector2.one * 0.5f) * rectTransform.rect.size;
-
-        return new Rect(center, size);
-    }
-
-    public void SetRect(RectTransform rect, Vector2 position, Vector2 size)
-    {
-        rect.position = (Vector2)rectTransform.position + position - (rectTransform.pivot - Vector2.one * 0.5f) * rectTransform.rect.size;
-        rect.sizeDelta = size;
+        public void SetRect(RectTransform rect, Vector2 position, Vector2 size)
+        {
+            rect.position = (Vector2)rectTransform.position + position - (rectTransform.pivot - Vector2.one * 0.5f) * rectTransform.rect.size;
+            rect.sizeDelta = size;
+        }
     }
 }

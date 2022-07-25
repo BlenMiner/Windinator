@@ -1,69 +1,70 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public enum CanvasRefreshMode
+namespace Riten.Windinator.Shapes
 {
-    Once,
-    OnDirty,
-    Always
-}
-
-[ExecuteAlways]
-public abstract class CanvasDrawer : MonoBehaviour
-{
-    [SerializeField] CanvasRefreshMode m_drawRefreshMode = CanvasRefreshMode.Always;
-
-    Vector2 m_lastSize;
-
-    CanvasGraphic m_canvas;
-
-    bool m_dirty = false;
-
-    public void SetDirty()
+    public enum CanvasRefreshMode
     {
-        m_dirty = true;
+        Once,
+        OnDirty,
+        Always
     }
 
-    protected abstract void Draw(CanvasGraphic canvas, Vector2 size);
-
-    protected virtual void Update()
+    [ExecuteAlways]
+    public abstract class CanvasDrawer : MonoBehaviour
     {
-        if (m_canvas == null)
+        [SerializeField] CanvasRefreshMode m_drawRefreshMode = CanvasRefreshMode.Always;
+
+        Vector2 m_lastSize;
+
+        CanvasGraphic m_canvas;
+
+        bool m_dirty = false;
+
+        public void SetDirty()
         {
-            m_canvas = GetComponent<CanvasGraphic>();
-            if (m_canvas == null) return;
+            m_dirty = true;
         }
 
-        var size = m_canvas.Size;
+        protected abstract void Draw(CanvasGraphic canvas, Vector2 size);
 
-        if (m_drawRefreshMode == CanvasRefreshMode.Always)
+        protected virtual void Update()
         {
-            m_canvas.Begin();
-            Draw(m_canvas, size);
-            m_canvas.End();
+            if (m_canvas == null)
+            {
+                m_canvas = GetComponent<CanvasGraphic>();
+                if (m_canvas == null) return;
+            }
 
-            return;
-        }
-        else if (m_lastSize != size)
-        {
-            if (m_drawRefreshMode == CanvasRefreshMode.Once ||
-                m_drawRefreshMode == CanvasRefreshMode.OnDirty)
+            var size = m_canvas.Size;
+
+            if (m_drawRefreshMode == CanvasRefreshMode.Always)
+            {
+                m_canvas.Begin();
+                Draw(m_canvas, size);
+                m_canvas.End();
+
+                return;
+            }
+            else if (m_lastSize != size)
+            {
+                if (m_drawRefreshMode == CanvasRefreshMode.Once ||
+                    m_drawRefreshMode == CanvasRefreshMode.OnDirty)
+                {
+                    m_canvas.Begin();
+                    Draw(m_canvas, size);
+                    m_canvas.End();
+                    m_dirty = false;
+                }
+                
+                m_lastSize = size;
+            }
+            else if (m_dirty)
             {
                 m_canvas.Begin();
                 Draw(m_canvas, size);
                 m_canvas.End();
                 m_dirty = false;
             }
-            
-            m_lastSize = size;
-        }
-        else if (m_dirty)
-        {
-            m_canvas.Begin();
-            Draw(m_canvas, size);
-            m_canvas.End();
-            m_dirty = false;
         }
     }
 }

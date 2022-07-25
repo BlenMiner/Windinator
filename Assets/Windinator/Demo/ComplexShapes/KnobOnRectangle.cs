@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Riten.Windinator.Shapes;
 using UnityEngine;
 
 [ExecuteAlways]

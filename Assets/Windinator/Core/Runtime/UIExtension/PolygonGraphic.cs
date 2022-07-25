@@ -3,15 +3,18 @@ using UnityEngine;
 [System.Serializable]
 public class StaticArray<T>
 {
+    [SerializeField]
     public T[] Array;
 
     [SerializeField]
-    private int len;
+    public int Capacity;
 
-    public int Length { get => len; set => SetLength(value); }
+    [SerializeField]
+    public int Length;
 
     public StaticArray(int count)
     {
+        Capacity = count;
         Array = new T[count];
         Length = 0;
     }
@@ -22,21 +25,9 @@ public class StaticArray<T>
         set { Array[i] = value; }
     }
 
-    public void SetLength(int len)
-    {
-        if (len > Array.Length)
-            System.Array.Resize(ref Array, len);
-        this.len = len;
-    }
-
     public void Add(T data)
     {
         Array[Length++] = data;
-    }
-
-    public void Clear()
-    {
-        Length = 0;
     }
 }
 

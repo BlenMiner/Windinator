@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Riten.Windinator.Shapes;
 using UnityEngine;
 
 public class ComplexShapesBenchmark2 : CanvasDrawer
@@ -21,23 +20,29 @@ public class ComplexShapesBenchmark2 : CanvasDrawer
             Mathf.PerlinNoise(694.5101f, -m_lineStep) - 0.5f
         ) * size;
 
+        float time = Time.time;
+
         for (int i = 0; i < m_lineCount; ++i)
         {
-            Vector2 normalized_point = new Vector2(
-                Mathf.PerlinNoise(i * m_lineStep, 56.151f) - 0.5f,
-                Mathf.PerlinNoise(694.5101f, i * m_lineStep) - 0.5f
+            Vector2 point = new Vector2(
+                (Mathf.PerlinNoise(i * m_lineStep, 56.151f) - 0.5f) * size.x,
+                (Mathf.PerlinNoise(694.5101f, i * m_lineStep) - 0.5f) * size.y
             );
 
-            Vector2 point = normalized_point * size;
+            float len = i * m_lineStep;
 
             var pointNoise = point + new Vector2(
-                Mathf.PerlinNoise(point.x * 0.01f + Time.time, point.y * 0.01f) - 0.5f,
-                Mathf.PerlinNoise(point.y * 0.01f, point.x * 0.01f + Time.time) - 0.5f
-            ) * 10f;
+                (Mathf.PerlinNoise(len * 1.6868f + time,len * 1.2515f) - 0.5f) * 10f,
+                (Mathf.PerlinNoise(len * 1.8778f, len * 1.8686f + time) - 0.5f) * 10f
+            );
 
-            canvas.DrawLine(lastPoint, pointNoise, m_lineWeight, m_lineWeight * m_blend);
+            // Add/batch lines
+            canvas.LineBrush.AddBatch(lastPoint, pointNoise);
 
             lastPoint = pointNoise;
         }
+
+        // Flush what we batched
+        canvas.LineBrush.DrawBatch(m_lineWeight, m_lineWeight * m_blend);
     }
 }

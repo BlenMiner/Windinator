@@ -103,6 +103,16 @@ float AddSDF(float sdf, float old) {
     }
 }
 
+float AddSDF(float sdf, float old, float k) {
+    if (_Operation == 0) {
+        return opSmoothUnion(sdf, old, k);
+    } else if (_Operation == 1) {
+        return opSmoothSubtraction(sdf, old, k);
+    } else {
+        return opSmoothIntersection(sdf, old, k);
+    }
+}
+
 void GetRawRect(float2 uv, out float2 position, out float2 halfSize, float extra)
 {
     float2 normalizedPadding = float2(_Padding / _Size.x, _Padding / _Size.y);

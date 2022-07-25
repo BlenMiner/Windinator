@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Riten.Windinator.Shapes;
 using UnityEngine;
 
 public class ComplexShapesBenchmark1 : CanvasDrawer
@@ -23,7 +22,9 @@ public class ComplexShapesBenchmark1 : CanvasDrawer
 
             float rad = Mathf.PerlinNoise(-i * 1000.12f, i * 1000.63f) * 50f;
 
-            canvas.DrawCircle(noise * size, rad, rad * m_blend);
+            canvas.CircleBrush.AddBatch(noise * size, rad, rad * m_blend);
         }
+
+        canvas.CircleBrush.DrawBatch();
     }
 }

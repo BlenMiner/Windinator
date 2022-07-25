@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
+using Riten.Windinator.Shapes;
 
 [CustomEditor(typeof(SignedDistanceFieldGraphic))]
 public class SDFGraphicEditor : Editor

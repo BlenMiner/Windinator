@@ -18,6 +18,23 @@ Shader "UI/Windinator/DrawLine"
 
     SubShader
     {
+        CGINCLUDE
+
+        #include "../shared.cginc"
+
+        uniform float4 _Points[512];
+        int _PointsCount;
+        float _LineThickness;
+
+        float sdSegment( in float2 p, in float2 a, in float2 b )
+        {
+            float2 pa = p-a, ba = b-a;
+            float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
+            return length( pa - ba*h );
+        }
+
+        ENDCG
+
         Tags
         {
             "Queue"="Transparent"
@@ -46,18 +63,6 @@ Shader "UI/Windinator/DrawLine"
         Pass
         {
             CGPROGRAM
-            #include "../shared.cginc"
-            
-            float2 _Point0;
-            float2 _Point1;
-            float _LineThickness;
-
-            float sdSegment( in float2 p, in float2 a, in float2 b )
-            {
-                float2 pa = p-a, ba = b-a;
-                float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
-                return length( pa - ba*h );
-            }
 
             float4 frag (v2f IN) : SV_Target
             {
@@ -79,7 +84,19 @@ Shader "UI/Windinator/DrawLine"
                 float multiplier = 1 - (roundness / maxSize);
                 halfSize -= roundness;
 
-                float dist = sdSegment(position, _Point0, _Point1) - _LineThickness;
+                float dist = color.r;
+
+                for (int i = 0; i < 512; ++i)
+                {
+                    if (i >= _PointsCount) break;
+
+                    float2 p0 = _Points[i].xy;
+                    float2 p1 = _Points[i].zw;
+
+                    float d = sdSegment(position, p0, p1) - _LineThickness;
+                    dist = min(d, dist);
+                }
+
                 float result = AddSDF(dist, color.r);
 
                 return float4(result, 1, 1, 1);

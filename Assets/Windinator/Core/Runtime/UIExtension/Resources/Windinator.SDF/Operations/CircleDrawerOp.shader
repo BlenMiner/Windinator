@@ -48,8 +48,9 @@ Shader "UI/Windinator/DrawCircle"
             CGPROGRAM
             #include "../shared.cginc"
 
-            float2 _OpPosition;
-            float _OpSize;
+            uniform float4 _Points[512];
+            int _PointsCount;
+            float _LineThickness;
 
             float circleSDF(float2 center, float2 pos, float radius)
             {
@@ -64,11 +65,22 @@ Shader "UI/Windinator/DrawCircle"
                 GetRawRect(IN.texcoord, position, halfSize, 1);
 
                 half4 color = tex2D(_MainTex, IN.texcoord);
-                float sdf = circleSDF(_OpPosition, position, _OpSize);
 
-                float result = AddSDF(sdf, color.r);
+                float dist = color.r;
 
-                return float4(result, 1, 1, 1);
+                for (int i = 0; i < 512; ++i)
+                {
+                    if (i >= _PointsCount) break;
+
+                    float2 pos = _Points[i].xy;
+                    float size = _Points[i].z;
+                    float blend = _Points[i].w;
+
+                    float d = circleSDF(pos, position, size);
+                    dist = AddSDF(d, dist, blend);
+                }
+
+                return float4(dist, 1, 1, 1);
             }
             ENDCG
         }
