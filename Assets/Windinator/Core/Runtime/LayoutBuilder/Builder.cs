@@ -152,6 +152,12 @@ namespace Riten.Windinator.LayoutBuilder
                 return me.gameObject.AddComponent<T>();
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="horizontal">-1 means undefined</param>
+            /// <param name="vertical">-1 means undefined</param>
+            /// <returns></returns>
             public Element Flexible(float horizontal = 1f, float vertical = 1f)
             {
                 m_flexibleWidth = horizontal;
@@ -162,6 +168,18 @@ namespace Riten.Windinator.LayoutBuilder
             public Element Pivot(Vector2 newPivot)
             {
                 m_pivot = newPivot;
+                return this;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="width">-1 means undefined</param>
+            /// <param name="height">-1 means undefined</param>
+            public Element PreferredSize(float width, float height)
+            {
+                m_preferredHeight = height;
+                m_preferredWidth = width;
                 return this;
             }
 
@@ -440,10 +458,8 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 var transform = Create("#Layout-Horizontal", parent);
                 var layoutGroup = GetOrAdd<HorizontalLayoutGroup>(transform);
-                var layoutElement = GetOrAdd<LayoutElement>(transform);
 
-                layoutElement.flexibleHeight = m_flexibleHeight;
-                layoutElement.flexibleWidth = m_flexibleWidth;
+                Setup(transform);
 
                 if (m_children != null && m_children.Length > 0)
                 {
@@ -643,11 +659,9 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 var transform = Create("#Layout-Vertical", parent);
                 var layoutGroup = GetOrAdd<VerticalLayoutGroup>(transform);
-                var layoutElement = GetOrAdd<LayoutElement>(transform);
 
-                layoutElement.flexibleHeight = m_flexibleHeight;
-                layoutElement.flexibleWidth = m_flexibleWidth;
-
+                Setup(transform);
+                
                 layoutGroup.padding = new RectOffset((int)m_padding.x, (int)m_padding.y, (int)m_padding.z, (int)m_padding.w);
 
                 if (m_children != null && m_children.Length > 0)

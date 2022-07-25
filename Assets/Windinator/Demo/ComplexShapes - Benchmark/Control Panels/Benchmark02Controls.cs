@@ -29,19 +29,19 @@ public class Benchmark02Controls : LayoutBaker
                     new MaterialUI.Separator(false),
 
                     new MaterialUI.LabeledControl(
-                        "Count", new MaterialUI.Slider(5000, 0, 10000, true).GetReference(out m_count).Flexible(10f, -1)
+                        "Count", new MaterialUI.Slider(5000, 0, 10000, true).GetReference(out m_count).Flexible(2f, -1)
                     ),
                     new MaterialUI.LabeledControl(
-                        "Step", new MaterialUI.Slider(0.1f, 0.01f, 0.5f).GetReference(out m_step).Flexible(10f, -1)
+                        "Step", new MaterialUI.Slider(0.1f, 0.01f, 0.5f).GetReference(out m_step).Flexible(2f, -1)
                     ),
                     new MaterialUI.LabeledControl(
-                        "Weight", new MaterialUI.Slider(2f, 0f, 10f).GetReference(out m_wheight).Flexible(10f, -1)
+                        "Weight", new MaterialUI.Slider(2f, 0f, 10f).GetReference(out m_wheight).Flexible(2f, -1)
                     ),
                     new MaterialUI.LabeledControl(
-                        "Quality", new MaterialUI.Slider(1f, 0f, 1f).GetReference(out m_quality).Flexible(10f, -1)
+                        "Quality", new MaterialUI.Slider(1f, 0f, 1f).GetReference(out m_quality).Flexible(2f, -1)
                     ),
                     new MaterialUI.LabeledControl(
-                        "Blend", new MaterialUI.Slider(0f, 0f, 5f).GetReference(out m_blend).Flexible(10f, -1)
+                        "Blend", new MaterialUI.Slider(0f, 0f, 5f).GetReference(out m_blend).Flexible(2f, -1)
                     ),
                 },
                 spacing: 15f

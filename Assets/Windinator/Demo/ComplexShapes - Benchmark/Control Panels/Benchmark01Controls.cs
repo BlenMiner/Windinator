@@ -28,16 +28,16 @@ public class Benchmark01Controls : LayoutBaker
                     new MaterialUI.Separator(false),
 
                     new MaterialUI.LabeledControl(
-                        "Count", new MaterialUI.Slider(100, 0, 771, true).GetReference(out m_count).Flexible(10f, -1)
+                        "Count", new MaterialUI.Slider(100, 0, 771, true).GetReference(out m_count).Flexible(2f, -1)
                     ),
                     new MaterialUI.LabeledControl(
-                        "Quality", new MaterialUI.Slider(1f, 0f, 1f).GetReference(out m_quality).Flexible(10f, -1)
+                        "Quality", new MaterialUI.Slider(1f, 0f, 1f).GetReference(out m_quality).Flexible(2f, -1)
                     ),
                     new MaterialUI.LabeledControl(
-                        "Blend", new MaterialUI.Slider(1f, 0f, 5f).GetReference(out m_blend).Flexible(10f, -1)
+                        "Blend", new MaterialUI.Slider(1f, 0f, 5f).GetReference(out m_blend).Flexible(2f, -1)
                     ),
                     new MaterialUI.LabeledControl(
-                        "Speed", new MaterialUI.Slider(1f, 0f, 10f).GetReference(out m_speed).Flexible(10f, -1)
+                        "Speed", new MaterialUI.Slider(1f, 0f, 10f).GetReference(out m_speed).Flexible(2f, -1)
                     ),
                 },
                 spacing: 15f

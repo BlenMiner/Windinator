@@ -324,10 +324,10 @@ namespace Riten.Windinator.LayoutBuilder
                                 new Label(SubTitle, color: Colors.OnSurfaceVariant, style: MaterialSize.Label),
                             },
                             alignment: TextAnchor.MiddleLeft
-                        ),
+                        ).PreferredSize(1, -1),
                         new FlexibleSpace(),
                         Separator ? new Separator(true) : null,
-                        Child
+                        Child.PreferredSize(1, -1)
                     },
                     alignment: TextAnchor.MiddleCenter,
                     spacing: 20f
