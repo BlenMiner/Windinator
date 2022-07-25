@@ -49,9 +49,11 @@ Shader "UI/Windinator/DrawRect"
 
             #include "../shared.cginc"
 
-            float2 _OpPosition;
-            float2 _OpSize;
-            float4 _OpRoundness;
+            uniform float4 _Points[512];
+            uniform float4 _PointsExtra[512];
+            uniform float4 _PointsExtra2[512];
+
+            int _PointsCount;
 
             float sdRoundedBox(float2 p, float2 b, float4 r )
             {
@@ -70,11 +72,22 @@ Shader "UI/Windinator/DrawRect"
 
                 half4 color = tex2D(_MainTex, IN.texcoord);
 
-                float sdf = sdRoundedBox(position - _OpPosition, _OpSize, _OpRoundness);
+                float dist = color.r;
 
-                float result = AddSDF(sdf, color.r);
+                for (int i = 0; i < 512; ++i)
+                {
+                    if (i >= _PointsCount) break;
 
-                return float4(result, 1, 1, 1);
+                    float2 pos = _Points[i].xy;
+                    float2 size = _Points[i].zw;
+                    float4 round = _PointsExtra[i];
+                    float blend = _PointsExtra2[i].x;
+
+                    float d = sdRoundedBox(position - pos, size, round);
+                    dist = AddSDF(d, dist, blend);
+                }
+
+                return float4(dist, 1, 1, 1);
             }
             ENDCG
         }

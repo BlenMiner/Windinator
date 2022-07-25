@@ -69,6 +69,8 @@ namespace Riten.Windinator.Shapes
 
         public CircleDrawer CircleBrush { get; private set; }
 
+        public RectDrawer RectBrush { get; private set; }
+
         public Vector2 Size => m_size;
 
         Vector2 m_size;
@@ -79,6 +81,7 @@ namespace Riten.Windinator.Shapes
 
             LineBrush = new LineDrawer(this);
             CircleBrush = new CircleDrawer(this);
+            RectBrush = new RectDrawer(this);
         }
 
         #if UNITY_EDITOR
@@ -147,29 +150,6 @@ namespace Riten.Windinator.Shapes
 
             Graphics.Blit(CurrentBuffer, BackBuffer, ClearCircleOp);
             SwitchBuffers();
-        }
-
-        public void DrawCircle(Vector2 position, float size, float blend = 0f, DrawOperation op = DrawOperation.Union)
-        {
-            /*FeedMaterialBasics(DrawCircleOp, op, blend);
-
-            DrawCircleOp.SetVector("_OpPosition", position);
-            DrawCircleOp.SetFloat("_OpSize", size);
-
-            Graphics.Blit(CurrentBuffer, BackBuffer, DrawCircleOp);
-            SwitchBuffers();*/
-        }
-
-        public void DrawRect(Vector2 position, Vector2 size, Vector4 roundness = default, float blend = 0f, DrawOperation op = DrawOperation.Union)
-        {
-            /*FeedMaterialBasics(DrawRectOp, op, blend);
-
-            DrawRectOp.SetVector("_OpPosition", position);
-            DrawRectOp.SetVector("_OpSize", size * 0.5f);
-            DrawRectOp.SetVector("_OpRoundness", roundness);
-
-            Graphics.Blit(CurrentBuffer, BackBuffer, DrawRectOp);
-            SwitchBuffers();*/
         }
 
         public void End()

@@ -57,7 +57,7 @@ public class ShapePainter : CanvasDrawer, IPointerEnterHandler, IPointerExitHand
         Vector2 bottom = new Vector2(0, -canvas.Size.y * 0.5f + m_offset);
 
         // Draw main circle
-        canvas.DrawCircle(bottom, m_radius);
+        canvas.CircleBrush.Draw(bottom, m_radius);
 
         // Draw smaller circles
         for (int i = 0; i < 3; ++i)
@@ -76,7 +76,7 @@ public class ShapePainter : CanvasDrawer, IPointerEnterHandler, IPointerExitHand
             canvas.SetRect(particles[i].Transform, circlePos, new Vector2(m_others_radius, m_others_radius));
 
             // Draw the actual circle
-            canvas.DrawCircle(
+            canvas.CircleBrush.Draw(
                 circlePos,
                 m_others_radius,
                 m_blending * m_others_radius
@@ -104,7 +104,7 @@ public class ShapePainter : CanvasDrawer, IPointerEnterHandler, IPointerExitHand
             float noiseX = (Mathf.PerlinNoise(i * 1000, Time.time * 5f) - 0.5f) * 2 * displacementStrength * disortionRad * m_noiseMult;
             
             // Draw shackiness
-            canvas.DrawCircle(
+            canvas.CircleBrush.Draw(
                 bottom + nPos * (disortionRad + noiseY) + new Vector2(noiseX, 0),
                 disortionRad,
                 disortionRad * 3
