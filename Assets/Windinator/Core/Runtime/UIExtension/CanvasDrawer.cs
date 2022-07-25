@@ -18,6 +18,14 @@ namespace Riten.Windinator.Shapes
 
         CanvasGraphic m_canvas;
 
+        public CanvasGraphic Canvas
+        {
+            get {
+                if (m_canvas == null) m_canvas = GetComponent<CanvasGraphic>();
+                return m_canvas;
+            }
+        }
+
         bool m_dirty = false;
 
         public void SetDirty()

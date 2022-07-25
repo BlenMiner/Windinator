@@ -3,15 +3,15 @@ using UnityEngine;
 
 public class ComplexShapesBenchmark2 : CanvasDrawer
 {
-    [SerializeField] int m_lineCount = 100;
+    public int m_lineCount = 100;
 
-    [SerializeField] float m_lineStep = 0.1f;
+    public float m_lineStep = 0.1f;
 
     [Header("Graphics")]
 
-    [SerializeField] float m_lineWeight = 2f;
+    public float m_lineWeight = 2f;
 
-    [SerializeField] float m_blend = 0f;
+    public float m_blend = 0f;
 
     protected override void Draw(CanvasGraphic canvas, Vector2 size)
     {

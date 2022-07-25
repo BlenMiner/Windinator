@@ -635,7 +635,7 @@ namespace Riten.Windinator.LayoutBuilder
                 m_aligmnet = alignment;
                 m_children = children;
 
-                m_flexibleWidth = 0;
+                m_flexibleWidth = 1;
                 m_flexibleHeight = 1;
             }
 

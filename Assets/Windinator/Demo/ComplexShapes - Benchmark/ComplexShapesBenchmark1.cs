@@ -3,17 +3,17 @@ using UnityEngine;
 
 public class ComplexShapesBenchmark1 : CanvasDrawer
 {
-    public int m_ballCount = 500;
+    public int BallCount = 500;
 
-    public float m_speed = 1f;
+    public float Speed = 1f;
 
-    public float m_blend = 0f;
+    public float Blend = 0f;
 
     protected override void Draw(CanvasGraphic canvas, Vector2 size)
     {
-        for (int i = 0; i < m_ballCount; ++i)
+        for (int i = 0; i < BallCount; ++i)
         {
-            float t = (Time.time * m_speed) + i * 100.59f;
+            float t = (Time.time * Speed) + i * 100.59f;
 
             Vector2 noise = new Vector2(
                 Mathf.PerlinNoise(t + 695, i * 100.12f) - 0.5f,
@@ -22,7 +22,7 @@ public class ComplexShapesBenchmark1 : CanvasDrawer
 
             float rad = Mathf.PerlinNoise(-i * 1000.12f, i * 1000.63f) * 50f;
 
-            canvas.CircleBrush.AddBatch(noise * size, rad, rad * m_blend);
+            canvas.CircleBrush.AddBatch(noise * size, rad, rad * Blend);
         }
 
         canvas.CircleBrush.DrawBatch();
