@@ -108,8 +108,8 @@ namespace Riten.Windinator.Shapes
         {
             m_size = new Vector2(width, height);
 
-            int w = Mathf.CeilToInt(width * Quality);
-            int h = Mathf.CeilToInt(height * Quality);
+            int w = Mathf.CeilToInt(width * Quality + Margin);
+            int h = Mathf.CeilToInt(height * Quality + Margin);
 
             if (w <= 0 || h <= 0) return;
 

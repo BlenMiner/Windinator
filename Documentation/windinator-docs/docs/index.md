@@ -2,7 +2,7 @@
 
 ## Download Windinator
 
-Asset Store Link Waiting...
+Download from the [Asset Store](https://assetstore.unity.com/packages/slug/220506).
 
 ## What is Windinator?
 

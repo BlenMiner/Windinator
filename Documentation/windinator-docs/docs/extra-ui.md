@@ -1,4 +1,4 @@
-# UI Graphics
+# SDF Graphics
 
 This sections goes over additional components that expand your toolset and will help you create better user interfaces without the need of additional images and graphics.
 

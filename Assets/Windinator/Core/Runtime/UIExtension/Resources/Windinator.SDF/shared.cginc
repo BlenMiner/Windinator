@@ -124,14 +124,14 @@ void GetRawRect(float2 uv, out float2 position, out float2 halfSize, float extra
     uv = uv * (1 + normalizedPadding * 2) - normalizedPadding;
 
     // For simplicity, convert UV to pixel coordinates
-    position = (uv - 0.5) * _Size;
+    position = (uv - 0.5) * _Size - 0.5;
 }
 
 void GetRect(float2 uv, out float2 position, out float2 halfSize, float extra)
 {
     GetRawRect(uv, position, halfSize, extra);
 
-    float2 pos = position + halfSize;
+    float2 pos = position + halfSize - 0.5;
 
     if ((_MaskRect.z > 0 && _MaskRect.w > 0 &&
         position.x >= _MaskRect.x && position.x <= _MaskRect.x + _MaskRect.z &&
