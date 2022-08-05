@@ -70,7 +70,7 @@ public class MaterialCheckbox : MonoBehaviour,
         if (m_outlineColor != null) return;
 
         if (m_iconGraphic != null)
-            m_iconGraphic.IconColor = m_iconColor.ToColor();
+            m_iconGraphic.IconColor = m_iconColor.ToColor(this);
 
         m_oldValue = Value;
         m_outlineColor = new VarAnimator<Color>(VarAnimator<Color>.Lerp, 
@@ -95,7 +95,7 @@ public class MaterialCheckbox : MonoBehaviour,
 
                 if (m_iconGraphic != null)
                 {
-                    Color c = m_iconGraphic.IconColor;
+                    Color c = m_iconGraphic.IconColor.GetUnityColor(this);
                     c.a = scale;
                     m_iconGraphic.IconColor = c;
                 }
@@ -134,7 +134,7 @@ public class MaterialCheckbox : MonoBehaviour,
     {
         if (m_outlineColor == null) Awake();
         
-        m_outlineColor.AnimateToTarget(Value ? m_selectedColor.ToColor() : m_unselectedColor.ToColor());
+        m_outlineColor.AnimateToTarget(Value ? m_selectedColor.ToColor(this) : m_unselectedColor.ToColor(this));
         m_knobScale.AnimateToTarget(Value ? 1f : 0f);
     }
 

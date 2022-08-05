@@ -63,7 +63,7 @@ public class SwatchPropDrawer : PropertyDrawer
         secondHalf.x -= LABEL_SPACE;
         EditorGUI.LabelField(secondHalf, "Satur");
 
-        Color c = UseCustomColor.boolValue ? CustomColor.colorValue : ((Colors)PaletteColor.enumValueIndex).ToColor();
+        Color c = UseCustomColor.boolValue ? CustomColor.colorValue : ((Colors)PaletteColor.enumValueIndex).ToColor((MonoBehaviour)property.serializedObject.targetObject);
 
         c = Color.Lerp(Color.white, c, Saturation.floatValue);
         c.a = Alpha.floatValue;

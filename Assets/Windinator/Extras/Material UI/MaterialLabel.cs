@@ -70,7 +70,7 @@ public class MaterialLabel : MonoBehaviour
     {
         m_text.text = Text;
         m_text.fontSize = (int)Style;
-        m_text.color = Color.UnityColor;
+        m_text.color = Color.GetUnityColor(this);
         m_text.fontStyle = FontStyle;
         m_dirty = false;
     }

@@ -36,7 +36,7 @@ public class GoogleResultsContent : LayoutBaker
                     padding: new Vector4(30f, 30f, 30f, 30f),
                     shape: new ShapeProperties
                     {
-                        Color = Colors.PrimaryContainer.ToColor(),
+                        Color = Colors.PrimaryContainer,
                         Roundness = new Vector4(20f, 20f, 20f, 20f)
                     } 
 

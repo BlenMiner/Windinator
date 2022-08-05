@@ -118,7 +118,7 @@ public class MaterialRadio : MonoBehaviour,
     {
         if (m_outlineColor == null) Awake();
         
-        m_outlineColor.AnimateToTarget(Value ? m_selectedColor.ToColor() : m_unselectedColor.ToColor());
+        m_outlineColor.AnimateToTarget(Value ? m_selectedColor.ToColor(this) : m_unselectedColor.ToColor(this));
         m_knobScale.AnimateToTarget(Value ? 1f : 0f);
     }
 

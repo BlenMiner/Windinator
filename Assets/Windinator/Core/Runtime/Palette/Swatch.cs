@@ -22,13 +22,24 @@ namespace Riten.Windinator
             return c;
         }
 
-        public Color UnityColor => TransformColor(UseCustomColor ? CustomColor : PaletteColor.ToColor());
+        public Color GetUnityColor(GameObject caller)
+        {
+            return TransformColor(UseCustomColor ? CustomColor : PaletteColor.ToColor(caller));
+        }
+
+        public Color GetUnityColor(Transform caller)
+        {
+            return TransformColor(UseCustomColor ? CustomColor : PaletteColor.ToColor(caller.gameObject));
+        }
+
+        public Color GetUnityColor(MonoBehaviour caller)
+        {
+            return TransformColor(UseCustomColor ? CustomColor : PaletteColor.ToColor(caller.gameObject));
+        }
 
         public static implicit operator Swatch(Color d) => new Swatch(d);
 
         public static implicit operator Swatch(Colors d) => new Swatch(d);
-
-        public static implicit operator Color(Swatch swatch) => swatch.UnityColor;
 
         public Swatch(Color color, float saturation = 1f)
         {

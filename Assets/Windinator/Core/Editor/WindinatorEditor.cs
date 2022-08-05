@@ -332,21 +332,25 @@ public class {0} : LayoutBaker
 
                 builder.ScriptHash = hash;
 
-                if (editingScope.prefabContentsRoot.GetComponent<ContentSizeFitter>() == null)
+                var size = editingScope.prefabContentsRoot.GetComponent<ContentSizeFitter>();
+                if (size == null)
                 {
-                    var size = editingScope.prefabContentsRoot.AddComponent<ContentSizeFitter>();
+                    size = editingScope.prefabContentsRoot.AddComponent<ContentSizeFitter>();
                     size.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
                     size.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
                 }
+                size.hideFlags |= HideFlags.HideInInspector;
 
-                if (editingScope.prefabContentsRoot.GetComponent<HorizontalLayoutGroup>() == null)
+                var h = editingScope.prefabContentsRoot.GetComponent<HorizontalLayoutGroup>();
+                if (h == null)
                 {
-                    var h = editingScope.prefabContentsRoot.AddComponent<HorizontalLayoutGroup>();
+                    h = editingScope.prefabContentsRoot.AddComponent<HorizontalLayoutGroup>();
                     h.childControlWidth = true;
                     h.childControlHeight = true;
                     h.childForceExpandWidth = false;
                     h.childForceExpandHeight = false;
                 }
+                h.hideFlags |= HideFlags.HideInInspector;
 
                 builder.ClearContents();
                 builder.Build();

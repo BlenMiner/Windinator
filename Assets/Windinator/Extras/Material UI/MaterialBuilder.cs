@@ -172,7 +172,7 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 return new Horizontal(
                     new Element[] {
-                        new Icon(Prepend, color: Colors.OnSurface.ToColor()),
+                        new Icon(Prepend, color: Colors.OnSurface),
                         new Vertical(
                             new Element[]
                             {
@@ -220,7 +220,7 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 return new Horizontal(
                     new Element[] {
-                        new Icon(Prepend, color: Colors.OnSurface.ToColor()),
+                        new Icon(Prepend, color: Colors.OnSurface),
                         new Vertical(
                             new Element[]
                             {
@@ -268,7 +268,7 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 return new Horizontal(
                     new Element[] {
-                        new Icon(Prepend, color: Colors.OnSurface.ToColor()),
+                        new Icon(Prepend, color: Colors.OnSurface),
                         new Vertical(
                             new Element[]
                             {
@@ -316,7 +316,7 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 return new Horizontal(
                     new Element[] {
-                        new Icon(Prepend, color: Colors.OnSurface.ToColor()),
+                        new Icon(Prepend, color: Colors.OnSurface),
                         new Vertical(
                             new Element[]
                             {
@@ -511,11 +511,11 @@ namespace Riten.Windinator.LayoutBuilder
         public class Separator : PrefabRef<MaterialSeparator>
         {
             private readonly bool vertical;
-            private readonly Color? color;
+            private readonly Swatch? color;
 
             public Separator(
                 bool Vertical,
-                Color? Color = null
+                Swatch? Color = null
             )
                 : base(prefab: LayoutMaterialPrefabs.MaterialSeparator)
             {
@@ -531,7 +531,7 @@ namespace Riten.Windinator.LayoutBuilder
 
                 var separator = prefab.GetComponentInChildren<MaterialSeparator>();
 
-                separator.Color = color.GetValueOrDefault(Colors.SurfaceVariant.ToColor());
+                separator.Color = color.GetValueOrDefault(Colors.OnSurface);
                 separator.Vertical = vertical;
 
                 SetReference(separator);
@@ -893,7 +893,7 @@ namespace Riten.Windinator.LayoutBuilder
 
                 field.Padding = m_padding;
 
-                field.UpdateIcon(m_icon, m_color.UnityColor);
+                field.UpdateIcon(m_icon, m_color.GetUnityColor(prefab));
                 field.UpdateSize(m_size);
 
                 SetReference(field);

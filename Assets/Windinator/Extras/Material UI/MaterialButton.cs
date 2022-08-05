@@ -164,14 +164,14 @@ namespace Riten.Windinator.Material
 
         public void ApplyButtonStyle(MaterialButtonType type)
         {
-            var primaryColor = (!InvertColors ? Colors.Primary : Colors.OnPrimary).ToColor();
-            var secondaryColor = (!InvertColors ? Colors.SecondaryContainer : Colors.OnSecondaryContainer).ToColor();
-            var outlineColor = (!InvertColors ? Colors.Outline : Colors.OnOutline).ToColor();
-            var surfaceColor = (!InvertColors ? Colors.Surface : Colors.OnSurface).ToColor();
+            var primaryColor = (!InvertColors ? Colors.Primary : Colors.OnPrimary).ToColor(this);
+            var secondaryColor = (!InvertColors ? Colors.SecondaryContainer : Colors.OnSecondaryContainer).ToColor(this);
+            var outlineColor = (!InvertColors ? Colors.Outline : Colors.OnOutline).ToColor(this);
+            var surfaceColor = (!InvertColors ? Colors.Surface : Colors.OnSurface).ToColor(this);
 
-            var primaryOnColor = (InvertColors ? Colors.Primary : Colors.OnPrimary).ToColor();
-            var secondaryOnColor = (InvertColors ? Colors.SecondaryContainer : Colors.OnSecondaryContainer).ToColor();
-            var surfaceOnColor = (InvertColors ? Colors.Surface : Colors.OnSurface).ToColor();
+            var primaryOnColor = (InvertColors ? Colors.Primary : Colors.OnPrimary).ToColor(this);
+            var secondaryOnColor = (InvertColors ? Colors.SecondaryContainer : Colors.OnSecondaryContainer).ToColor(this);
+            var surfaceOnColor = (InvertColors ? Colors.Surface : Colors.OnSurface).ToColor(this);
 
             if (m_renderer.cull)
                 m_renderer.cull = false;

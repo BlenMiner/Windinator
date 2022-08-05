@@ -1,3 +1,4 @@
+using Riten.Windinator;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,13 +8,21 @@ public class MaterialSeparator : Image
 
     [SerializeField] bool m_vertical;
 
-    public Color Color
+    Swatch m_color;
+
+    public Swatch Color
     {
-        get => color;
+        get => m_color;
         set
         {
-            color = value;
+            m_color = value;
+            ColorChanged();
         }
+    }
+
+    void ColorChanged()
+    {
+        color = m_color.GetUnityColor(this);
     }
 
     public bool Vertical
@@ -36,8 +45,8 @@ public class MaterialSeparator : Image
 
     public void UpdateVisuals()
     {
-        color = Color;
-
+        ColorChanged();
+        
         if (m_layout != null)
         {
             m_layout.flexibleHeight = m_vertical ? 1 : -1;

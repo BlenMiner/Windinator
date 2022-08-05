@@ -36,7 +36,7 @@ namespace Riten.Windinator
         public void UpdateColor()
         {
             if (m_targetGraphic == null) return;
-            m_targetGraphic.color = m_color.UnityColor;
+            m_targetGraphic.color = m_color.GetUnityColor(this);
         }
     }
 }

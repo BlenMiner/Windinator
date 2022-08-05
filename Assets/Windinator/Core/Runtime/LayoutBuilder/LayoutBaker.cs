@@ -44,7 +44,7 @@ namespace Riten.Windinator.LayoutBuilder
         {
             UpdateFullscreen();
 
-            return new Builder(transform as RectTransform, child: Bake()).Build();
+            return new Builder(transform as RectTransform, child: new Layout.Theme(null, Bake())).Build();
         }
 
         public abstract Layout.Element Bake();

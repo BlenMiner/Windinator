@@ -34,7 +34,7 @@ namespace Riten.Windinator.Material
 
         public void UpdateSelectedColor()
         {
-            Color c = m_hovering || m_selected ? ColorSelected.ToColor() : default;
+            Color c = m_hovering || m_selected ? ColorSelected.ToColor(this) : default;
             Graphic.color = c;
         }
 

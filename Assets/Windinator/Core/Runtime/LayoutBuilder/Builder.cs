@@ -65,7 +65,7 @@ namespace Riten.Windinator.LayoutBuilder
 
     public struct ShapeProperties
     {
-        public Color? Color;
+        public Swatch? Color;
 
         public Vector4 Roundness;
 
@@ -125,9 +125,11 @@ namespace Riten.Windinator.LayoutBuilder
         {
             protected Vector4 m_padding;
 
-            protected float m_flexibleWidth = 0f, m_flexibleHeight = 0f;
+            protected float m_flexibleWidth = -1f, m_flexibleHeight = -1f;
 
             protected float m_preferredWidth = -1f, m_preferredHeight = -1f;
+
+            protected float m_minWidth = -1f, m_minHeight = -1f;
 
             protected Vector2? m_pivot = null;
 
@@ -180,6 +182,18 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 m_preferredHeight = height;
                 m_preferredWidth = width;
+                return this;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="minWidth">-1 means undefined</param>
+            /// <param name="minHeight">-1 means undefined</param>
+            public Element MinSize(float minWidth, float minHeight)
+            {
+                m_minHeight = minHeight;
+                m_minWidth = minWidth;
                 return this;
             }
 
@@ -246,14 +260,42 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 var layout = GetOrAdd<LayoutElement>(transform);
 
-                if (m_flexibleWidth != -1) layout.flexibleWidth = m_flexibleWidth;
-                if (m_flexibleHeight != -1) layout.flexibleHeight = m_flexibleHeight;
+                if (m_flexibleWidth >= 0) layout.flexibleWidth = m_flexibleWidth;
+                if (m_flexibleHeight >= 0) layout.flexibleHeight = m_flexibleHeight;
 
-                if (m_preferredWidth != -1) layout.preferredWidth = m_preferredWidth;
-                if (m_preferredHeight != -1) layout.preferredHeight = m_preferredHeight;
+                if (m_preferredWidth >= 0) layout.preferredWidth = m_preferredWidth;
+                if (m_preferredHeight >= 0) layout.preferredHeight = m_preferredHeight;
+
+                if (m_minWidth >= 0) layout.minWidth = m_minWidth;
+                if (m_minHeight >= 0) layout.minHeight = m_minHeight;
 
                 if (m_pivot.HasValue)
                     transform.pivot = m_pivot.Value;
+            }
+        }
+
+        [Serializable]
+        public class Theme : Element
+        {
+            ColorAssigner m_palette;
+
+            Element m_child;
+
+            public Theme(ColorAssigner palette, Element child)
+            {
+                m_palette = palette;
+                m_child = child;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                if (m_child == null) return null;
+
+                var container = new Container(null).Build(parent);
+                var theme = container.gameObject.AddComponent<LayoutTheme>();
+                theme.UpdateTheme(m_palette);
+
+                return m_child.Build(container);
             }
         }
 
@@ -298,6 +340,13 @@ namespace Riten.Windinator.LayoutBuilder
             {
                 m_child = child;
                 m_size = size;
+
+                if (m_size.HasValue)
+                {
+                    m_preferredWidth = m_size.Value.x;
+                    m_preferredHeight = m_size.Value.y;
+                }
+
                 m_alignment = alignment;
             }
 
@@ -308,17 +357,7 @@ namespace Riten.Windinator.LayoutBuilder
                 if (m_size.HasValue) transform.sizeDelta = m_size.Value;
 
                 AddGenericGroup(transform, m_alignment);
-
-                m_layout.flexibleWidth = m_flexibleWidth;
-                m_layout.flexibleHeight = m_flexibleHeight;
-
-                if (m_size.HasValue)
-                {
-                    var size = m_size.Value;
-
-                    m_layout.preferredWidth = size.x;
-                    m_layout.preferredHeight = size.y;
-                }
+                Setup(transform);
 
                 m_child?.Build(transform);
 
@@ -502,18 +541,16 @@ namespace Riten.Windinator.LayoutBuilder
         [System.Serializable]
         public class FlexibleSpace : Element
         {
-            float m_weight;
-
             public FlexibleSpace(float weight = 1f) : base(default)
             {
-                m_weight = weight;
+                m_flexibleHeight = weight;
+                m_flexibleWidth = weight;
             }
 
             public override RectTransform Build(RectTransform parent)
             {
                 var transform = Create("#Layout-Flexible-Space", parent);
-                m_layout.flexibleWidth = m_weight;
-                m_layout.flexibleHeight = m_weight;
+                Setup(transform);
                 return transform;
             }
         }
@@ -706,6 +743,12 @@ namespace Riten.Windinator.LayoutBuilder
                 m_shape = shape;
                 m_texture = texture;
                 m_alignment = alignment;
+
+                if (m_size.HasValue)
+                {
+                    m_preferredWidth = size.Value.x;
+                    m_preferredHeight = size.Value.y;
+                }
             }
 
             public override RectTransform Build(RectTransform parent)
@@ -717,21 +760,12 @@ namespace Riten.Windinator.LayoutBuilder
                 var cr = GetOrAdd<CanvasRenderer>(transform);
                 cr.cullTransparentMesh = false;
 
-                var layout = GetOrAdd<LayoutElement>(transform);
                 var graphic = GetOrAdd<RectangleGraphic>(transform);
 
                 AddGenericGroup(transform, m_alignment);
 
-                if (m_size.HasValue)
-                {
-                    var size = m_size.Value;
 
-                    layout.minWidth = size.x;
-                    layout.minHeight = size.y;
-                }
-
-                layout.flexibleHeight = m_flexibleHeight;
-                layout.flexibleWidth = m_flexibleWidth;
+                Setup(transform);
 
                 graphic.LeftDownColor = m_shape.Gradient.BottomLeft.GetValueOrDefault(Color.white);
                 graphic.LeftUpColor = m_shape.Gradient.TopLeft.GetValueOrDefault(Color.white);
@@ -748,7 +782,7 @@ namespace Riten.Windinator.LayoutBuilder
                     m_shape.Shadow.Blur
                 );
 
-                graphic.color = m_shape.Color.GetValueOrDefault(Color.white);
+                graphic.color = m_shape.Color.GetValueOrDefault(Colors.Surface).GetUnityColor(transform);
                 graphic.Texture = m_texture;
 
                 SetReference(graphic);
@@ -870,7 +904,7 @@ namespace Riten.Windinator.LayoutBuilder
                 img.pixelsPerUnitMultiplier = m_pixelScaler;
                 img.sprite = m_sprite;
                 img.preserveAspect = m_preserveAspect;
-                img.color = m_color.UnityColor;
+                img.color = m_color.GetUnityColor(transform);
                 img.type = m_type;
 
                 colorAssigner.Color = m_color;

@@ -36,7 +36,7 @@ public class CSGOHud : LayoutBaker
                 }
             },
             alignment: alignment
-        );
+        ).Flexible(0, 0);
     }
 
     public Element ProgressBar(float fill, Vector2 size, float outline, Color color)

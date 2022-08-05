@@ -48,10 +48,21 @@ namespace Riten.Windinator
 
     public static class AllColorTypeExtension
     {
-        public static Color ToColor(this Colors color)
+        public static Color ToColor(this Colors color, GameObject caller)
         {
-            if (Windinator.WindinatorConfig == null) return Color.black;
-            return Windinator.WindinatorConfig.ColorPalette[color];
+            var theme = caller.GetComponentInParent<LayoutBuilder.LayoutTheme>();
+            if (theme == null) return Windinator.WindinatorConfig.ColorPalette[color];
+            return theme.Theme[color];
+        }
+
+        public static Color ToColor(this Colors color, MonoBehaviour caller)
+        {
+            return ToColor(color, caller.gameObject);
+        }
+
+        public static Color ToColor(this Colors color, Transform caller)
+        {
+            return ToColor(color, caller.gameObject);
         }
     }
 

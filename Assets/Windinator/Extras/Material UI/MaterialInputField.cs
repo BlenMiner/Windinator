@@ -187,9 +187,9 @@ public class MaterialInputField : MonoBehaviour
         m_labelPaddingTarget = selected || !emptyText ? (m_type == MaterialTextFieldType.Outlined ? -40f : -24f) : 0;
 
         float bottomBarHeight = selected ? 3f : 2f;
-        m_bottomBarColorTarget = selected ? m_selectedColor.ToColor() : m_normalColor.ToColor();
+        m_bottomBarColorTarget = selected ? m_selectedColor.ToColor(this) : m_normalColor.ToColor(this);
 
-        if (m_error) m_bottomBarColorTarget = m_errorColor.ToColor();
+        if (m_error) m_bottomBarColorTarget = m_errorColor.ToColor(this);
 
         m_labelColorTarget = m_bottomBarColorTarget;
 
@@ -197,7 +197,7 @@ public class MaterialInputField : MonoBehaviour
 
         var newSize = new Vector2(m_bottomLine.rectTransform.sizeDelta.x, bottomBarHeight);
 
-        var color = m_fieldColor.ToColor();
+        var color = m_fieldColor.ToColor(this);
         var empty = color;
         empty.a = 0;
 

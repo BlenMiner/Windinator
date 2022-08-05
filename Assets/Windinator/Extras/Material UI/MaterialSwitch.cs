@@ -145,15 +145,15 @@ public class MaterialSwitch : MonoBehaviour, ISelectHandler, IDeselectHandler, I
     {
         return new AnimationState
         {
-            TrackColor = (Value ? m_TrackSelected : m_TrackUnselected).ToColor(),
-            TrackOutlineColor = (Value ? m_OutlineSelected : m_OutlineUnselected).ToColor(),
+            TrackColor = (Value ? m_TrackSelected : m_TrackUnselected).ToColor(this),
+            TrackOutlineColor = (Value ? m_OutlineSelected : m_OutlineUnselected).ToColor(this),
 
-            ThumbColor = (Value ? m_ThumbSelected : m_ThumbUnselected).ToColor(),
+            ThumbColor = (Value ? m_ThumbSelected : m_ThumbUnselected).ToColor(this),
             ThumbPosition = new Vector2(Offset * (Value ? 1 : -1), 0),
             ThumbSize = Vector2.one * (Value ? ThumbSize : ThumbMinSize),
 
             Icon = (Value ? m_IconTrue : m_IconFalse),
-            IconColor = (Value ? m_IconSelected : m_IconUnselected).ToColor()
+            IconColor = (Value ? m_IconSelected : m_IconUnselected).ToColor(this)
         };
     }
 
