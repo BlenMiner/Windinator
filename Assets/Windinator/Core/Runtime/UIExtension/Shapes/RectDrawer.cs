@@ -21,7 +21,7 @@ namespace Riten.Windinator.Shapes
 
         public override string MaterialName => "UI/Windinator/DrawRect";
 
-        protected override void DrawBatches()
+        protected override void DrawBatches(LayerGraphic layer = null)
         {
             if (m_batchedData.Count == 0) return;
 
@@ -36,7 +36,7 @@ namespace Riten.Windinator.Shapes
                 Material.SetVectorArray("_PointsExtra2", extra.Array);
                 Material.SetInt("_PointsCount", batch.Length);
 
-                Dispatch();
+                Dispatch(layer);
 
                 batch.Length = 0;
                 extra.Length = 0;
@@ -52,7 +52,7 @@ namespace Riten.Windinator.Shapes
             m_batchedDataExtra2.Clear();
         }
 
-        public void Draw(Vector2 center, Vector2 size, Vector4 roundness = default, float blend = default, DrawOperation operation = DrawOperation.Union)
+        public void Draw(Vector2 center, Vector2 size, Vector4 roundness = default, float blend = default, DrawOperation operation = DrawOperation.Union, LayerGraphic layer = null)
         {
             m_tmp.x = center.x;
             m_tmp.y = center.y;
@@ -70,7 +70,7 @@ namespace Riten.Windinator.Shapes
 
             extra2.Add(m_tmp);
 
-            SetupMaterial(blend, operation);
+            SetupMaterial(blend, operation, layer);
 
             Material.SetVectorArray("_Points", array.Array);
             Material.SetVectorArray("_PointsExtra", extra.Array);
@@ -85,7 +85,7 @@ namespace Riten.Windinator.Shapes
             ArrayPool.Free(extra);
             ArrayPool.Free(extra2);
 
-            Dispatch();
+            Dispatch(layer);
         }
 
         Vector4 m_tmp;
@@ -121,9 +121,9 @@ namespace Riten.Windinator.Shapes
             m_batchedDataExtra2[^1].Add(m_tmp);
         }
 
-        public void DrawBatch(DrawOperation operation = DrawOperation.Union)
+        public void DrawBatch(DrawOperation operation = DrawOperation.Union, LayerGraphic layer = null)
         {
-            DrawBatchInternal(0, operation);
+            DrawBatchInternal(0, operation, layer);
         }
     }
 }

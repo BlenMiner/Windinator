@@ -15,7 +15,7 @@ namespace Riten.Windinator.Shapes
 
         public override string MaterialName => "UI/Windinator/DrawCircle";
 
-        protected override void DrawBatches()
+        protected override void DrawBatches(LayerGraphic layer = null)
         {
             if (m_batchedData.Count == 0) return;
 
@@ -24,7 +24,7 @@ namespace Riten.Windinator.Shapes
                 Material.SetVectorArray("_Points", batch.Array);
                 Material.SetInt("_PointsCount", batch.Length);
 
-                Dispatch();
+                Dispatch(layer);
 
                 batch.Length = 0;
                 ArrayPool.Free(batch);
@@ -33,7 +33,7 @@ namespace Riten.Windinator.Shapes
             m_batchedData.Clear();
         }
 
-        public void Draw(Vector2 center, float radius, float blend = 0f, DrawOperation operation = DrawOperation.Union)
+        public void Draw(Vector2 center, float radius, float blend = 0f, DrawOperation operation = DrawOperation.Union, LayerGraphic layer = null)
         {
             m_tmp.x = center.x;
             m_tmp.y = center.y;
@@ -43,7 +43,7 @@ namespace Riten.Windinator.Shapes
             var array = ArrayPool.Allocate();
             array.Add(m_tmp);
 
-            SetupMaterial(blend, operation);
+            SetupMaterial(blend, operation, layer);
 
             Material.SetVectorArray("_Points", array.Array);
             Material.SetInt("_PointsCount", array.Length);
@@ -51,7 +51,7 @@ namespace Riten.Windinator.Shapes
             array.Length = 0;
             ArrayPool.Free(array);
 
-            Dispatch();
+            Dispatch(layer);
         }
 
         Vector4 m_tmp;
@@ -74,9 +74,9 @@ namespace Riten.Windinator.Shapes
             m_batchedData[^1].Add(m_tmp);
         }
 
-        public void DrawBatch(DrawOperation operation = DrawOperation.Union)
+        public void DrawBatch(DrawOperation operation = DrawOperation.Union, LayerGraphic layer = null)
         {
-            DrawBatchInternal(0, operation);
+            DrawBatchInternal(0, operation, layer);
         }
     }
 }

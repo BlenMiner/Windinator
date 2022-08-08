@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Riten.Windinator.Shapes
@@ -11,19 +12,22 @@ namespace Riten.Windinator.Shapes
 
     public class CanvasGraphic : SignedDistanceFieldGraphic
     {
-        RenderTexture m_buffer, m_backBuffer;
-
         RenderTexture m_finalBuffer;
 
-        Material m_canvas_material, m_clearCircle;
-
-        public RenderTexture CurrentBuffer => m_useBackBuffer ? m_backBuffer : m_buffer;
-
-        public RenderTexture BackBuffer => m_useBackBuffer ? m_buffer : m_backBuffer;
+        Material m_canvas_material, m_clearCircle, m_blend;
 
         [SerializeField] float m_margin;
 
         [SerializeField] float m_quality = 1f;
+
+        LayerGraphic m_mainLayer;
+
+        public LayerGraphic MainLayer => m_mainLayer;
+
+        public LayerGraphic GetLayer(LayerGraphic layer = null)
+        {
+            return layer == null ? m_mainLayer : layer;
+        }
 
         public override float Margin => m_margin;
 
@@ -37,13 +41,6 @@ namespace Riten.Windinator.Shapes
             if (margin < 0) margin = 0;
             m_margin = margin;
         }
-
-        public void SwitchBuffers()
-        {
-            m_useBackBuffer = !m_useBackBuffer;
-        }
-
-        bool m_useBackBuffer = false;
 
         public override Material defaultMaterial
         {
@@ -62,6 +59,16 @@ namespace Riten.Windinator.Shapes
                 if (m_clearCircle == null)
                     m_clearCircle = new Material(Shader.Find("UI/Windinator/ClearOp"));
                 return m_clearCircle;
+            }
+        }
+
+        Material BlendOp
+        {
+            get
+            {
+                if (m_blend == null)
+                    m_blend = new Material(Shader.Find("UI/Windinator/BlendOp"));
+                return m_blend;
             }
         }
 
@@ -113,48 +120,80 @@ namespace Riten.Windinator.Shapes
 
             if (w <= 0 || h <= 0) return;
 
-            if (m_buffer == null || m_buffer.width != w || m_buffer.height != h)
+            if (m_mainLayer == null || !m_mainLayer.IsCreated || m_finalBuffer == null || m_finalBuffer.width != w || m_finalBuffer.height != h)
             {
-                if (m_buffer != null && m_buffer.IsCreated())
-                    m_buffer.Release();
+                if (m_finalBuffer != null && m_finalBuffer.IsCreated())
+                    m_finalBuffer.Release();
+                
+                m_mainLayer?.Dispose();
 
-                if (m_backBuffer != null && m_backBuffer.IsCreated())
-                    m_backBuffer.Release();
-
-                m_buffer = new RenderTexture(w, h, 0, RenderTextureFormat.ARGBFloat);
-                m_backBuffer = new RenderTexture(m_buffer);
-                m_finalBuffer = new RenderTexture(m_buffer);
-
-                m_buffer.useMipMap = false;
-                m_backBuffer.useMipMap = false;
+                m_finalBuffer = new RenderTexture(w, h, 0, RenderTextureFormat.ARGBFloat);
                 m_finalBuffer.useMipMap = false;
-
-                m_buffer.filterMode = FilterMode.Bilinear;
-                m_backBuffer.filterMode = FilterMode.Bilinear;
-                m_finalBuffer.filterMode = FilterMode.Bilinear;
-
-                m_buffer.Create();
-                m_backBuffer.Create();
                 m_finalBuffer.Create();
 
+                m_mainLayer = new LayerGraphic(w, h);
                 Texture = m_finalBuffer;
-
-                SwitchBuffers();
             }
         }
 
-        public void Begin()
+        /// <summary>
+        /// You have to dispose it manually after you use it this frame.
+        /// </summary>
+        /// <returns></returns>
+        public LayerGraphic GetNewLayer()
         {
-            if (Texture != m_finalBuffer)
-                Texture = m_finalBuffer;
+            int w = Mathf.CeilToInt(m_size.x * Quality + Margin);
+            int h = Mathf.CeilToInt(m_size.y * Quality + Margin);
 
-            Graphics.Blit(CurrentBuffer, BackBuffer, ClearCircleOp);
-            SwitchBuffers();
+            var layer = new LayerGraphic(w, h);
+
+            Clear(layer);
+
+            return layer;
         }
 
-        public void End()
+        public void Clear(LayerGraphic layer = null)
         {
-            Graphics.Blit(CurrentBuffer, m_finalBuffer);
+            var selectedLayer = GetLayer(layer);
+
+            selectedLayer.Blit(ClearCircleOp);
+
+            if (Texture != m_finalBuffer)
+                Texture = m_finalBuffer;
+        }
+
+        public void Apply(LayerGraphic layer = null)
+        {
+            var selectedLayer = GetLayer(layer);
+
+            selectedLayer.Copy(m_finalBuffer);
+
+            if (Texture != m_finalBuffer)
+                Texture = m_finalBuffer;
+        }
+
+        public void Copy(LayerGraphic source, LayerGraphic dest)
+        {
+            var a = GetLayer(source);
+            var b = GetLayer(dest);
+
+            a.Copy(b.Texture);
+        }
+
+        public void Blend(LayerGraphic a, LayerGraphic b, float v, LayerGraphic target)
+        {
+            BlendOp.SetFloat("_Lerp", v);
+            BlendOp.SetTexture("_TextureA", a.Texture);
+            BlendOp.SetTexture("_TextureB", b.Texture);
+            Graphics.Blit(null, target.Texture, BlendOp);
+        }
+
+        public void Blend(RenderTexture a, RenderTexture b, float v, RenderTexture target)
+        {
+            BlendOp.SetFloat("_Lerp", v);
+            BlendOp.SetTexture("_TextureA", a);
+            BlendOp.SetTexture("_TextureB", b);
+            Graphics.Blit(null, target, BlendOp);
         }
 
         public Rect GetRect(RectTransform transform)

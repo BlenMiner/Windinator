@@ -33,6 +33,11 @@ namespace Riten.Windinator.Shapes
             m_dirty = true;
         }
 
+        private void OnValidate()
+        {
+            SetDirty();
+        }
+
         protected abstract void Draw(CanvasGraphic canvas, Vector2 size);
 
         protected virtual void Update()
@@ -47,9 +52,9 @@ namespace Riten.Windinator.Shapes
 
             if (m_drawRefreshMode == CanvasRefreshMode.Always)
             {
-                m_canvas.Begin();
+                m_canvas.Clear();
                 Draw(m_canvas, size);
-                m_canvas.End();
+                m_canvas.Apply();
 
                 return;
             }
@@ -58,9 +63,9 @@ namespace Riten.Windinator.Shapes
                 if (m_drawRefreshMode == CanvasRefreshMode.Once ||
                     m_drawRefreshMode == CanvasRefreshMode.OnDirty)
                 {
-                    m_canvas.Begin();
+                    m_canvas.Clear();
                     Draw(m_canvas, size);
-                    m_canvas.End();
+                    m_canvas.Apply();
                     m_dirty = false;
                 }
                 
@@ -68,9 +73,9 @@ namespace Riten.Windinator.Shapes
             }
             else if (m_dirty)
             {
-                m_canvas.Begin();
+                m_canvas.Clear();
                 Draw(m_canvas, size);
-                m_canvas.End();
+                m_canvas.Apply();
                 m_dirty = false;
             }
         }

@@ -117,6 +117,20 @@ namespace Riten.Windinator.LayoutBuilder
         public Reference() { }
     }
 
+    public struct WeightedElement
+    {
+        public Layout.Element Element;
+        public float Weight;
+
+        public WeightedElement(Layout.Element element, float weight)
+        {
+            Element = element;
+            Weight = weight;
+        }
+
+        public static implicit operator WeightedElement(Layout.Element d) => new WeightedElement { Element = d, Weight = 1 };
+    }
+
 
     public static class Layout
     {
@@ -669,6 +683,122 @@ namespace Riten.Windinator.LayoutBuilder
                 }
 
                 GetOrAdd<LayoutSizeMax>(transform);
+
+                return transform;
+            }
+        }
+
+        public class AnchoredHorizontal : Element
+        {
+            readonly WeightedElement[] m_children;
+
+            readonly float m_spacing;
+
+            public AnchoredHorizontal(WeightedElement[] children, float height = 32f, float spacing = 0f)
+            {
+                m_children = children;
+                m_flexibleWidth = 1f;
+                m_flexibleHeight = 0f;
+                m_spacing = spacing;
+                m_preferredHeight = height;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var transform = Create("AnchoredHorizontal", parent);
+
+                Setup(transform);
+
+                if (m_children != null)
+                {
+                    int len = m_children.Length;
+
+                    float totalWeight = 0f;
+
+                    foreach (var c in m_children)
+                        if (c.Element != null) totalWeight += c.Weight;
+
+                    float currentWeight = 0f;
+
+                    for (int i = 0; i < len; ++i)
+                    {
+                        if (m_children[i].Element == null)
+                            continue;
+
+                        float w = m_children[i].Weight;
+
+                        var child = m_children[i].Element.Build(transform);
+                        var currPos = currentWeight / totalWeight; currentWeight += w;
+                        var nextPos = currentWeight / totalWeight;
+
+                        child.anchorMin = new Vector2(currPos, 0f);
+                        child.anchorMax = new Vector2(nextPos, 1f);
+
+                        child.anchoredPosition = Vector2.zero;
+                        child.sizeDelta = Vector2.zero;
+
+                        if (i < len - 1) child.offsetMax = new Vector2(-m_spacing, 0);
+                        if (i > 0      ) child.offsetMin = new Vector2(m_spacing, 0);
+                    }
+                }
+
+                return transform;
+            }
+        }
+
+        public class AnchoredVertical : Element
+        {
+            readonly WeightedElement[] m_children;
+
+            readonly float m_spacing;
+
+            public AnchoredVertical(WeightedElement[] children, float width = 32f, float spacing = 0f)
+            {
+                m_children = children;
+                m_flexibleWidth = 1f;
+                m_flexibleHeight = 0f;
+                m_spacing = spacing;
+                m_preferredWidth = width;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var transform = Create("AnchoredVertical", parent);
+
+                Setup(transform);
+
+                if (m_children != null)
+                {
+                    int len = m_children.Length;
+
+                    float totalWeight = 0f;
+
+                    foreach (var c in m_children)
+                        if (c.Element != null) totalWeight += c.Weight;
+
+                    float currentWeight = 0f;
+
+                    for (int i = 0; i < len; ++i)
+                    {
+                        if (m_children[i].Element == null)
+                            continue;
+
+                        float w = m_children[i].Weight;
+
+                        var child = m_children[i].Element.Build(transform);
+                        var currPos = currentWeight / totalWeight; currentWeight += w;
+                        var nextPos = currentWeight / totalWeight;
+
+                        child.anchorMin = new Vector2(0f, currPos);
+                        child.anchorMax = new Vector2(1f, nextPos);
+
+                        child.anchoredPosition = Vector2.zero;
+                        child.sizeDelta = Vector2.zero;
+
+                        if (i < len - 1) child.offsetMax = new Vector2(0, -m_spacing);
+                        if (i > 0) child.offsetMin = new Vector2(0, m_spacing);
+                    }
+                }
 
                 return transform;
             }

@@ -21,28 +21,27 @@ namespace Riten.Windinator.Shapes
 
         public Material Material;
 
-        protected void SetupMaterial(float blend = 0f, DrawOperation operation = DrawOperation.Union)
+        protected void SetupMaterial(float blend = 0f, DrawOperation operation = DrawOperation.Union, LayerGraphic layer = null)
         {
             Material.SetFloat("_Union", blend);
             Material.SetFloat("_Operation", (int)operation);
 
-            Material.SetTexture("_MainTexture", Canvas.CurrentBuffer);
+            Material.SetTexture("_MainTexture", Canvas.GetLayer(layer).Texture);
             Material.SetVector("_Size", Canvas.Size);
             Material.SetFloat("_Padding", Canvas.Margin);
         }
 
-        protected void DrawBatchInternal(float blend = 0f, DrawOperation operation = DrawOperation.Union)
+        protected void DrawBatchInternal(float blend = 0f, DrawOperation operation = DrawOperation.Union, LayerGraphic layer = null)
         {
-            SetupMaterial(blend, operation);
-            DrawBatches();
+            SetupMaterial(blend, operation, layer);
+            DrawBatches(layer);
         }
 
-        protected void Dispatch()
+        protected void Dispatch(LayerGraphic layer = null)
         {
-            Graphics.Blit(Canvas.CurrentBuffer, Canvas.BackBuffer, Material);
-            Canvas.SwitchBuffers();
+            Canvas.GetLayer(layer).Blit(Material);
         }
 
-        protected abstract void DrawBatches();
+        protected abstract void DrawBatches(LayerGraphic layer = null);
     }
 }
