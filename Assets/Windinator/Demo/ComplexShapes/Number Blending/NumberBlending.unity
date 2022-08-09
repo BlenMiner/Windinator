@@ -283,7 +283,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_texture: {fileID: 1538947950}
+  m_texture: {fileID: 1549110591}
   m_graphicAlphaMult: 1
   m_circleAlpha: 0.321
   m_circlePos: {x: 0, y: 0}
@@ -361,6 +361,7 @@ GameObject:
   - component: {fileID: 1391313742}
   - component: {fileID: 1391313741}
   - component: {fileID: 1391313740}
+  - component: {fileID: 1391313743}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -434,7 +435,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!84 &1538947950
+--- !u!114 &1391313743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391313739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 689476944fc8c264cb27d180c5831325, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!84 &1549110591
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -453,7 +466,7 @@ RenderTexture:
   m_AntiAliasing: 1
   m_MipCount: -1
   m_DepthStencilFormat: 0
-  m_ColorFormat: 52
+  m_ColorFormat: 21
   m_MipMap: 0
   m_GenerateMips: 1
   m_SRGB: 0

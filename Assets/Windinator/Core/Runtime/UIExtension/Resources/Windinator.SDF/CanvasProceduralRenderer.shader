@@ -57,7 +57,7 @@ Shader "UI/Windinator/CanvasProceduralRenderer"
 
                 float4 color = tex2D(_MainTex, IN.texcoord);
 
-                float dist = color.r;
+                float dist = Decode(color.r);
 
                 return fragFunctionRaw(IN.texcoord, IN.worldPosition, IN.color, dist, position, halfSize);
             }

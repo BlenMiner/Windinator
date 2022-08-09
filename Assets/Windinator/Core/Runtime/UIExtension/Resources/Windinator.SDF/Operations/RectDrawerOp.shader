@@ -72,7 +72,7 @@ Shader "UI/Windinator/DrawRect"
 
                 half4 color = tex2D(_MainTex, IN.texcoord);
 
-                float dist = color.r;
+                float dist = Decode(color.r);
 
                 for (int i = 0; i < 512; ++i)
                 {
@@ -87,7 +87,7 @@ Shader "UI/Windinator/DrawRect"
                     dist = AddSDF(d, dist, blend);
                 }
 
-                return float4(dist, 1, 1, 1);
+                return float4(Encode(dist), 1, 1, 1);
             }
             ENDCG
         }

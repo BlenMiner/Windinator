@@ -127,7 +127,7 @@ namespace Riten.Windinator.Shapes
                 
                 m_mainLayer?.Dispose();
 
-                m_finalBuffer = new RenderTexture(w, h, 0, RenderTextureFormat.ARGBFloat);
+                m_finalBuffer = new RenderTexture(w, h, 0, RenderTextureFormat.R16);
                 m_finalBuffer.useMipMap = false;
                 m_finalBuffer.Create();
 

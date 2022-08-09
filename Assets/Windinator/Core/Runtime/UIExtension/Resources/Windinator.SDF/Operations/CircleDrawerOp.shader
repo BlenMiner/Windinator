@@ -66,7 +66,7 @@ Shader "UI/Windinator/DrawCircle"
 
                 half4 color = tex2D(_MainTex, IN.texcoord);
 
-                float dist = color.r;
+                float dist = Decode(color.r);
 
                 for (int i = 0; i < 512; ++i)
                 {
@@ -80,7 +80,7 @@ Shader "UI/Windinator/DrawCircle"
                     dist = AddSDF(d, dist, blend);
                 }
 
-                return float4(dist, 1, 1, 1);
+                return float4(Encode(dist), 0, 0, 1);
             }
             ENDCG
         }

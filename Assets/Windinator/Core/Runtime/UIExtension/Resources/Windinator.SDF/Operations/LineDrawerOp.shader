@@ -84,7 +84,7 @@ Shader "UI/Windinator/DrawLine"
                 float multiplier = 1 - (roundness / maxSize);
                 halfSize -= roundness;
 
-                float dist = color.r;
+                float dist = Decode(color.r);
 
                 for (int i = 0; i < 512; ++i)
                 {
@@ -97,9 +97,9 @@ Shader "UI/Windinator/DrawLine"
                     dist = min(d, dist);
                 }
 
-                float result = AddSDF(dist, color.r);
+                float result = AddSDF(dist, dist);
 
-                return float4(result, 1, 1, 1);
+                return float4(Encode(result), 1, 1, 1);
             }
             ENDCG
         }
