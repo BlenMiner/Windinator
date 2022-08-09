@@ -79,13 +79,13 @@ int _Operation;
 
 float Encode(float dist)
 {
-    float maxLen = sqrt(_Size.x * _Size.x * 0.5 + _Size.y * _Size.y * 0.5f);
+    float maxLen = length(_Size * 0.5);
     return ((dist / maxLen) + 1) * 0.5;
 }
 
 float Decode(float value)
 {
-    float maxLen = sqrt(_Size.x * _Size.x * 0.5 + _Size.y * _Size.y * 0.5f);
+    float maxLen = length(_Size * 0.5);
     return ((value * 2) - 1) * maxLen;
 }
 

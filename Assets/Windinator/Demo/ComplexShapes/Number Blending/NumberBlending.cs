@@ -117,15 +117,12 @@ public class NumberBlending : CanvasDrawer
 
         var numberA = canvas.GetNewLayer();
         var numberB = canvas.GetNewLayer();
-        var result = canvas.GetNewLayer();
 
         DrawNumer(canvas, size, numberA, time);
         DrawNumer(canvas, size, numberB, (time + 1) % 10);
 
-        canvas.Blend(numberA, numberB, Mathf.Pow(m_animation.Evaluate(lerp), m_animPower), result);
-        canvas.Copy(result, canvas.MainLayer);
+        canvas.Blend(numberA, numberB, Mathf.Pow(m_animation.Evaluate(lerp), m_animPower), canvas.MainLayer);
 
-        result.Dispose();
         numberA.Dispose();
         numberB.Dispose();
     }

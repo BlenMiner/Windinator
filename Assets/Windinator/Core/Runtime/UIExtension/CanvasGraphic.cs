@@ -26,7 +26,7 @@ namespace Riten.Windinator.Shapes
 
         public LayerGraphic GetLayer(LayerGraphic layer = null)
         {
-            return layer == null ? m_mainLayer : layer;
+            return layer ?? m_mainLayer;
         }
 
         public override float Margin => m_margin;
@@ -208,7 +208,9 @@ namespace Riten.Windinator.Shapes
 
         public void SetRect(RectTransform rect, Vector2 position, Vector2 size)
         {
-            rect.position = (Vector2)rectTransform.position + position - (rectTransform.pivot - Vector2.one * 0.5f) * rectTransform.rect.size;
+            var p = position - (rectTransform.pivot - Vector2.one * 0.5f) * rectTransform.rect.size;
+
+            rect.position = rectTransform.TransformPoint(p);
             rect.sizeDelta = size;
         }
     }
