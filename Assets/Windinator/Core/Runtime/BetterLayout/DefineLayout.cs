@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using TMPro;
 
 [ExecuteAlways]
-public class DefineLayout : MonoBehaviour
+public class DefineLayout : MonoBehaviour, ILayoutElement
 {
     [SerializeField] Vector2 m_minSize = new Vector2(0, 0);
 
@@ -10,9 +13,13 @@ public class DefineLayout : MonoBehaviour
 
     [SerializeField] Vector2 m_flexible = new Vector2(0, 0);
 
+    Vector2 m_cachedPrefferedSize;
+
     [System.NonSerialized] public RectTransform RectTransform;
 
     [System.NonSerialized] public Vector2 CachedSize;
+
+    TMP_Text m_text;
 
     static Dictionary<RectTransform, List<DefineLayout>> Layouts = 
        new Dictionary<RectTransform, List<DefineLayout>>();
@@ -31,7 +38,25 @@ public class DefineLayout : MonoBehaviour
     {
         get 
         {
-            return Vector2.Max(default, m_prefferedSize);
+            var result = m_prefferedSize;
+
+            if (result.x < 0 || result.y < 0)
+            {
+                if (m_text != null)
+                {
+                    var size = m_text.GetPreferredValues();
+
+                    if (result.x < 0) result.x = size.x;
+                    if (result.y < 0) result.y = size.y;
+                }
+                else
+                {
+                    if (result.x < 0) result.x = 0;
+                    if (result.y < 0) result.y = 0;
+                }
+            }
+
+            return result;
         }
         set
         {
@@ -66,6 +91,20 @@ public class DefineLayout : MonoBehaviour
         }
     }
 
+    public float minWidth => m_minSize.x;
+
+    public float preferredWidth => m_cachedPrefferedSize.x;
+
+    public float flexibleWidth => m_flexible.x;
+
+    public float minHeight => m_minSize.y;
+
+    public float preferredHeight => m_cachedPrefferedSize.y;
+
+    public float flexibleHeight => m_flexible.y;
+
+    public int layoutPriority => 0;
+
     public static List<DefineLayout> GetLayouts(RectTransform parent)
     {
         if (!Layouts.TryGetValue(parent, out var list))
@@ -92,12 +131,30 @@ public class DefineLayout : MonoBehaviour
 #if UNITY_EDITOR
     void OnValidate()
     {
+        RectTransform = transform as RectTransform;
+        Parent = transform.parent as RectTransform;
+
+        m_minSize = Vector2.Max(default, m_minSize);
+        m_flexible = Vector2.Max(default, m_flexible);
+
         NotifyParent(transform.parent);
     }
 #endif
 
+    void TextUpdated(TMP_TextInfo info)
+    {
+        NotifyParent(Parent);
+    }
+
     void OnEnable()
     {
+        if (m_text == null)
+        {
+            m_text = GetComponent<TMP_Text>();
+            if (m_text != null) 
+                m_text.OnPreRenderText += TextUpdated;
+        }
+
         RectTransform = transform as RectTransform;
         Parent = transform.parent as RectTransform;
 
@@ -119,10 +176,12 @@ public class DefineLayout : MonoBehaviour
             NotifyParent(Parent, list);
         }
     }
- 
+
     void OnDisable()
     {
-        if (Parent == null) return;
+        if (m_text != null) m_text.OnPreRenderText -= TextUpdated;
+
+        if (Parent == null || !Layouts.ContainsKey(Parent)) return;
 
         var list = Layouts[Parent];
 
@@ -144,7 +203,7 @@ public class DefineLayout : MonoBehaviour
 
     void ChildOrderChanged(RectTransform parent)
     {
-        if (parent == null) return;
+        if (parent == null || !Layouts.ContainsKey(parent)) return;
 
         var list = Layouts[parent];
         int cCount = parent.childCount;
@@ -166,6 +225,13 @@ public class DefineLayout : MonoBehaviour
 
     void Update()
     {
+#if UNITY_EDITOR
+        if (m_text == null)
+        {
+            m_text = GetComponent<TMP_Text>();
+            if (m_text != null) m_text.OnPreRenderText += TextUpdated;
+        }
+#endif
         var sibling = RectTransform.GetSiblingIndex();
 
         if (ChildIndex != sibling)
@@ -186,5 +252,15 @@ public class DefineLayout : MonoBehaviour
     {
         LastRect = RectTransform.rect;
         LastPosition = RectTransform.position;
+    }
+
+    public void CalculateLayoutInputHorizontal()
+    {
+        m_cachedPrefferedSize = PrefferedSize;
+    }
+
+    public void CalculateLayoutInputVertical()
+    {
+        m_cachedPrefferedSize = PrefferedSize;
     }
 }

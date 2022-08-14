@@ -12,8 +12,6 @@ public class MaterialIcon : MonoBehaviour
 
     [SerializeField, Searchable] MaterialIcons m_icon = MaterialIcons.plus;
 
-    [SerializeField] LayoutElement m_layout;
-
     [SerializeField] ColorPalette m_palette;
 
     TMP_FontAsset m_mdiFont;
@@ -6720,9 +6718,6 @@ public class MaterialIcon : MonoBehaviour
 
     public void UpdateSize(MaterialSize m_size)
     {
-        m_layout.preferredHeight = -1f;
-        m_layout.preferredWidth = -1f;
-
         if (m_size == MaterialSize.Expand)
         {
             m_text.enableAutoSizing = true;
@@ -6822,9 +6817,6 @@ public class MaterialIcon : MonoBehaviour
         m_icon = icon;
 
         bool none = m_icon == MaterialIcons.none;
-
-        if (m_layout != null)
-            m_layout.ignoreLayout = none;
 
         if (none)
         {

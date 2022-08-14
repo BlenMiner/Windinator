@@ -55,9 +55,7 @@ namespace Riten.Windinator.Material
 
         RectangleGraphic m_graphic;
 
-        ContentSizeFitter m_contentFitter;
-
-        HorizontalLayoutGroup m_horizontalLayoutGroup;
+        HorizontalLayout m_horizontalLayoutGroup;
 
         CanvasGroup m_canvasGroup;
 
@@ -72,14 +70,14 @@ namespace Riten.Windinator.Material
             if (c == null)
                 c = gameObject.AddComponent<T>();
 
-            c.hideFlags = HideFlags.HideInInspector;
+            c.hideFlags = HideFlags.None;
 
             return c;
         }
 
         public bool FitToContent
         {
-            set { m_style.FitToContent = false; m_contentFitter.enabled = m_style.FitToContent & enabled; }
+            set { m_style.FitToContent = false; m_horizontalLayoutGroup.FitContent = m_style.FitToContent & enabled; }
         }
 
         private void Reset()
@@ -107,13 +105,9 @@ namespace Riten.Windinator.Material
 
             m_canvasGroup = GetOrAdd<CanvasGroup>();
             m_graphic = GetOrAdd<RectangleGraphic>();
-            m_contentFitter = GetOrAdd<ContentSizeFitter>();
             m_renderer = GetComponent<CanvasRenderer>();
             m_renderer.cullTransparentMesh = false;
-            m_horizontalLayoutGroup = GetOrAdd<HorizontalLayoutGroup>();
-
-            m_contentFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-            m_contentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            m_horizontalLayoutGroup = GetOrAdd<HorizontalLayout>();
 
             m_canvasGroup.alpha = 1f;
             m_canvasGroup.interactable = true;
@@ -130,7 +124,7 @@ namespace Riten.Windinator.Material
         public void SetPadding(RectOffset padding)
         {
             m_style.Padding = padding;
-            m_horizontalLayoutGroup.padding = new RectOffset(padding.left + 10, padding.right + 10, padding.top + 10, padding.bottom + 10);
+            m_horizontalLayoutGroup.Padding = new Vector4(padding.left + 10, padding.right + 10, padding.top + 10, padding.bottom + 10);
         }
 
         public void SetText(string content)
@@ -244,9 +238,8 @@ namespace Riten.Windinator.Material
 
         private void OnValidate()
         {
-            if (m_contentFitter == null) return;
-
-            m_contentFitter.enabled = m_style.FitToContent && enabled;
+            if (m_horizontalLayoutGroup == null) return;
+            m_horizontalLayoutGroup.FitContent = m_style.FitToContent && enabled;
 
             SetButtonType(m_buttonType);
             SetText(m_text);
@@ -256,21 +249,11 @@ namespace Riten.Windinator.Material
 
         private void OnDisable()
         {
-            m_contentFitter.enabled = false;
+            m_horizontalLayoutGroup.FitContent = false;
 
             m_canvasGroup.alpha = 1f;
             m_canvasGroup.interactable = true;
             m_canvasGroup.blocksRaycasts = true;
-        }
-
-        private void OnDestroy()
-        {
-#if UNITY_EDITOR
-            m_graphic.hideFlags = HideFlags.None;
-            m_contentFitter.hideFlags = HideFlags.None;
-            m_horizontalLayoutGroup.hideFlags = HideFlags.None;
-            m_canvasGroup.hideFlags = HideFlags.None;
-#endif
         }
     }
 }

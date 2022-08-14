@@ -714,12 +714,17 @@ namespace Riten.Windinator.LayoutBuilder
 
         public class KeyButton : PrefabRef<MaterialKeyButton>
         {
+#if ENABLE_LEGACY_INPUT_MANAGER
             readonly KeyCode m_defaultKey;
+#else
+            readonly UnityEngine.InputSystem.Key m_defaultKey;
+#endif
 
             MaterialIcons m_icon;
 
             MaterialButtonType m_type;
 
+#if ENABLE_LEGACY_INPUT_MANAGER
             public KeyButton(KeyCode defaultKey, MaterialIcons icon = MaterialIcons.none,
                 MaterialButtonType type = MaterialButtonType.Text,
                 Vector4 padding = default) : base(LayoutMaterialPrefabs.MaterialKeyButton)
@@ -729,6 +734,17 @@ namespace Riten.Windinator.LayoutBuilder
                 m_padding = padding;
                 m_type = type;
             }
+#else
+            public KeyButton(UnityEngine.InputSystem.Key defaultKey, MaterialIcons icon = MaterialIcons.none,
+                MaterialButtonType type = MaterialButtonType.Text,
+                Vector4 padding = default) : base(LayoutMaterialPrefabs.MaterialKeyButton)
+            {
+                m_defaultKey = defaultKey;
+                m_icon = icon;
+                m_padding = padding;
+                m_type = type;
+            }
+#endif
 
             public override RectTransform Build(RectTransform parent)
             {

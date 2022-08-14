@@ -108,7 +108,7 @@ namespace Riten.Windinator
                 dirVector = new Vector2(0, -1);
                 scaleVector = new Vector2(0, 1);
                 scrollPos = Mathf.Abs(m_scrollView.content.anchoredPosition.y);
-                itemsCountThatFit = Mathf.RoundToInt(view.rect.height / itemSize) + 2;
+                itemsCountThatFit = Mathf.CeilToInt(view.rect.height / itemSize) + 2;
             }
             else
             {
@@ -117,7 +117,7 @@ namespace Riten.Windinator
                 dirVector = new Vector2(1, 0);
                 scaleVector = new Vector2(1, 0);
                 scrollPos = Mathf.Abs(m_scrollView.content.anchoredPosition.x);
-                itemsCountThatFit = Mathf.RoundToInt(view.rect.width / itemSize) + 2;
+                itemsCountThatFit = Mathf.CeilToInt(view.rect.width / itemSize) + 2;
             }
 
             int indexOffset = Mathf.FloorToInt(scrollPos / itemSize);
@@ -132,11 +132,12 @@ namespace Riten.Windinator
 
             for (int i = 0; i < m_instances.Count; ++i)
             {
+                int idx = indexOffset + i;
                 T element = m_instances[i];
 
                 RectTransform tr = element.transform as RectTransform;
 
-                var newPos = dirVector * (i + indexOffset) * itemSize;
+                var newPos = dirVector * idx * itemSize;
                 var newSize = scaleVector * m_itemSize;
 
                 if (tr.anchoredPosition != newPos)
@@ -145,7 +146,6 @@ namespace Riten.Windinator
                 if (tr.sizeDelta != newSize)
                     tr.sizeDelta = newSize;
 
-                int idx = indexOffset + i;
                 if (idx < m_data.Count) m_requestElement(idx, element, m_data[idx]);
             }
         }

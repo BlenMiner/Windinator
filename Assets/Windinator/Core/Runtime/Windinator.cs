@@ -349,9 +349,18 @@ namespace Riten.Windinator
 
         void Update()
         {
+            bool escapePressed = false;
+
+#if ENABLE_LEGACY_INPUT_MANAGER
+            escapePressed = Input.GetKeyDown(KeyCode.Escape);
+#elif ENABLE_INPUT_SYSTEM
+
+            var currentKeyboard = UnityEngine.InputSystem.Keyboard.current;
+            if (currentKeyboard != null)
+                escapePressed = currentKeyboard.escapeKey.wasPressedThisFrame;
+#endif
             // This code handles closing windows with the escape key
-            if (m_windinatorConfig.CloseWindowsWithEscape &&
-                Input.GetKeyDown(KeyCode.Escape) && m_windows.Count > 0)
+            if (m_windinatorConfig.CloseWindowsWithEscape && escapePressed && m_windows.Count > 0)
             {
                 Pop();
             }

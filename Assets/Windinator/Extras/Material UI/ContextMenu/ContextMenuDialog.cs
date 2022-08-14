@@ -31,21 +31,11 @@ namespace Riten.Windinator.Material
 
     public class ContextMenuDialog : WindinatorBehaviour, ISelectHandler, IDeselectHandler
     {
-        struct RawContextMenuItem
-        {
-            public string Value;
-
-            public Action Action;
-
-            public ContextMenuItem[] Children;
-        }
-
         [SerializeField] RectTransform m_contextMenuRoot;
 
         [SerializeField] GameObject m_itemPreset;
 
         [SerializeField] ContextMenuListPreset m_list;
-
 
         List<GameObject> m_spawnedObjects = new List<GameObject>();
 

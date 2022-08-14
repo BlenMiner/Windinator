@@ -1,12 +1,16 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class HorizontalLayout : GenericLayout
+public class VerticalLayout : GenericLayout
 {
     protected override void OnDirty(int childCount)
     {
         Rect parent = RectTransform.rect;
 
         Vector2 prefferedSize = default;
+
         Vector2 totalPrefferedSize = default;
         Vector2 totalFlexibleSpace = default;
 
@@ -32,7 +36,7 @@ public class HorizontalLayout : GenericLayout
 
     void Arrange(Vector2 container, Vector2 usedSize)
     {
-        float advance = Padding.x;
+        float advance = Padding.y;
 
         switch (Alignment)
         {
@@ -40,7 +44,7 @@ public class HorizontalLayout : GenericLayout
             case TextAnchor.LowerCenter:
             case TextAnchor.LowerRight:
 
-            advance += container.x - usedSize.x;
+            advance += container.y - usedSize.y;
 
             break;
 
@@ -48,7 +52,7 @@ public class HorizontalLayout : GenericLayout
             case TextAnchor.MiddleCenter:
             case TextAnchor.MiddleRight:
 
-            advance += (container.x - usedSize.x) * 0.5f;
+            advance += (container.y - usedSize.y) * 0.5f;
 
             break;
         }
@@ -58,11 +62,11 @@ public class HorizontalLayout : GenericLayout
             var child = layout.RectTransform;
             var size = layout.CachedSize;
 
-            float height = layout.Flexible.y != 0 ? 
-                Mathf.Max(layout.MinSize.y, container.y) : 
-                Mathf.Max(layout.MinSize.y, Mathf.Min(layout.PrefferedSize.y, container.y));
+            float width = layout.Flexible.x != 0 ? 
+                Mathf.Max(layout.MinSize.x, container.x) : 
+                Mathf.Max(layout.MinSize.x, Mathf.Min(layout.PrefferedSize.x, container.x));
 
-            float posY = Padding.y;
+            float xOffset = Padding.x;
 
             switch (Alignment)
             {
@@ -70,7 +74,7 @@ public class HorizontalLayout : GenericLayout
                 case TextAnchor.LowerCenter:
                 case TextAnchor.MiddleCenter:
 
-                posY += (container.y - height) * 0.5f;
+                xOffset += (container.x - width) * 0.5f;
 
                 break;
 
@@ -78,14 +82,15 @@ public class HorizontalLayout : GenericLayout
                 case TextAnchor.LowerRight:
                 case TextAnchor.MiddleRight:
 
-                posY += container.y - height;
+                xOffset += container.x - width;
 
                 break;
             }
 
-            child.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, posY, height);
-            child.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, advance, size.x);
-            advance += size.x;
+            child.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, advance, size.y);
+            child.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, xOffset, width);
+
+            advance += size.y;
         }
     }
 }

@@ -63,7 +63,7 @@ namespace Riten.Windinator.Shapes
                 m_batchedData = new List<StaticArray<Vector4>>();
             #endif
 
-            if (m_batchedData.Count == 0 || m_batchedData[^1].Length >= m_batchedData.Capacity)
+            if (m_batchedData.Count == 0 || m_batchedData[m_batchedData.Count - 1].Length >= m_batchedData.Capacity)
                 m_batchedData.Add(ArrayPool.Allocate());
 
             m_tmp.x = center.x;
@@ -71,7 +71,7 @@ namespace Riten.Windinator.Shapes
             m_tmp.z = radius;
             m_tmp.w = blend;
 
-            m_batchedData[^1].Add(m_tmp);
+            m_batchedData[m_batchedData.Count - 1].Add(m_tmp);
         }
 
         public void DrawBatch(DrawOperation operation = DrawOperation.Union, LayerGraphic layer = null)

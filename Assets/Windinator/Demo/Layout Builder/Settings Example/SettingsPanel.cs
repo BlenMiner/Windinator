@@ -14,7 +14,7 @@ public class SettingsPanel : LayoutBaker
         return new Theme(theme,
             new Rectangle(
                 new ScrollView(
-                    new Vertical( 
+                    new Vertical(
                         new Element[]
                         {
                             new MaterialUI.Label("General Settings", style: MaterialSize.Label),
@@ -32,8 +32,9 @@ public class SettingsPanel : LayoutBaker
                             new MaterialUI.LabeledControl("Volume", 
                                 child: new MaterialUI.Slider(0.5f).Flexible(2f, 0f),
                                 prepend: MaterialIcons.volume_source
-                            ), 
+                            ),
 
+#if ENABLE_LEGACY_INPUT_MANAGER
                             new MaterialUI.LabeledControl("Move Forward", 
                                 child: new MaterialUI.KeyButton(KeyCode.W).Small(),
                                 prepend: MaterialIcons.controller_classic 
@@ -43,6 +44,18 @@ public class SettingsPanel : LayoutBaker
                                 child: new MaterialUI.KeyButton(KeyCode.LeftShift).Small(),
                                 prepend: MaterialIcons.controller_classic
                             ),
+
+#else
+                            new MaterialUI.LabeledControl("Move Forward",
+                                child: new MaterialUI.KeyButton(UnityEngine.InputSystem.Key.W).Small(),
+                                prepend: MaterialIcons.controller_classic
+                            ),
+
+                            new MaterialUI.LabeledControl("Sprint", 
+                                child: new MaterialUI.KeyButton(UnityEngine.InputSystem.Key.LeftShift).Small(),
+                                prepend: MaterialIcons.controller_classic
+                            ),
+#endif
 
                             new MaterialUI.Separator(false),
 
@@ -100,14 +113,11 @@ public class SettingsPanel : LayoutBaker
 
     public override Element Bake()
     {
-        return new Horizontal(
-            new Element[]
+        return new AnchoredHorizontal(
+            new WeightedElement[]
             {
-                new FlexibleSpace(),
                 SettingsCard(null),
-                new FlexibleSpace(),
                 SettingsCard(m_theme),
-                new FlexibleSpace(),
             }
         ).Flexible();
     }

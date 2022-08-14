@@ -51,7 +51,14 @@ namespace Riten.Windinator
         public static Color ToColor(this Colors color, GameObject caller)
         {
             var theme = caller.GetComponentInParent<LayoutBuilder.LayoutTheme>();
-            if (theme == null) return Windinator.WindinatorConfig.ColorPalette[color];
+
+            if (theme == null)
+            {
+                var config = Windinator.WindinatorConfig;
+                if (config == null || config.ColorPalette == null) 
+                     return new Color(1, 0, 1);
+                else return config.ColorPalette[color];
+            }
             return theme.Theme[color];
         }
 
