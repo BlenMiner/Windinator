@@ -55,7 +55,9 @@ namespace Riten.Windinator.Material
 
         RectangleGraphic m_graphic;
 
-        HorizontalLayout m_horizontalLayoutGroup;
+        HorizontalLayoutGroup m_horizontalLayoutGroup;
+
+        ContentSizeFitter m_contentSizeFitter;
 
         CanvasGroup m_canvasGroup;
 
@@ -77,7 +79,7 @@ namespace Riten.Windinator.Material
 
         public bool FitToContent
         {
-            set { m_style.FitToContent = false; m_horizontalLayoutGroup.FitContent = m_style.FitToContent & enabled; }
+            set { m_style.FitToContent = false; m_contentSizeFitter.enabled = m_style.FitToContent & enabled; }
         }
 
         private void Reset()
@@ -107,7 +109,8 @@ namespace Riten.Windinator.Material
             m_graphic = GetOrAdd<RectangleGraphic>();
             m_renderer = GetComponent<CanvasRenderer>();
             m_renderer.cullTransparentMesh = false;
-            m_horizontalLayoutGroup = GetOrAdd<HorizontalLayout>();
+            m_horizontalLayoutGroup = GetOrAdd<HorizontalLayoutGroup>();
+            m_contentSizeFitter = GetOrAdd<ContentSizeFitter>();
 
             m_canvasGroup.alpha = 1f;
             m_canvasGroup.interactable = true;
@@ -124,7 +127,12 @@ namespace Riten.Windinator.Material
         public void SetPadding(RectOffset padding)
         {
             m_style.Padding = padding;
-            m_horizontalLayoutGroup.Padding = new Vector4(padding.left + 10, padding.right + 10, padding.top + 10, padding.bottom + 10);
+            m_horizontalLayoutGroup.padding = new RectOffset(
+                Mathf.FloorToInt(padding.left + 10), 
+                Mathf.FloorToInt(padding.right + 10),
+                Mathf.FloorToInt(padding.top + 10), 
+                Mathf.FloorToInt(padding.bottom + 10)
+            );
         }
 
         public void SetText(string content)
@@ -239,7 +247,7 @@ namespace Riten.Windinator.Material
         private void OnValidate()
         {
             if (m_horizontalLayoutGroup == null) return;
-            m_horizontalLayoutGroup.FitContent = m_style.FitToContent && enabled;
+            m_contentSizeFitter.enabled = m_style.FitToContent && enabled;
 
             SetButtonType(m_buttonType);
             SetText(m_text);
@@ -249,7 +257,7 @@ namespace Riten.Windinator.Material
 
         private void OnDisable()
         {
-            m_horizontalLayoutGroup.FitContent = false;
+            m_contentSizeFitter.enabled = false;
 
             m_canvasGroup.alpha = 1f;
             m_canvasGroup.interactable = true;
