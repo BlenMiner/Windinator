@@ -22,7 +22,7 @@ public class SettingsPanel : LayoutBaker
                                 "Wi-Fi", false, MaterialIcons.wifi,
                                 MaterialIcons.wifi, MaterialIcons.wifi_off,
                                 "Public campus Wi-Fi", true
-                            ),
+                            ), 
                             new MaterialUI.LabeledSwitch("Bluetooth", true, MaterialIcons.bluetooth, MaterialIcons.check),
                             new MaterialUI.LabeledSwitch("Airplane Mode", true, MaterialIcons.airplane),
                             new MaterialUI.LabeledSwitch("Do not disturb", false, MaterialIcons.volume_mute),
@@ -113,11 +113,14 @@ public class SettingsPanel : LayoutBaker
 
     public override Element Bake()
     {
-        return new AnchoredHorizontal(
-            new WeightedElement[]
+        return new Horizontal(
+            new Element[]
             {
+                new FlexibleSpace(),
                 SettingsCard(null),
+                new FlexibleSpace(),
                 SettingsCard(m_theme),
+                new FlexibleSpace(),
             }
         ).Flexible();
     }
