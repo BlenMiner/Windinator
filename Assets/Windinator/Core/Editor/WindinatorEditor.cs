@@ -332,23 +332,25 @@ public class {0} : LayoutBaker
 
                 builder.ScriptHash = hash;
 
-                var size = editingScope.prefabContentsRoot.GetComponent<ContentSizeFitter>();
+                /*var size = editingScope.prefabContentsRoot.GetComponent<ContentSizeFitter>();
                 if (size == null)
                 {
                     size = editingScope.prefabContentsRoot.AddComponent<ContentSizeFitter>();
                     size.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
                     size.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
                 }
-                size.hideFlags |= HideFlags.HideInInspector;
+                size.hideFlags |= HideFlags.HideInInspector;*/
 
-                var h = editingScope.prefabContentsRoot.GetComponent<HorizontalLayoutGroup>();
+                if (editingScope.prefabContentsRoot.TryGetComponent(out HorizontalLayoutGroup l))
+                    DestroyImmediate(l);
+
+                if (editingScope.prefabContentsRoot.TryGetComponent(out ContentSizeFitter csf))
+                    DestroyImmediate(csf);
+
+                var h = editingScope.prefabContentsRoot.GetComponent<HorizontalLayout>();
                 if (h == null)
                 {
-                    h = editingScope.prefabContentsRoot.AddComponent<HorizontalLayoutGroup>();
-                    h.childControlWidth = true;
-                    h.childControlHeight = true;
-                    h.childForceExpandWidth = false;
-                    h.childForceExpandHeight = false;
+                    h = editingScope.prefabContentsRoot.AddComponent<HorizontalLayout>();
                 }
                 h.hideFlags |= HideFlags.HideInInspector;
 
