@@ -97,6 +97,8 @@ public class NumberBlending : CanvasDrawer
         },
     };
 
+    LayerGraphic m_numberA, m_numberB;
+
     void DrawNumer(CanvasGraphic canvas, Vector2 size, LayerGraphic layer, int number)
     {
         var nb = numbers[number];
@@ -110,20 +112,29 @@ public class NumberBlending : CanvasDrawer
         canvas.LineBrush.DrawBatch(m_thickness, layer: layer);
     }
 
+    void OnEnable()
+    {
+        m_numberA = Canvas.GetNewLayer();
+        m_numberB = Canvas.GetNewLayer();
+    }
+
+    void OnDisable()
+    {
+        m_numberA?.Dispose();
+        m_numberB?.Dispose();
+    }
+
     protected override void Draw(CanvasGraphic canvas, Vector2 size)
     {
         int time = Mathf.FloorToInt(Time.time) % 10;
         float lerp = Time.time % 1f;
 
-        var numberA = canvas.GetNewLayer();
-        var numberB = canvas.GetNewLayer();
+        canvas.Clear(m_numberA);
+        canvas.Clear(m_numberB);
 
-        DrawNumer(canvas, size, numberA, time);
-        DrawNumer(canvas, size, numberB, (time + 1) % 10);
+        DrawNumer(canvas, size, m_numberA, time);
+        DrawNumer(canvas, size, m_numberB, (time + 1) % 10);
 
-        canvas.Blend(numberA, numberB, Mathf.Pow(m_animation.Evaluate(lerp), m_animPower), canvas.MainLayer);
-
-        numberA.Dispose();
-        numberB.Dispose();
+        canvas.Blend(m_numberA, m_numberB, Mathf.Pow(m_animation.Evaluate(lerp), m_animPower), canvas.MainLayer);
     }
 }
