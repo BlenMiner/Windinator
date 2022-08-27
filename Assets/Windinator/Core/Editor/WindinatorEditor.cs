@@ -334,12 +334,22 @@ public class {0} : LayoutBaker
 
                 var cs = editingScope.prefabContentsRoot.GetComponent<ContentSizeFitter>();
                 if (cs == null)
+                {
                     cs = editingScope.prefabContentsRoot.AddComponent<ContentSizeFitter>();
+                }
+                cs.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+                cs.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
                 cs.hideFlags = HideFlags.HideInInspector;
 
                 var h = editingScope.prefabContentsRoot.GetComponent<HorizontalLayoutGroup>();
                 if (h == null)
                     h = editingScope.prefabContentsRoot.AddComponent<HorizontalLayoutGroup>();
+                h.childControlWidth = true;
+                h.childControlHeight = true;
+                h.childScaleWidth = false;
+                h.childScaleHeight = false;
+                h.childForceExpandWidth = false;
+                h.childForceExpandHeight = false;
                 h.hideFlags = HideFlags.HideInInspector;
 
                 builder.ClearContents();
