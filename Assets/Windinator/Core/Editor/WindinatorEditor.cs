@@ -136,6 +136,8 @@ public class {0} : LayoutBaker
             try
             {
                 WindinatorConfig config = Resources.Load<WindinatorConfig>("WindinatorConfig");
+                
+                CleanList();
 
                 if (config.Prefabs == null) config.Prefabs = new List<LayoutBaker>();
 
@@ -220,7 +222,6 @@ public class {0} : LayoutBaker
 
                     RegisterPrefab(prefab);
                 }
-                else CleanList();
             }
             catch (Exception ex)
             {
@@ -257,7 +258,6 @@ public class {0} : LayoutBaker
 
                     RegisterWindow(window);
                 }
-                else CleanList();
             }
             catch (Exception ex)
             {
