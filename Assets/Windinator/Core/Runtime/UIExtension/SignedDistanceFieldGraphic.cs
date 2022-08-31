@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -55,7 +53,10 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     public Texture Texture {
         get => m_texture;
-        set {m_texture = value; SetMaterialDirty();}
+        set {
+            m_texture = value; 
+            SetMaterialDirty();
+        }
     }
      
     public virtual float Margin => Mathf.Max(m_outlineSize, m_shadowSize) + 2 + ExtraMargin;
@@ -75,12 +76,27 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         else            canvasRenderer.cull = false;
     }}
 
+    static Material RectangleRendererShader;
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        UpdateInstanciable();
+    }
+
     public override Material defaultMaterial
     {
         get
         {
             if (m_material == null)
-                m_material = new Material(Shader.Find("UI/Windinator/RectangleRenderer"));
+            {
+                if (RectangleRendererShader == null)
+                {
+                    RectangleRendererShader = new Material(Shader.Find("UI/Windinator/RectangleRenderer"));
+                    RectangleRendererShader.enableInstancing = true;
+                }
+                m_material = RectangleRendererShader;
+            }
             return m_material;
         }
     }
@@ -91,7 +107,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set
         {
             m_circleColor = value;
-            SetMaterialDirty();
+            SetVerticesDirty();
         }
     }
 
@@ -101,7 +117,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set
         {
             m_circleAlpha = value;
-            SetMaterialDirty();
+            SetVerticesDirty();
         }
     }
 
@@ -111,7 +127,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set
         {
             m_circleRadius = value;
-            SetMaterialDirty();
+            SetVerticesDirty();
         }
     }
 
@@ -121,7 +137,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set
         {
             m_outlineColor = value;
-            SetMaterialDirty();
+            SetVerticesDirty();
         }
     }
 
@@ -131,7 +147,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set
         {
             m_outlineSize = value;
-            SetAllDirty();
+            SetVerticesDirty();
         }
     }
 
@@ -141,7 +157,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set
         {
             m_shadowColor = value;
-            SetMaterialDirty();
+            SetVerticesDirty();
         }
     }
 
@@ -151,7 +167,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set
         {
             m_shadowSize = value;
-            SetAllDirty();
+            SetVerticesDirty();
         }
     }
 
@@ -161,7 +177,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set
         {
             m_shadowBlur = value;
-            SetMaterialDirty();
+            SetVerticesDirty();
         }
     }
 
@@ -171,15 +187,24 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set
         {
             m_shadowPower = value;
-            SetMaterialDirty();
+            SetVerticesDirty();
         }
     }
 
-    public Vector2 CirclePos { get => m_circlePos; set { m_circlePos = value; SetMaterialDirty();} }
+    public Vector2 CirclePos { get => m_circlePos; set { m_circlePos = value; SetVerticesDirty();} }
 
-    public Vector4 MaskRect { get => m_maskRect; set { m_maskRect = value; SetMaterialDirty(); } }
+    public Vector4 MaskRect { 
+        get => m_maskRect; 
+        set { 
+            m_maskRect = value;
+            SetMaterialDirty(); 
+        } 
+    }
 
-    public Vector4 MaskOffset { get => m_maskOffset; set { m_maskOffset = value; SetMaterialDirty(); } }
+    public Vector4 MaskOffset { get => m_maskOffset; set { 
+            m_maskOffset = value;
+            SetMaterialDirty(); 
+        }  }
 
     public Color LeftUpColor { get => m_leftUpColor; set => m_leftUpColor = value; }
     
@@ -223,15 +248,17 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         SetAllDirty();
     }
 
+    private Vector2 m_size;
+
+    public Vector2 Size => new Vector2(rectTransform.rect.width, rectTransform.rect.height);
+
     private void UpdateShaderDimensions()
     {
         float width = rectTransform.rect.width;
         float height = rectTransform.rect.height;
 
-        defaultMaterial.SetVector("_Size", new Vector2(
-            width,
-            height)
-        );
+        m_size.x = width;
+        m_size.y = height;
 
         onMaterialUpdate?.Invoke(width, height);
     }
@@ -242,11 +269,33 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         UpdateShaderDimensions();
     }
 
+    public override void SetVerticesDirty()
+    {
+        base.SetVerticesDirty();
+
+        #if UNITY_EDITOR
+        if (canvas != null && !Application.isPlaying)
+        {
+            canvas.additionalShaderChannels = 
+                AdditionalCanvasShaderChannels.Normal | 
+                AdditionalCanvasShaderChannels.Tangent | 
+                AdditionalCanvasShaderChannels.TexCoord1 | 
+                AdditionalCanvasShaderChannels.TexCoord2 | 
+                AdditionalCanvasShaderChannels.TexCoord3;
+        }
+        #endif
+    }
+
     protected override void OnRectTransformDimensionsChange()
     {
         base.OnRectTransformDimensionsChange();
 
         UpdateShaderDimensions();
+    }
+
+    protected virtual Vector4 UpdateMeshData(float width, float height)
+    {
+        return default;
     }
 
     protected override void OnPopulateMesh(VertexHelper vh)
@@ -261,20 +310,41 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
             rectTransform.pivot.y * height, 0);
 
         UIVertex vertex = UIVertex.simpleVert;
-        vertex.color = color;
 
+        // Equal for all
+        vertex.uv1 = new Vector4(m_shadowSize, m_shadowBlur, 0, Margin);
+        vertex.uv2 = new Vector4(m_size.x, m_size.y, m_outlineSize, m_graphicAlphaMult);
+        vertex.uv3 = new Vector4(
+            DecodeFloatRGBA(m_outlineColor),
+            DecodeFloatRGBA(m_shadowColor),
+            DecodeFloatRGBA(new Vector4(m_circleColor.r, m_circleColor.g, m_circleColor.b, m_circleColor.a * m_circleAlpha)),
+            m_circleRadius
+        );
+
+        vertex.normal = new Vector3(
+            CirclePos.x,
+            CirclePos.y,
+            0
+        );
+
+        vertex.tangent = UpdateMeshData(width, height);
+
+        vertex.color = color * LeftDownColor;
         vertex.position = new Vector3(-Margin, -Margin) - pivot;
         vertex.uv0 = new Vector2(0, 0);
         vh.AddVert(vertex);
 
+        vertex.color = color * LeftUpColor;
         vertex.position = new Vector3(-Margin, height + Margin) - pivot;
         vertex.uv0 = new Vector2(0, 1);
         vh.AddVert(vertex);
 
+        vertex.color = color * RightUpColor;
         vertex.position = new Vector3(width + Margin, height + Margin) - pivot;
         vertex.uv0 = new Vector2(1, 1);
         vh.AddVert(vertex);
 
+        vertex.color = color * RightDownColor;
         vertex.position = new Vector3(width + Margin, -Margin) - pivot;
         vertex.uv0 = new Vector2(1, 0);
         vh.AddVert(vertex);
@@ -283,43 +353,57 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         vh.AddTriangle(2, 3, 0);
     }
 
+    float DecodeFloatRGBA( Vector4 enc )
+    {
+        Color32 color = (Color)enc;
+        int result = color.r;
+        result |= color.g << 8;
+        result |= color.b << 16;
+        result |= Mathf.Max(0, (color.a / 2) - 1) << 24;
+
+        return Int32BitsToSingle(result);
+    }
+
+    float DecodeFloatCoords(byte x, byte y, byte z, byte w)
+    {
+        int result = x;
+        result |= y << 8;
+        result |= z << 16;
+        result |= Mathf.Max(0, (w / 2) - 1) << 24;
+
+        return Int32BitsToSingle(result);
+    }
+
+    public static unsafe uint SingleToUInt32Bits(float value) {
+        return *(uint*)(&value);
+    }
+
+    public static unsafe float Int32BitsToSingle(int value) {
+        return *(float*)(&value);
+    }
+
     public override void SetMaterialDirty()
     {
         base.SetMaterialDirty();
 
+        UpdateInstanciable();
         UpdateShaderDimensions();
 
         defaultMaterial.SetTexture("_MainTex", mainTexture);
-        defaultMaterial.SetFloat("_Alpha", m_graphicAlphaMult);
-
-        defaultMaterial.SetFloat("_GraphicBlur", 0f);
-
-        var outlineCol = m_outlineColor;
-
-        defaultMaterial.SetFloat("_OutlineSize", m_outlineSize);
-        defaultMaterial.SetColor("_OutlineColor", outlineCol);
-
-        var circleCol = m_circleColor;
 
         defaultMaterial.SetVector("_MaskRect", MaskRect);
         defaultMaterial.SetVector("_MaskOffset", MaskOffset);
-        defaultMaterial.SetVector("_CirclePos", CirclePos);
-        defaultMaterial.SetVector("_CircleColor", circleCol);
-        defaultMaterial.SetFloat("_CircleRadius", m_circleRadius);
-        defaultMaterial.SetFloat("_CircleAlpha", m_circleAlpha);
+    }
 
-        var shadowCol = m_shadowColor;
+    void UpdateInstanciable()
+    {
+        bool canInstance = mainTexture == null && MaskRect.z == 0 && MaskRect.w == 0 && MaskOffset == default;
+        bool isInstance = defaultMaterial == RectangleRendererShader;
 
-        defaultMaterial.SetFloat("_ShadowSize", m_shadowSize);
-        defaultMaterial.SetFloat("_ShadowBlur", m_shadowBlur);
-        defaultMaterial.SetFloat("_ShadowPow", m_shadowPower);
-        defaultMaterial.SetColor("_ShadowColor", shadowCol);
-
-        defaultMaterial.SetFloat("_Padding", Margin);
-
-        defaultMaterial.SetColor("_LU", LeftUpColor);
-        defaultMaterial.SetColor("_RU", RightUpColor);
-        defaultMaterial.SetColor("_LD", LeftDownColor);
-        defaultMaterial.SetColor("_RD", RightDownColor);
+        if (canInstance != isInstance)
+        {
+            m_material = canInstance ? RectangleRendererShader : Instantiate(RectangleRendererShader);
+            SetAllDirty();
+        }
     }
 }

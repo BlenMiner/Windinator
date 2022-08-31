@@ -81,7 +81,7 @@ public class SDFGraphicEditor : Editor
         {
             graphic.CircleColor = EditorGUILayout.ColorField(
                 new GUIContent("Circle Color"), 
-                graphic.CircleColor, true, false, true
+                graphic.CircleColor, true, false, false
             );
             
             graphic.CircleSize = EditorGUILayout.FloatField("Circle Radius", graphic.CircleSize);

@@ -16,50 +16,38 @@ public class RectangleGraphic : SignedDistanceFieldGraphic
 
     public Vector4 Roundness {get => m_roudnessInPixels; set {
         m_roudnessInPixels = value;
-        SetMaterialDirty();
+        SetVerticesDirty();
     }}
 
     public bool UniformRoundness {get => m_uniformRoundness; set {
         m_uniformRoundness = value;
-        SetMaterialDirty();
+        SetVerticesDirty();
     }}
 
     public bool MaxRoundess {get => m_useMaxRoundness; set {
         m_useMaxRoundness = value;
-        SetMaterialDirty();
+        SetVerticesDirty();
     }}
 
     public void SetRoundness(Vector4 roundness)
     {
         m_roudnessInPixels = roundness;
-        SetMaterialDirty();
+        SetVerticesDirty();
     }
 
     public void SetUniformRoundness(bool value)
     {
         m_uniformRoundness = value;
-        SetMaterialDirty();
+        SetVerticesDirty();
     }
 
     public void SetMaxRoundness(bool value)
     {
         m_useMaxRoundness = value;
-        SetMaterialDirty();
+        SetVerticesDirty();
     }
 
-    override protected void OnEnable()
-    {
-        onMaterialUpdate += UpdateShaderRoundness;
-        base.OnEnable();
-    }
-
-    override protected void OnDisable()
-    {
-        onMaterialUpdate -= UpdateShaderRoundness;
-        base.OnDisable();
-    }
-
-    void UpdateShaderRoundness(float width, float height)
+    protected override Vector4 UpdateMeshData(float width, float height)
     {
         float maxRoundedValue = Mathf.Min(width, height) * 0.5f;
 
@@ -79,6 +67,6 @@ public class RectangleGraphic : SignedDistanceFieldGraphic
         roudness.z = Mathf.Min(roudness.z, maxRoundedValue);
         roudness.w = Mathf.Min(roudness.w, maxRoundedValue);
 
-        defaultMaterial.SetVector("_Roundness", m_useMaxRoundness ? maxRounded : roudness);
+        return m_useMaxRoundness ? maxRounded : roudness;
     }
 }

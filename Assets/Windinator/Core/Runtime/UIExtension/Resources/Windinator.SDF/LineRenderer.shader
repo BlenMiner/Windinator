@@ -85,7 +85,9 @@ Shader "UI/Windinator/LineRenderer"
             {
                 float2 position;
                 float2 halfSize;
+                float2 worldPos;
 
+                LoadData(IN, worldPos);
                 GetRect(IN.texcoord, position, halfSize, 1);
 
                 float2 size = halfSize - 0.5;
@@ -106,7 +108,7 @@ Shader "UI/Windinator/LineRenderer"
 
                 // float dist = sdTriangleIsosceles(dpos, dsize) - roundness;
 
-                return fragFunction(IN.texcoord, IN.worldPosition, IN.color, dist, position, halfSize);
+                return fragFunction(IN.texcoord, worldPos, IN.color, dist, position, halfSize);
             }
             ENDCG
         }

@@ -99,6 +99,12 @@ namespace Riten.Windinator
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = WindinatorConfig.StartingCanvasLayer;
             canvas.pixelPerfect = WindinatorConfig.CanvasSettings.PixelPerfect;
+            canvas.additionalShaderChannels = 
+                AdditionalCanvasShaderChannels.Normal |
+                AdditionalCanvasShaderChannels.Tangent |
+                AdditionalCanvasShaderChannels.TexCoord1 |
+                AdditionalCanvasShaderChannels.TexCoord2 |
+                AdditionalCanvasShaderChannels.TexCoord3;
 
             var scalerSettings = WindinatorConfig.ScalerSettings;
             scaler.uiScaleMode = scalerSettings.UIScaleMode;

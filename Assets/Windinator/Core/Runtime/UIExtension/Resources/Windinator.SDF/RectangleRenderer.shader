@@ -60,13 +60,19 @@ Shader "UI/Windinator/RectangleRenderer"
             {
                 float2 position;
                 float2 halfSize;
+                float2 worldPos;
 
-                GetRect(IN.texcoord, position, halfSize, 0);
+                LoadData(IN, worldPos);
+                float4 tangent = IN.tangent;
+
+                _Roundness = float4(tangent.x, tangent.y, tangent.z, tangent.w);
+
+                GetRawRect(IN.texcoord, position, halfSize, 0);
 
                 // Signed distance field calculation
                 float dist = sdRoundedBox(position, halfSize, _Roundness);
-
-                return fragFunction(IN.texcoord, IN.worldPosition, IN.color, dist, position, halfSize);
+                return fragFunction(IN.texcoord, worldPos, IN.color, dist, position, halfSize);
+                //return IN.color;
             }
             ENDCG
         }

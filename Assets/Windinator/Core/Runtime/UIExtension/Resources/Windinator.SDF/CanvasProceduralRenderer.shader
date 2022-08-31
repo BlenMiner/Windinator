@@ -52,14 +52,16 @@ Shader "UI/Windinator/CanvasProceduralRenderer"
             {
                 float2 position;
                 float2 halfSize;
+                float2 worldPos;
 
+                LoadData(IN, worldPos);
                 GetRect(IN.texcoord, position, halfSize, 1);
 
                 float4 color = tex2D(_MainTex, IN.texcoord);
 
                 float dist = Decode(color.r);
 
-                return fragFunctionRaw(IN.texcoord, IN.worldPosition, IN.color, dist, position, halfSize);
+                return fragFunctionRaw(IN.texcoord, worldPos, IN.color, dist, position, halfSize);
             }
             ENDCG
         }
