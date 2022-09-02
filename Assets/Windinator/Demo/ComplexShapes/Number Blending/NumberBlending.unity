@@ -199,7 +199,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 31
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -283,7 +283,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_texture: {fileID: 1549110591}
+  m_texture: {fileID: 1731730674}
   m_graphicAlphaMult: 1
   m_circleAlpha: 0.321
   m_circlePos: {x: 0, y: 0}
@@ -301,7 +301,7 @@ MonoBehaviour:
   m_rightUpColor: {r: 1, g: 1, b: 1, a: 1}
   m_rightDownColor: {r: 1, g: 1, b: 1, a: 1}
   m_leftDownColor: {r: 1, g: 1, b: 1, a: 1}
-  m_margin: 30
+  m_margin: 200
   m_quality: 1
 --- !u!222 &537653362
 CanvasRenderer:
@@ -447,7 +447,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689476944fc8c264cb27d180c5831325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!84 &1549110591
+--- !u!84 &1731730674
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -461,8 +461,8 @@ RenderTexture:
   m_DownscaleFallback: 0
   m_IsAlphaChannelOptional: 0
   serializedVersion: 5
-  m_Width: 160
-  m_Height: 230
+  m_Width: 330
+  m_Height: 400
   m_AntiAliasing: 1
   m_MipCount: -1
   m_DepthStencilFormat: 0

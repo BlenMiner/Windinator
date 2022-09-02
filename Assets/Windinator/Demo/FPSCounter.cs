@@ -7,6 +7,14 @@ public class FPSCounter : MonoBehaviour
     float fps;
     float oldTime;
 
+    private void Start()
+    {
+#if !UNITY_EDITOR
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 300;
+#endif
+    }
+
     void Update()
     {
         float currentFps = 1.0f / Time.deltaTime;

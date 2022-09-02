@@ -36,6 +36,7 @@ namespace Riten.Windinator.LayoutBuilder
         }
     }
 
+    [Serializable]
     public struct ShadowProperties
     {
         public float Size;
@@ -45,6 +46,7 @@ namespace Riten.Windinator.LayoutBuilder
         public Color? Color;
     }
 
+    [Serializable]
     public struct OutlineProperties
     {
         public float Size;
@@ -52,6 +54,7 @@ namespace Riten.Windinator.LayoutBuilder
         public Color? Color;
     }
 
+    [Serializable]
     public struct GradientProperties
     {
         public Color? TopLeft;
@@ -63,6 +66,7 @@ namespace Riten.Windinator.LayoutBuilder
         public Color? BottomLeft;
     }
 
+    [System.Serializable]
     public struct ShapeProperties
     {
         public Swatch? Color;
@@ -120,6 +124,7 @@ namespace Riten.Windinator.LayoutBuilder
     public struct WeightedElement
     {
         public Layout.Element Element;
+
         public float Weight;
 
         public WeightedElement(Layout.Element element, float weight)
@@ -129,6 +134,19 @@ namespace Riten.Windinator.LayoutBuilder
         }
 
         public static implicit operator WeightedElement(Layout.Element d) => new WeightedElement { Element = d, Weight = 1 };
+    }
+
+    public struct SizedElement
+    {
+        public Layout.Element Element;
+
+        public float Size;
+
+        public SizedElement(Layout.Element element, float size)
+        {
+            Element = element;
+            Size = size;
+        }
     }
 
 
@@ -688,13 +706,13 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
 
-        public class AnchoredHorizontal : Element
+        public class WeightedHorizontal : Element
         {
             readonly WeightedElement[] m_children;
 
             readonly float m_spacing;
 
-            public AnchoredHorizontal(WeightedElement[] children, float height = 32f, float spacing = 0f)
+            public WeightedHorizontal(WeightedElement[] children, float height = 32f, float spacing = 0f)
             {
                 m_children = children;
                 m_flexibleWidth = 1f;
@@ -746,13 +764,78 @@ namespace Riten.Windinator.LayoutBuilder
             }
         }
 
-        public class AnchoredVertical : Element
+        public class SizeVertical : Element
+        {
+            readonly SizedElement[] m_children;
+
+            readonly float m_spacing;
+
+            readonly float m_totalHeight;
+
+            public SizeVertical(SizedElement[] children, float spacing = 0f, Vector4 padding = default) : base(padding)
+            {
+                foreach (var c in children)
+                {
+                    m_totalHeight += c.Size + spacing;
+                }
+
+                m_totalHeight += padding.z + padding.w;
+                m_totalHeight -= spacing;
+
+                m_children = children;
+                m_flexibleWidth = 1f;
+                m_flexibleHeight = 0f;
+                m_preferredHeight = m_totalHeight;
+                m_spacing = spacing;
+            }
+
+            public override RectTransform Build(RectTransform parent)
+            {
+                var transform = Create("SizedHorizontal", parent);
+
+                Setup(transform);
+
+                if (m_children != null)
+                {
+                    int len = m_children.Length;
+
+                    float currPos = -m_padding.z;
+
+                    for (int i = 0; i < len; ++i)
+                    {
+                        if (m_children[i].Element == null)
+                        {
+                            currPos -= m_children[i].Size + m_spacing;
+                            continue;
+                        }
+
+                        float height = m_children[i].Size;
+
+                        var child = m_children[i].Element.Build(transform);
+
+                        child.pivot = new Vector2(0f, 1f);
+
+                        child.anchorMin = new Vector2(0f, 1f);
+                        child.anchorMax = new Vector2(1f, 1f);
+
+                        child.anchoredPosition = new Vector2(m_padding.x, currPos);
+                        child.sizeDelta = new Vector2(-m_padding.y, height);
+
+                        currPos -= height + m_spacing;
+                    }
+                }
+
+                return transform;
+            }
+        }
+
+        public class WeightedVertical : Element
         {
             readonly WeightedElement[] m_children;
 
             readonly float m_spacing;
 
-            public AnchoredVertical(WeightedElement[] children, float width = 32f, float spacing = 0f)
+            public WeightedVertical(WeightedElement[] children, float width = 32f, float spacing = 0f)
             {
                 m_children = children;
                 m_flexibleWidth = 1f;

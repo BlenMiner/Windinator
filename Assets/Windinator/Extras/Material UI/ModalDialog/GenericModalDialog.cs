@@ -1,5 +1,6 @@
 using UnityEngine;
 using Riten.Windinator;
+using Riten.Windinator.Material;
 
 public class GenericModalDialog : WindinatorBehaviour
 {
@@ -7,7 +8,7 @@ public class GenericModalDialog : WindinatorBehaviour
 
     [SerializeField] TMPro.TMP_Text m_message;
 
-    [SerializeField] TMPro.TMP_Text m_ok, m_cancel;
+    [SerializeField] MaterialButton m_button1, m_button2;
 
     [Header("Sections")]
 
@@ -28,8 +29,8 @@ public class GenericModalDialog : WindinatorBehaviour
         m_title.text = title;
         m_message.text = message;
 
-        m_ok.text = action1;
-        m_cancel.text = action2;
+        m_button1.SetText(action1);
+        m_button2.SetText(action2);
 
         m_action1GO.SetActive(action1 != null);
         m_action2GO.SetActive(action2 != null);

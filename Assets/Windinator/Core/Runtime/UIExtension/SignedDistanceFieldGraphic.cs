@@ -16,7 +16,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     [SerializeField] Vector2 m_circlePos;
 
-    [SerializeField] Color m_circleColor;
+    [SerializeField] Color32 m_circleColor;
 
     [SerializeField] float m_circleRadius = 0f;
 
@@ -24,7 +24,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     [SerializeField, Min(0f)] float m_outlineSize = 0f;
 
-    [SerializeField] Color m_outlineColor = Color.black;
+    [SerializeField] Color32 m_outlineColor = Color.black;
 
     [Header("Shadow")]
 
@@ -34,7 +34,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     [SerializeField, Min(0f)] float m_shadowPower = 1f;
 
-    [SerializeField] Color m_shadowColor = Color.black;
+    [SerializeField] Color32 m_shadowColor = Color.black;
 
     [Header("Mask")]
 
@@ -84,18 +84,23 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         UpdateInstanciable();
     }
 
+    private void LoadMaterial()
+    {
+        if (RectangleRendererShader == null)
+        {
+            RectangleRendererShader = new Material(Shader.Find("UI/Windinator/RectangleRenderer"));
+            RectangleRendererShader.enableInstancing = true;
+        }
+        m_material = RectangleRendererShader;
+    }
+
     public override Material defaultMaterial
     {
         get
         {
             if (m_material == null)
             {
-                if (RectangleRendererShader == null)
-                {
-                    RectangleRendererShader = new Material(Shader.Find("UI/Windinator/RectangleRenderer"));
-                    RectangleRendererShader.enableInstancing = true;
-                }
-                m_material = RectangleRendererShader;
+                LoadMaterial();
             }
             return m_material;
         }
@@ -248,17 +253,15 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         SetAllDirty();
     }
 
-    private Vector2 m_size;
-
-    public Vector2 Size => new Vector2(rectTransform.rect.width, rectTransform.rect.height);
+    private Vector2 m_sizeCached;
 
     private void UpdateShaderDimensions()
     {
         float width = rectTransform.rect.width;
         float height = rectTransform.rect.height;
 
-        m_size.x = width;
-        m_size.y = height;
+        m_sizeCached.x = width;
+        m_sizeCached.y = height;
 
         onMaterialUpdate?.Invoke(width, height);
     }
@@ -298,6 +301,8 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         return default;
     }
 
+    static readonly Vector2 ZERO = new Vector2(0, 0), UP = new Vector2(0, 1), ONE = new Vector2(1, 1), RIGHT = new Vector2(1, 0);
+
     protected override void OnPopulateMesh(VertexHelper vh)
     {
         vh.Clear();
@@ -309,73 +314,65 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
             rectTransform.pivot.x * width,
             rectTransform.pivot.y * height, 0);
 
-        UIVertex vertex = UIVertex.simpleVert;
-
         // Equal for all
-        vertex.uv1 = new Vector4(m_shadowSize, m_shadowBlur, 0, Margin);
-        vertex.uv2 = new Vector4(m_size.x, m_size.y, m_outlineSize, m_graphicAlphaMult);
-        vertex.uv3 = new Vector4(
+        var uv1 = new Vector4(m_shadowSize, m_shadowBlur, 0, Margin);
+        var uv2 = new Vector4(m_sizeCached.x, m_sizeCached.y, m_outlineSize, m_graphicAlphaMult);
+        var uv3 = new Vector4(
             DecodeFloatRGBA(m_outlineColor),
             DecodeFloatRGBA(m_shadowColor),
-            DecodeFloatRGBA(new Vector4(m_circleColor.r, m_circleColor.g, m_circleColor.b, m_circleColor.a * m_circleAlpha)),
+            DecodeFloatRGBA(new Color32(m_circleColor.r, m_circleColor.g, m_circleColor.b, (byte)(m_circleColor.a * m_circleAlpha))),
             m_circleRadius
         );
 
-        vertex.normal = new Vector3(
+        var normal = new Vector3(
             CirclePos.x,
             CirclePos.y,
             0
         );
 
-        vertex.tangent = UpdateMeshData(width, height);
+        float marginedWidth = width + Margin - pivot.x;
+        float marginedHeight = height + Margin - pivot.y;
+        float negativeMarginX = -Margin - pivot.x;
+        float negativeMarginY = -Margin - pivot.y;
 
-        vertex.color = color * LeftDownColor;
-        vertex.position = new Vector3(-Margin, -Margin) - pivot;
-        vertex.uv0 = new Vector2(0, 0);
-        vh.AddVert(vertex);
+        var tangent = UpdateMeshData(width, height);
 
-        vertex.color = color * LeftUpColor;
-        vertex.position = new Vector3(-Margin, height + Margin) - pivot;
-        vertex.uv0 = new Vector2(0, 1);
-        vh.AddVert(vertex);
+        vh.AddVert(
+            new Vector3(negativeMarginX, negativeMarginY),
+            color * LeftDownColor,
+            ZERO,
+            uv1, uv2, uv3, normal, tangent);
 
-        vertex.color = color * RightUpColor;
-        vertex.position = new Vector3(width + Margin, height + Margin) - pivot;
-        vertex.uv0 = new Vector2(1, 1);
-        vh.AddVert(vertex);
+        vh.AddVert(
+            new Vector3(negativeMarginX, marginedHeight),
+            color * LeftUpColor,
+            UP,
+            uv1, uv2, uv3, normal, tangent);
 
-        vertex.color = color * RightDownColor;
-        vertex.position = new Vector3(width + Margin, -Margin) - pivot;
-        vertex.uv0 = new Vector2(1, 0);
-        vh.AddVert(vertex);
+        vh.AddVert(
+            new Vector3(marginedWidth, marginedHeight),
+            color * RightUpColor,
+            ONE,
+            uv1, uv2, uv3, normal, tangent);
+
+        vh.AddVert(
+            new Vector3(marginedWidth, negativeMarginY),
+            color * RightDownColor,
+            RIGHT,
+            uv1, uv2, uv3, normal, tangent);
 
         vh.AddTriangle(0, 1, 2);
         vh.AddTriangle(2, 3, 0);
     }
 
-    float DecodeFloatRGBA( Vector4 enc )
+    float DecodeFloatRGBA(Color32 color)
     {
-        Color32 color = (Color)enc;
         int result = color.r;
         result |= color.g << 8;
         result |= color.b << 16;
         result |= Mathf.Max(0, (color.a / 2) - 1) << 24;
 
         return Int32BitsToSingle(result);
-    }
-
-    float DecodeFloatCoords(byte x, byte y, byte z, byte w)
-    {
-        int result = x;
-        result |= y << 8;
-        result |= z << 16;
-        result |= Mathf.Max(0, (w / 2) - 1) << 24;
-
-        return Int32BitsToSingle(result);
-    }
-
-    public static unsafe uint SingleToUInt32Bits(float value) {
-        return *(uint*)(&value);
     }
 
     public static unsafe float Int32BitsToSingle(int value) {
@@ -397,8 +394,10 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     void UpdateInstanciable()
     {
+        if (m_material == null) LoadMaterial();
+
         bool canInstance = mainTexture == null && MaskRect.z == 0 && MaskRect.w == 0 && MaskOffset == default;
-        bool isInstance = defaultMaterial == RectangleRendererShader;
+        bool isInstance = m_material == RectangleRendererShader;
 
         if (canInstance != isInstance)
         {

@@ -17,7 +17,8 @@ namespace Riten.Windinator
 
         public Color TransformColor(Color c)
         {
-            c = Color.Lerp(Color.white, c, Saturation);
+            Color.RGBToHSV(c, out var h, out var s, out var v);
+            c = Color.HSVToRGB(h, s * Saturation, v);
             c.a = Alpha;
             return c;
         }
@@ -54,7 +55,7 @@ namespace Riten.Windinator
         public static Swatch FromColor(Color color, float saturation = 1f)
         {
             return new Swatch{
-                CustomColor = color,
+                CustomColor = new Color(color.r, color.g, color.b),
                 Alpha = color.a,
                 Saturation = saturation,
                 UseCustomColor = true,

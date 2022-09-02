@@ -20,6 +20,11 @@ namespace WindinatorTools
             m_parent = parent;
         }
 
+        public void ResetCounter()
+        {
+            m_index = 0;
+        }
+
         public GameObject GetInstance()
         {
             if (m_instances.Count <= m_index)
@@ -42,7 +47,7 @@ namespace WindinatorTools
         {
             for (int i = m_index; i < m_instances.Count; i++)
                 m_instances[i].SetActive(false);
-            m_index = 0;
+            ResetCounter();
         }
     }
 }

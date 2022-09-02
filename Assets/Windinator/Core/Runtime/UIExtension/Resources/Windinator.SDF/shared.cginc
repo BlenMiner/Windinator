@@ -83,13 +83,13 @@ int _Operation;
 
 float Encode(float dist)
 {
-    float maxLen = length(_Size * 0.5);
+    float maxLen = length(_Size * 0.5 + _Padding);
     return ((dist / maxLen) + 1) * 0.5;
 }
 
 float Decode(float value)
 {
-    float maxLen = length(_Size * 0.5);
+    float maxLen = length(_Size * 0.5 + _Padding);
     return ((value * 2) - 1) * maxLen;
 }
 
@@ -209,58 +209,35 @@ void LoadData(v2f v, out float2 worldPos)
 
 fixed4 fragFunctionRaw(float2 uv, float2 worldPosition, float4 color, float dist, float2 position, float2 halfSize)
 {
-    half4 _GraphicColor = color;
+    float4 effects;
+
+    float outlineDist = dist - _OutlineSize;
+    float shadowDist = dist - _ShadowSize;
     
-    float delta = fwidth(dist);
-    float delta1 = fwidth(dist + 1);
+    float delta = fwidth(dist * 0.5);
+    float outlineDelta = fwidth(outlineDist);
+    float shadowDelta = fwidth(shadowDist);
 
     // Calculate the different masks based on the SDF
-    float graphicAlpha = 1 - smoothstep(-delta, delta * 0.5, dist);
-    float graphicAlphaOutline = 1 - smoothstep(-delta1, 0, dist + 1);
-    float outlineAlpha = (1 - smoothstep(_OutlineSize - 1 - delta, _OutlineSize - 1 + delta * 0.5, dist)) * _OutlineColor.a;
-    float shadowAlpha = (1 - smoothstep(_ShadowSize - _ShadowBlur - delta, _ShadowSize, dist));
+    float graphicAlpha = smoothstep(delta, -delta, dist);
+    float outlineAlpha = smoothstep(outlineDelta, -outlineDelta, outlineDist);
+    float shadowAlpha = smoothstep(shadowDelta, -shadowDelta - _ShadowBlur, shadowDist);
+
+    float4 graphic = float4(color.rgb, color.a);
+    float4 outline = float4(_OutlineColor.rgb, _OutlineColor.a);
+    float4 shadow = float4(_ShadowColor.rgb, _ShadowColor.a);
 
     float circleSDF = distance(position, _CirclePos) - _CircleRadius;
-    float circleAASDF = 1 - smoothstep(-fwidth(circleSDF), 0, circleSDF);
+    float circleDelta = fwidth(circleSDF);
+    float circleAASDF = smoothstep(circleDelta, -circleDelta, circleSDF);
 
-    // Start with the background most layer, aka shadows
-    shadowAlpha = pow(shadowAlpha, _ShadowPow) * step(0.001, _ShadowSize);
-    outlineAlpha = outlineAlpha * step(0.001, _OutlineSize);
+    graphic = lerp(graphic, float4(_CircleColor.rgb, _CircleAlpha), _CircleRadius > 0 ? circleAASDF * _CircleAlpha : 0);
+    effects = lerp(graphic, outline, _OutlineSize > 0 ? 1 - graphicAlpha : 0);
+    effects = lerp(effects, shadow, _ShadowSize > _OutlineSize ? 1 - outlineAlpha : 0);
 
-    float4 shadowColor = float4(_ShadowColor.rgb, shadowAlpha);
-    float4 outlineColor = float4(_OutlineColor.rgb, outlineAlpha);
-    float4 graphicColor = float4(_GraphicColor.rgb, graphicAlpha * _GraphicColor.a);
-
-    float shadowInvisible = step(shadowAlpha, 0.001);
-    float shapeInvisible = step(0.001, graphicAlphaOutline);
-
-    float4 baseColor = lerp(float4(_ShadowColor.rgb, 0), float4(_GraphicColor.rgb, 0), max(shadowInvisible, shapeInvisible));
-
-    float4 graphic = lerp(
-        baseColor,
-        graphicColor,
-        graphicColor.a
-    );
-    graphic = lerp(graphic, float4(_CircleColor.rgb, 1), circleAASDF * _CircleAlpha * graphicAlpha);
-
-    float4 shadowWithGraphic = lerp(
-        graphic,
-        _ShadowColor,
-        shadowAlpha * (1 - graphicAlphaOutline)
-    );
-
-    shapeInvisible = step(0.001, shadowWithGraphic.a);
-
-    float4 shapeColor = lerp(float4(_OutlineColor.rgb, 0), shadowWithGraphic, shapeInvisible);
-
-    float4 effects = lerp(
-        shapeColor,
-        _OutlineColor,
-        outlineAlpha * (1 - graphicAlphaOutline)
-    );
-
-
+    effects.a *= max(graphicAlpha, max(outlineAlpha, shadowAlpha));
     effects.a *= _Alpha;
+
     // Unity stuff
     #ifdef UNITY_UI_CLIP_RECT
     effects.a *= UnityGet2DClipping(worldPosition.xy, _ClipRect);

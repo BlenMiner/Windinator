@@ -71,6 +71,14 @@ namespace Riten.Windinator
         {
             return ToColor(color, caller.gameObject);
         }
+
+        public static Color ToColorRaw(this Colors color)
+        {
+            var config = Windinator.WindinatorConfig;
+            if (config == null || config.ColorPalette == null)
+                return new Color(1, 0, 1);
+            else return config.ColorPalette[color];
+        }
     }
 
     [CreateAssetMenu(menuName = "Windinator/Material Palette")]

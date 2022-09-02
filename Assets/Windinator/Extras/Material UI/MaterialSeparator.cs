@@ -8,7 +8,7 @@ public class MaterialSeparator : Image
 
     [SerializeField] bool m_vertical;
 
-    Swatch m_color;
+    [SerializeField] Swatch m_color;
 
     public Swatch Color
     {

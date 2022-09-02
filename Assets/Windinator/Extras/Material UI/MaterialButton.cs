@@ -1,267 +1,267 @@
-using System;
+using Riten.Windinator;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
+using TMPro;
+using static Riten.Windinator.Material.MaterialButton;
+using static Riten.Windinator.LayoutBuilder.MaterialUI;
+using UnityEngine.Events;
+using Button = UnityEngine.UI.Button;
 
 namespace Riten.Windinator.Material
 {
     [System.Serializable]
-    public enum MaterialButtonType
+    public enum MaterialButtonStylePresets
     {
         Elevated,
         Filled,
         Tonal,
         Outlined,
         Text,
-        Manual
+        Manual,
+        WaitingSelection
+    }
+
+    [System.Serializable]
+    public class MaterialButtonStyle
+    {
+        [Header("Graphic")]
+        public Swatch Color = Colors.Surface;
+        public Swatch TextColor = Colors.OnSurface;
+        public Swatch CircleColor = Colors.Primary;
+
+        [Header("Outline")]
+        public float OutlineSize = 0f;
+        public Swatch OutlineColor = Colors.Outline;
+
+        [Header("Shadow")]
+        public float ShadowSize = 15f;
+        public float ShadowBlur = 80f;
+        public Swatch ShadowColor = UnityEngine.Color.black;
     }
 
     [ExecuteInEditMode]
-    public class MaterialButton : MonoBehaviour
+    public class MaterialButton : MonoBehaviour, ILayoutElement
     {
-        [System.Serializable]
-        private struct PresetReferences
-        {
-            public TMPro.TMP_Text m_label;
-            public TMPro.TMP_Text m_iconRenderer;
-            public MaterialIcon m_icon;
-        }
-
-        [System.Serializable]
-        public struct MaterialButtonStyle
-        {
-            public RectOffset Padding;
-            public float OutlineSize;
-            public float ShadowSize;
-            public float ShadowBlur;
-            public bool FitToContent;
-        }
-
-        public bool InvertColors = false;
-
-        internal string GetText() => m_text;
-
-        [SerializeField] PresetReferences m_presets;
-
-        [Header("Content")]
-
-        [SerializeField] MaterialButtonType m_buttonType = MaterialButtonType.Filled;
-
-        [SerializeField, Searchable] MaterialIcons m_icon = MaterialIcons.none;
+        [SerializeField, Searchable] MaterialIcons MaterialIcon = MaterialIcons.none;
 
         [SerializeField] string m_text = "Button";
 
-        [SerializeField] MaterialButtonStyle m_style;
+        [SerializeField] MaterialButtonStyle m_buttonStyle;
 
-        RectangleGraphic m_graphic;
+        [SerializeField] MaterialButtonStylePresets m_loadPreset = MaterialButtonStylePresets.WaitingSelection;
 
-        HorizontalLayoutGroup m_horizontalLayoutGroup;
+        [Header("References")]
 
-        ContentSizeFitter m_contentSizeFitter;
+        [SerializeField] Button m_button;
 
-        CanvasGroup m_canvasGroup;
+        [SerializeField] RectangleGraphic m_graphic;
 
-        CanvasRenderer m_renderer;
+        [SerializeField] MaterialIcon m_materialIcon;
 
-        public UnityEvent onClick = new UnityEvent();
+        [SerializeField] TMP_Text m_textComponent;
 
-        private T GetOrAdd<T>() where T : Component
+        Vector2 m_preferredSize;
+
+        Vector2 m_padding;
+
+        private DrivenRectTransformTracker m_Tracker;
+
+        public float minWidth => 40f;
+
+        public float preferredWidth => Mathf.Max(m_preferredSize.x + m_padding.x, minWidth);
+
+        public float preferredHeight => Mathf.Max(m_preferredSize.y + m_padding.y, minHeight);
+
+        public float flexibleWidth => 0;
+
+        public float minHeight => 40f;
+
+        public float flexibleHeight => 0;
+
+        public int layoutPriority => 0;
+
+        bool m_beingControlled = false;
+
+        RectTransform m_rectTransform;
+
+        void UpdateBeingControlled()
         {
-            var c = GetComponent<T>();
-
-            if (c == null)
-                c = gameObject.AddComponent<T>();
-
-            c.hideFlags = HideFlags.None;
-
-            return c;
+            m_beingControlled = transform.parent != null && transform.parent.GetComponent<HorizontalOrVerticalLayoutGroup>() != null;
         }
 
-        public bool FitToContent
-        {
-            set { m_style.FitToContent = false; m_contentSizeFitter.enabled = m_style.FitToContent & enabled; }
-        }
+        public void CalculateLayoutInputHorizontal() { }
 
-        private void Reset()
-        {
-            m_style.OutlineSize = 1.5f;
-            m_style.ShadowSize = 15f;
-            m_style.ShadowBlur = 80f;
-            m_style.FitToContent = true;
+        public void CalculateLayoutInputVertical() { UpdateButton(); }
 
-            OnValidate();
-        }
-
-        public void SimulateClick()
+        void OnClicked()
         {
             onClick?.Invoke();
         }
 
         private void OnEnable()
         {
-            if (m_presets.m_label == null)
-                m_presets.m_label = GetComponentInChildren<TMPro.TMP_Text>();
+            if (m_button != null)
+                m_button.onClick.AddListener(OnClicked);
 
-            if (m_presets.m_icon == null)
-                m_presets.m_icon = GetComponentInChildren<MaterialIcon>(true);
+            if (m_textComponent != null)
+                m_textComponent.autoSizeTextContainer = false;
 
-            m_canvasGroup = GetOrAdd<CanvasGroup>();
-            m_graphic = GetOrAdd<RectangleGraphic>();
-            m_renderer = GetComponent<CanvasRenderer>();
-            m_renderer.cullTransparentMesh = false;
-            m_horizontalLayoutGroup = GetOrAdd<HorizontalLayoutGroup>();
-            m_contentSizeFitter = GetOrAdd<ContentSizeFitter>();
+            m_rectTransform = transform as RectTransform;
+            m_Tracker.Add(this, m_rectTransform, DrivenTransformProperties.SizeDelta);
 
-            m_canvasGroup.alpha = 1f;
-            m_canvasGroup.interactable = true;
-            m_canvasGroup.blocksRaycasts = true;
-
-            SetButtonType(m_buttonType);
+            UpdateBeingControlled();
+            UpdateButton();
         }
 
-        private void Start()
+        private void OnDisable()
         {
-            m_graphic.SetAllDirty();
+            if (m_button != null)
+                m_button.onClick.RemoveListener(OnClicked);
+            m_Tracker.Clear();
         }
 
-        public void SetPadding(RectOffset padding)
+        private void OnValidate()
         {
-            m_style.Padding = padding;
-            m_horizontalLayoutGroup.padding = new RectOffset(
-                Mathf.FloorToInt(padding.left + 10), 
-                Mathf.FloorToInt(padding.right + 10),
-                Mathf.FloorToInt(padding.top + 10), 
-                Mathf.FloorToInt(padding.bottom + 10)
-            );
+            m_rectTransform = transform as RectTransform;
+
+            if (m_loadPreset != MaterialButtonStylePresets.WaitingSelection)
+            {
+                ApplyButtonStyle(m_loadPreset);
+                m_loadPreset = MaterialButtonStylePresets.WaitingSelection;
+            }
+            else UpdateButton();
+        }
+
+        public void ApplyButtonStyle(MaterialButtonStylePresets style)
+        {
+            switch (style)
+            {
+                case MaterialButtonStylePresets.Elevated:
+                    {
+                        m_buttonStyle.Color = Colors.Surface;
+                        m_buttonStyle.TextColor = Colors.OnSurface;
+
+                        m_buttonStyle.CircleColor = Colors.SecondaryContainer;
+
+                        m_buttonStyle.OutlineSize = 0f;
+
+                        m_buttonStyle.ShadowColor = Color.black;
+                        m_buttonStyle.ShadowSize = 15f;
+                        m_buttonStyle.ShadowBlur = 80f;
+                        break;
+                    }
+                case MaterialButtonStylePresets.Filled:
+                    {
+                        m_buttonStyle.Color = Colors.Primary;
+                        m_buttonStyle.TextColor = Colors.OnPrimary;
+
+                        m_buttonStyle.CircleColor = Colors.OnPrimary;
+
+                        m_buttonStyle.OutlineSize = 0f;
+                        m_buttonStyle.ShadowSize = 0f;
+                        break;
+                    }
+                case MaterialButtonStylePresets.Tonal:
+                    {
+                        m_buttonStyle.Color = Colors.SecondaryContainer;
+                        m_buttonStyle.TextColor = Colors.OnSecondaryContainer;
+
+                        m_buttonStyle.CircleColor = Colors.Primary;
+
+                        m_buttonStyle.OutlineSize = 0f;
+                        m_buttonStyle.ShadowSize = 0f;
+                        break;
+                    }
+                case MaterialButtonStylePresets.Outlined:
+                    {
+                        m_buttonStyle.Color = Color.clear;
+                        m_buttonStyle.TextColor = Colors.OnSecondaryContainer;
+
+                        m_buttonStyle.CircleColor = Colors.Primary;
+
+                        m_buttonStyle.OutlineColor = Colors.Outline;
+                        m_buttonStyle.OutlineSize = 1.5f;
+
+                        m_buttonStyle.ShadowSize = 0f;
+                        break;
+                    }
+                case MaterialButtonStylePresets.Text:
+                    {
+                        m_buttonStyle.Color = Color.clear;
+                        m_buttonStyle.TextColor = Colors.Primary;
+                        m_buttonStyle.CircleColor = Colors.SecondaryContainer;
+
+                        m_buttonStyle.OutlineSize = 0f;
+                        m_buttonStyle.ShadowSize = 0f;
+                        break;
+                    }
+            }
+
+            UpdateButton();
         }
 
         public void SetText(string content)
         {
             m_text = content;
-
-            if (m_presets.m_label != null)
-            {
-                m_presets.m_label.text = m_text;
-                m_presets.m_label.gameObject.SetActive(!string.IsNullOrEmpty(content));
-            }
+            UpdateButton();
         }
+
+        public string GetText() => m_text;
+
+        public UnityEvent onClick;
 
         public void SetIcon(MaterialIcons icon)
         {
-            m_icon = icon;
-            if (m_presets.m_icon != null)
-            {
-                m_presets.m_icon.UpdateIcon(icon);
-                m_presets.m_icon.gameObject.SetActive(icon != MaterialIcons.none);
-            }
+            MaterialIcon = icon;
+            UpdateButton();
         }
 
-        public void SetButtonType(MaterialButtonType type)
+        public MaterialButtonStyle ButtonStyle
         {
-            m_buttonType = type;
-
-            if (type != MaterialButtonType.Manual)
-                ApplyButtonStyle(type);
+            get => m_buttonStyle;
+            set => m_buttonStyle = value;
         }
 
-        public void ApplyButtonStyle(MaterialButtonType type)
+        private void OnTransformChildrenChanged()
         {
-            var primaryColor = (!InvertColors ? Colors.Primary : Colors.OnPrimary).ToColor(this);
-            var secondaryColor = (!InvertColors ? Colors.SecondaryContainer : Colors.OnSecondaryContainer).ToColor(this);
-            var outlineColor = (!InvertColors ? Colors.Outline : Colors.OnOutline).ToColor(this);
-            var surfaceColor = (!InvertColors ? Colors.Surface : Colors.OnSurface).ToColor(this);
-
-            var primaryOnColor = (InvertColors ? Colors.Primary : Colors.OnPrimary).ToColor(this);
-            var secondaryOnColor = (InvertColors ? Colors.SecondaryContainer : Colors.OnSecondaryContainer).ToColor(this);
-            var surfaceOnColor = (InvertColors ? Colors.Surface : Colors.OnSurface).ToColor(this);
-
-            if (m_renderer.cull)
-                m_renderer.cull = false;
-
-            switch (type)
-            {
-                case MaterialButtonType.Elevated:
-                    {
-                        m_graphic.color = surfaceColor;
-                        m_graphic.CircleColor = secondaryColor;
-                        m_graphic.SetOutline(default, 0f);
-                        m_graphic.SetShadow(Color.black, m_style.ShadowSize, m_style.ShadowBlur);
-
-                        m_presets.m_iconRenderer.color = surfaceOnColor;
-                        m_presets.m_label.color = surfaceOnColor;
-                        break;
-                    }
-                case MaterialButtonType.Filled:
-                    {
-                        m_graphic.color = primaryColor;
-                        m_graphic.CircleColor = primaryColor;
-                        m_graphic.SetOutline(Color.clear, 0f);
-                        m_graphic.SetShadow(default, 0f, 0f);
-
-                        m_presets.m_iconRenderer.color = primaryOnColor;
-                        m_presets.m_label.color = primaryOnColor;
-                        break;
-                    }
-                case MaterialButtonType.Tonal:
-                    {
-                        m_graphic.color = secondaryColor;
-                        m_graphic.CircleColor = primaryColor;
-                        m_graphic.SetOutline(Color.clear, 0f);
-                        m_graphic.SetShadow(default, 0f, 0f);
-
-                        m_presets.m_iconRenderer.color = secondaryOnColor;
-                        m_presets.m_label.color = secondaryOnColor;
-                        break;
-                    }
-                case MaterialButtonType.Outlined:
-                    {
-                        m_graphic.CircleColor = secondaryColor;
-                        m_graphic.color = default;
-                        m_graphic.SetOutline(outlineColor, m_style.OutlineSize);
-                        m_graphic.SetShadow(default, 0f, 0f);
-
-                        m_presets.m_iconRenderer.color = primaryColor;
-                        m_presets.m_label.color = primaryColor;
-                        break;
-                    }
-                case MaterialButtonType.Text:
-                    {
-                        m_graphic.CircleColor = secondaryColor;
-                        m_graphic.color = default;
-                        m_graphic.SetOutline(default, 0f);
-                        m_graphic.SetShadow(default, 0f, 0f);
-
-                        m_presets.m_iconRenderer.color = primaryColor;
-                        m_presets.m_label.color = primaryColor;
-                        break;
-                    }
-            }
-
-            m_graphic.CircleColor *= 1.25f;
-
-            if (m_buttonType != MaterialButtonType.Manual)
-                m_graphic.SetMaxRoundness(true);
-            m_graphic.SetAllDirty();
+            UpdateBeingControlled();
         }
 
-        private void OnValidate()
+        void UpdateButton()
         {
-            if (m_horizontalLayoutGroup == null) return;
-            m_contentSizeFitter.enabled = m_style.FitToContent && enabled;
+            if (m_textComponent == null || m_materialIcon == null || m_graphic == null) return;
 
-            SetButtonType(m_buttonType);
-            SetText(m_text);
-            SetIcon(m_icon);
-            SetPadding(m_style.Padding);
+#if UNITY_EDITOR
+            if (m_rectTransform == null)
+                m_rectTransform = transform as RectTransform;
+#endif
+
+            bool hasIcon = MaterialIcon != MaterialIcons.none;
+
+            m_preferredSize = m_textComponent.GetPreferredValues(m_text);
+            m_padding = new Vector2(hasIcon ? (string.IsNullOrEmpty(m_text) ? 40f : 48f) : 20f, 20f);
+
+            if (!m_beingControlled)
+                m_rectTransform.sizeDelta = new Vector2(preferredWidth, preferredHeight);
+
+            m_textComponent.rectTransform.sizeDelta = m_preferredSize;
+            m_textComponent.SetText(m_text);
+            m_materialIcon.Icon = MaterialIcon;
+
+            UpdateColors();
         }
 
-        private void OnDisable()
+        void UpdateColors()
         {
-            m_contentSizeFitter.enabled = false;
+            m_graphic.color = m_buttonStyle.Color.GetUnityColor(this);
+            m_graphic.CircleColor = m_buttonStyle.CircleColor.GetUnityColor(this);
+            m_graphic.SetOutline(m_buttonStyle.OutlineColor.GetUnityColor(this), m_buttonStyle.OutlineSize);
+            m_graphic.SetShadow(m_buttonStyle.ShadowColor.GetUnityColor(this), m_buttonStyle.ShadowSize, m_buttonStyle.ShadowBlur);
 
-            m_canvasGroup.alpha = 1f;
-            m_canvasGroup.interactable = true;
-            m_canvasGroup.blocksRaycasts = true;
+            var textColor = m_buttonStyle.TextColor.GetUnityColor(this);
+
+            m_materialIcon.UpdateColor(m_buttonStyle.TextColor);
+            m_textComponent.color = textColor;
         }
     }
 }

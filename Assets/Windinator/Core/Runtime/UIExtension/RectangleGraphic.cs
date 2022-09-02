@@ -67,6 +67,11 @@ public class RectangleGraphic : SignedDistanceFieldGraphic
         roudness.z = Mathf.Min(roudness.z, maxRoundedValue);
         roudness.w = Mathf.Min(roudness.w, maxRoundedValue);
 
-        return m_useMaxRoundness ? maxRounded : roudness;
+        var result = m_useMaxRoundness ? maxRounded : roudness;
+
+        result.x /= transform.localScale.x;
+        result.y /= transform.localScale.y;
+
+        return result;
     }
 }

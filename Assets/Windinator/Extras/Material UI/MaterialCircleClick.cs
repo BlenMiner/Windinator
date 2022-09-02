@@ -60,7 +60,9 @@ public class MaterialCircleClick : MonoBehaviour, IPointerDownHandler, IPointerU
         m_alpha = newAlpha;
         m_size = newSize;
 
-        m_graphic.SetCircle(m_pos, GetColor(), m_size, m_alpha * 0.5f);
+        var g = m_graphic;
+
+        g.SetCircle(m_pos, g.CircleColor, m_size, m_alpha * 0.5f);
 
         m_dirty = false;
     }
@@ -75,7 +77,9 @@ public class MaterialCircleClick : MonoBehaviour, IPointerDownHandler, IPointerU
 
     private void Update()
     {
-        if (m_graphic == null) return;
+        var g = m_graphic;
+
+        if (g == null) return;
 
         RectTransform rectTransform = transform as RectTransform;
         var size = rectTransform.sizeDelta;
@@ -95,23 +99,24 @@ public class MaterialCircleClick : MonoBehaviour, IPointerDownHandler, IPointerU
         }
         else
         {
-            float newSize = Mathf.Max(0f, m_size + Time.deltaTime * m_sizeSpeed * speedMult);
             float newAlpha = Mathf.MoveTowards(m_alpha, 0f, Time.deltaTime * m_alphaSpeed);
 
-            if (newAlpha != m_alpha || newSize != m_size)
+            if (newAlpha != m_alpha)
             {
                 m_alpha = newAlpha;
-                m_size = newSize;
+                m_size = Mathf.Max(0f, m_size + Time.deltaTime * m_sizeSpeed * speedMult);
                 m_dirty = true;
+            }
+            else
+            {
+                m_size = 0f;
             }
         }
 
         if (m_dirty)
         {
-            m_graphic.SetCircle(m_pos, GetColor(), m_size, m_alpha * 0.5f);
+            g.SetCircle(m_pos, g.CircleColor, m_size, m_alpha * 0.5f);
             m_dirty = false;
         }
     }
-
-    Color GetColor() => m_graphic.CircleColor;
 }

@@ -346,7 +346,7 @@ namespace Riten.Windinator.LayoutBuilder
 
             MaterialIcons[] m_icon;
 
-            MaterialButtonType[] m_type;
+            MaterialButtonStylePresets[] m_type;
 
             int m_startIndex;
 
@@ -355,7 +355,7 @@ namespace Riten.Windinator.LayoutBuilder
             public SegmentedButton(
                 string[] text = null,
                 MaterialIcons[] icon = null,
-                MaterialButtonType[] type = null,
+                MaterialButtonStylePresets[] type = null,
                 int startSelectedIndex = -1,
                 Vector4 padding = default
             )
@@ -383,7 +383,7 @@ namespace Riten.Windinator.LayoutBuilder
                     buttonList[i] = new Button(
                         text: (m_text == null ? null : m_text[i]),
                         icon: (m_icon == null ? MaterialIcons.none : m_icon[i]),
-                        type: (m_type == null ? MaterialButtonType.Outlined : m_type[i])
+                        type: (m_type == null ? MaterialButtonStylePresets.Outlined : m_type[i])
                     );
 
                     var btn = buttonList[i];
@@ -414,8 +414,6 @@ namespace Riten.Windinator.LayoutBuilder
                     bool end = i == buttonList.Length - 1;
 
                     var btn = buttonUI[i].Value;
-
-                    btn.SetButtonType(MaterialButtonType.Manual);
 
                     var graphic = btn.GetComponent<RectangleGraphic>();
                     var color = graphic.OutlineColor;
@@ -448,12 +446,12 @@ namespace Riten.Windinator.LayoutBuilder
 
             MaterialIcons m_icon;
 
-            MaterialButtonType m_type;
+            MaterialButtonStylePresets m_type;
 
             public Button(
                 string text = null,
                 MaterialIcons icon = MaterialIcons.none,
-                MaterialButtonType type = MaterialButtonType.Filled,
+                MaterialButtonStylePresets type = MaterialButtonStylePresets.Filled,
                 Vector4 padding = default
             )
                 : base(prefab: LayoutMaterialPrefabs.MaterialButton)
@@ -472,11 +470,9 @@ namespace Riten.Windinator.LayoutBuilder
 
                 var btn = prefab.GetComponentInChildren<MaterialButton>();
 
-                btn.FitToContent = false;
                 btn.SetText(m_text);
                 btn.SetIcon(m_icon);
-                btn.SetPadding(new RectOffset((int)m_padding.x, (int)m_padding.y, (int)m_padding.z, (int)m_padding.w));
-                btn.SetButtonType(m_type);
+                btn.ApplyButtonStyle(m_type);
 
                 SetReference(btn);
 
@@ -544,14 +540,14 @@ namespace Riten.Windinator.LayoutBuilder
         {
             MaterialIcons m_icon;
 
-            MaterialButtonType m_type;
+            MaterialButtonStylePresets m_type;
 
             string m_text;
 
             public ActionButton(
                 string text = null,
                 MaterialIcons icon = MaterialIcons.plus,
-                MaterialButtonType type = MaterialButtonType.Filled,
+                MaterialButtonStylePresets type = MaterialButtonStylePresets.Filled,
                 Vector4 padding = default
             )
                 : base(prefab: LayoutMaterialPrefabs.ActionButton)
@@ -572,8 +568,7 @@ namespace Riten.Windinator.LayoutBuilder
 
                 btn.SetText(m_text);
                 btn.SetIcon(m_icon);
-                btn.SetPadding(new RectOffset((int)m_padding.x, (int)m_padding.y, (int)m_padding.z, (int)m_padding.w));
-                btn.SetButtonType(m_type);
+                btn.ApplyButtonStyle(m_type);
 
                 SetReference(btn);
 
@@ -649,11 +644,14 @@ namespace Riten.Windinator.LayoutBuilder
 
             readonly string m_text;
 
+            readonly TextAlignmentOptions m_alignment;
+
             public Label(
                 string text = "",
                 MaterialSize style = MaterialSize.Body,
                 FontStyles fontStyle = FontStyles.Normal,
-                Swatch? color = null, Vector4 padding = default
+                Swatch? color = null, Vector4 padding = default,
+                TextAlignmentOptions alignmentOptions = TextAlignmentOptions.MidlineLeft
             ) : base(LayoutMaterialPrefabs.MaterialLabel)
             {
                 m_padding = padding;
@@ -661,6 +659,7 @@ namespace Riten.Windinator.LayoutBuilder
                 m_style = style;
                 m_fontStyle = fontStyle;
                 m_color = color.GetValueOrDefault(new Swatch(Colors.Primary));
+                m_alignment = alignmentOptions;
             }
 
             public override RectTransform Build(RectTransform parent)
@@ -672,6 +671,7 @@ namespace Riten.Windinator.LayoutBuilder
                 var field = prefab.GetComponentInChildren<MaterialLabel>();
 
                 field.TMP.margin = m_padding;
+                field.TMP.alignment = m_alignment;
                 field.LabelText = m_text;
                 field.LabelStyle = m_style;
                 field.LabelColor = m_color;
@@ -722,11 +722,11 @@ namespace Riten.Windinator.LayoutBuilder
 
             MaterialIcons m_icon;
 
-            MaterialButtonType m_type;
+            MaterialButtonStylePresets m_type;
 
 #if ENABLE_LEGACY_INPUT_MANAGER
             public KeyButton(KeyCode defaultKey, MaterialIcons icon = MaterialIcons.none,
-                MaterialButtonType type = MaterialButtonType.Text,
+                MaterialButtonStylePresets type = MaterialButtonStylePresets.Text,
                 Vector4 padding = default) : base(LayoutMaterialPrefabs.MaterialKeyButton)
             {
                 m_defaultKey = defaultKey;
@@ -753,10 +753,8 @@ namespace Riten.Windinator.LayoutBuilder
 
                 var btn = btnTransform.GetComponentInChildren<MaterialButton>();
 
-                btn.FitToContent = false;
                 btn.SetIcon(m_icon);
-                btn.SetPadding(new RectOffset((int)m_padding.x, (int)m_padding.y, (int)m_padding.z, (int)m_padding.w));
-                btn.SetButtonType(m_type);
+                btn.ApplyButtonStyle(m_type);
 
                 var field = btnTransform.GetComponentInChildren<MaterialKeyButton>();
 

@@ -72,7 +72,8 @@ Shader "UI/Windinator/RectangleRenderer"
                 // Signed distance field calculation
                 float dist = sdRoundedBox(position, halfSize, _Roundness);
                 return fragFunction(IN.texcoord, worldPos, IN.color, dist, position, halfSize);
-                //return IN.color;
+
+                // return IN.color * (1 - dist / length(_Size));
             }
             ENDCG
         }

@@ -33,9 +33,9 @@ public class GoogleTemplate : LayoutBaker
                 new Horizontal(
                     children: new Element[]
                     {
-                        new MaterialUI.Button("Search", type: MaterialButtonType.Text)
+                        new MaterialUI.Button("Search", type: MaterialButtonStylePresets.Text)
                             .GetReference(out m_searchButton),
-                        new MaterialUI.Button("Feeling Lucky", type: MaterialButtonType.Text)
+                        new MaterialUI.Button("Feeling Lucky", type: MaterialButtonStylePresets.Text)
                     },
                     alignment: TextAnchor.MiddleCenter,
                     spacing: 20f
