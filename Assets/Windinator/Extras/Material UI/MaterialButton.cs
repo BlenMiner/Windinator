@@ -91,7 +91,7 @@ namespace Riten.Windinator.Material
 
         public void CalculateLayoutInputHorizontal() { }
 
-        public void CalculateLayoutInputVertical() { UpdateButton(); }
+        public void CalculateLayoutInputVertical() { }
 
         void OnClicked()
         {
@@ -104,7 +104,10 @@ namespace Riten.Windinator.Material
                 m_button.onClick.AddListener(OnClicked);
 
             if (m_textComponent != null)
+            {
                 m_textComponent.autoSizeTextContainer = false;
+                m_textComponent.useGUILayout = false;
+            }
 
             m_rectTransform = transform as RectTransform;
             m_Tracker.Add(this, m_rectTransform, DrivenTransformProperties.SizeDelta);
@@ -210,6 +213,8 @@ namespace Riten.Windinator.Material
 
         public UnityEvent onClick;
 
+        bool m_dirty = false;
+
         public void SetIcon(MaterialIcons icon)
         {
             MaterialIcon = icon;
@@ -236,19 +241,7 @@ namespace Riten.Windinator.Material
                 m_rectTransform = transform as RectTransform;
 #endif
 
-            bool hasIcon = MaterialIcon != MaterialIcons.none;
-
-            m_preferredSize = m_textComponent.GetPreferredValues(m_text);
-            m_padding = new Vector2(hasIcon ? (string.IsNullOrEmpty(m_text) ? 40f : 48f) : 20f, 20f);
-
-            if (!m_beingControlled)
-                m_rectTransform.sizeDelta = new Vector2(preferredWidth, preferredHeight);
-
-            m_textComponent.rectTransform.sizeDelta = m_preferredSize;
-            m_textComponent.SetText(m_text);
-            m_materialIcon.Icon = MaterialIcon;
-
-            UpdateColors();
+            m_dirty = true;
         }
 
         void UpdateColors()
@@ -262,6 +255,29 @@ namespace Riten.Windinator.Material
 
             m_materialIcon.UpdateColor(m_buttonStyle.TextColor);
             m_textComponent.color = textColor;
+        }
+
+        private void LateUpdate()
+        {
+            if (m_dirty)
+            {
+                Debug.Log("Button Stuff");
+
+                bool hasIcon = MaterialIcon != MaterialIcons.none;
+
+                m_preferredSize = m_textComponent.GetPreferredValues(m_text);
+                m_padding = new Vector2(hasIcon ? (string.IsNullOrEmpty(m_text) ? 40f : 48f) : 20f, 20f);
+
+                if (!m_beingControlled)
+                    m_rectTransform.sizeDelta = new Vector2(preferredWidth, preferredHeight);
+
+                m_textComponent.rectTransform.sizeDelta = m_preferredSize;
+                m_textComponent.SetText(m_text);
+                m_materialIcon.Icon = MaterialIcon;
+
+                UpdateColors();
+                m_dirty = false;
+            }
         }
     }
 }
