@@ -81,30 +81,30 @@ float2 _Size;
 float _Union;
 int _Operation;
 
-float Encode(float dist)
+inline float Encode(float dist)
 {
     float maxLen = length(_Size * 0.5 + _Padding);
     return ((dist / maxLen) + 1) * 0.5;
 }
 
-float Decode(float value)
+inline float Decode(float value)
 {
     float maxLen = length(_Size * 0.5 + _Padding);
     return ((value * 2) - 1) * maxLen;
 }
 
-float opSmoothUnion( float d1, float d2, float k ) {
+inline float opSmoothUnion( float d1, float d2, float k ) {
     float h = clamp( 0.5 + 0.5*(d2-d1)/k, 0.0, 1.0 );
     return lerp( d2, d1, h ) - k*h*(1.0-h); 
 }
 
 
-float opSmoothSubtraction( float d1, float d2, float k ) {
+inline float opSmoothSubtraction( float d1, float d2, float k ) {
     float h = clamp( 0.5 - 0.5*(d2+d1)/k, 0.0, 1.0 );
     return lerp( d2, -d1, h ) + k*h*(1.0-h);
 }
 
-float opSmoothIntersection( float d1, float d2, float k ) {
+inline float opSmoothIntersection( float d1, float d2, float k ) {
     float h = clamp( 0.5 - 0.5*(d2-d1)/k, 0.0, 1.0 );
     return lerp( d2, d1, h ) + k*h*(1.0-h); 
 }
@@ -140,14 +140,14 @@ void GetRawRect(float2 uv, out float2 position, out float2 halfSize, float extra
     uv = uv * (1 + normalizedPadding * 2) - normalizedPadding;
 
     // For simplicity, convert UV to pixel coordinates
-    position = (uv - 0.5) * _Size - 0.5;
+    position = (uv - 0.5) * _Size - 0.5 + 0.5;
 }
 
 void GetRect(float2 uv, out float2 position, out float2 halfSize, float extra)
 {
     GetRawRect(uv, position, halfSize, extra);
 
-    float2 pos = position + halfSize - 0.5;
+    float2 pos = ((position + 1) + halfSize - 0.5);
 
     bool shouldMask = ((_MaskRect.z > 0 && _MaskRect.w > 0 &&
         position.x >= _MaskRect.x && position.x <= _MaskRect.x + _MaskRect.z &&
@@ -168,6 +168,35 @@ float4 DecodeColor(float value)
     float a = (v >> 24) & 0xFF;
 
     return float4(r / 255.0f, g / 255.0f, b / 255.0f, a / 126.0f);
+}
+
+float Encode01(float4 c)
+{
+    float max = 32768;
+
+    uint r = (uint)(c.r * 31);
+    uint g = (uint)(c.g * 31) << 5;
+    uint b = (uint)(c.b * 15) << 10;
+
+    uint res = (r | g | b);
+
+    return (float)res / max;
+}
+
+float4 Decode01(float c)
+{
+    float max = 32768;
+
+    c = c * max;
+
+    uint color = (uint)c;
+
+    // 0x1F
+    float r = color & 0x1F;
+    float g = (color >> 5) & 0x1F;
+    float b = (color >> 10) & 0x1F;
+
+    return float4(r / 31.0f, g / 31.0f, b / 15, 1);
 }
 
 float4 DecodeCoords(float value)

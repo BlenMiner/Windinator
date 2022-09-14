@@ -52,6 +52,7 @@ Shader "UI/Windinator/DrawRect"
             uniform float4 _Points[512];
             uniform float4 _PointsExtra[512];
             uniform float4 _PointsExtra2[512];
+            uniform float4 _Transform[512];
 
             int _PointsCount;
 
@@ -61,6 +62,14 @@ Shader "UI/Windinator/DrawRect"
                 r.x  = (p.y>0.0)?r.x  : r.y;
                 float2 q = abs(p)-b+r.x;
                 return min(max(q.x,q.y),0.0) + length(max(q,0.0)) - r.x;
+            }
+
+            float2 rotate(float2 pos, float angle)
+            {
+                float sinX = sin(angle);
+                float cosX = cos(angle);
+                float2x2 rotationMatrix = float2x2(cosX, -sinX, sinX, cosX);
+                return mul(pos, rotationMatrix);
             }
 
             float4 frag (v2f IN) : SV_Target
@@ -78,12 +87,18 @@ Shader "UI/Windinator/DrawRect"
                 {
                     if (i >= _PointsCount) break;
 
+                    float rotation = _Transform[i].x;
+
                     float2 pos = _Points[i].xy;
                     float2 size = _Points[i].zw;
                     float4 round = _PointsExtra[i];
                     float blend = _PointsExtra2[i].x;
 
-                    float d = sdRoundedBox(position - pos, size, round);
+                    float2 localPos = position - pos;
+
+                    localPos = rotate(localPos, rotation);
+
+                    float d = sdRoundedBox(localPos, size, round);
                     dist = AddSDF(d, dist, blend);
                 }
 

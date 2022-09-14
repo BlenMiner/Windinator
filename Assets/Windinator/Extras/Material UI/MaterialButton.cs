@@ -104,10 +104,7 @@ namespace Riten.Windinator.Material
                 m_button.onClick.AddListener(OnClicked);
 
             if (m_textComponent != null)
-            {
                 m_textComponent.autoSizeTextContainer = false;
-                m_textComponent.useGUILayout = false;
-            }
 
             m_rectTransform = transform as RectTransform;
             m_Tracker.Add(this, m_rectTransform, DrivenTransformProperties.SizeDelta);
@@ -261,8 +258,6 @@ namespace Riten.Windinator.Material
         {
             if (m_dirty)
             {
-                Debug.Log("Button Stuff");
-
                 bool hasIcon = MaterialIcon != MaterialIcons.none;
 
                 m_preferredSize = m_textComponent.GetPreferredValues(m_text);

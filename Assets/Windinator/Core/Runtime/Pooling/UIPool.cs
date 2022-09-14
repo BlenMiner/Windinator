@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,6 +21,8 @@ namespace WindinatorTools
             m_parent = parent;
         }
 
+        public Action<GameObject> OnInstantiated;
+
         public void ResetCounter()
         {
             m_index = 0;
@@ -28,7 +31,11 @@ namespace WindinatorTools
         public GameObject GetInstance()
         {
             if (m_instances.Count <= m_index)
-                m_instances.Add(GameObject.Instantiate(m_gameobject, m_parent, false));
+            {
+                var gameo = GameObject.Instantiate(m_gameobject, m_parent, false);
+                OnInstantiated?.Invoke(gameo);
+                m_instances.Add(gameo);
+            }
 
             var go = m_instances[m_index++];
 
@@ -48,6 +55,17 @@ namespace WindinatorTools
             for (int i = m_index; i < m_instances.Count; i++)
                 m_instances[i].SetActive(false);
             ResetCounter();
+        }
+
+        internal void Dispose()
+        {
+            ResetCounter();
+
+            for (int i = 0; i < m_instances.Count; i++)
+                GameObject.Destroy(m_instances[i]);
+
+            m_instances.Clear();
+            m_instances.TrimExcess();
         }
     }
 }

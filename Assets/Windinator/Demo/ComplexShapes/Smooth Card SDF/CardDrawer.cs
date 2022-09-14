@@ -36,6 +36,6 @@ public class CardDrawer : CanvasDrawer
         var size = rect.size;
         float radius = (Mathf.Min(size.x, size.y) * 0.5f + 1f) * BallScale;
 
-        canvas.CircleBrush.Draw(rect.position + size * 0.5f, radius, m_blend, DrawOperation.Union);
+        canvas.CircleBrush.Draw(rect.position + size * 0.5f, radius, m_blend, operation: DrawOperation.Union);
     }
 }

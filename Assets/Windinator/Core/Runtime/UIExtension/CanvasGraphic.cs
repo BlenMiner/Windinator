@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace Riten.Windinator.Shapes
 {
@@ -14,7 +15,7 @@ namespace Riten.Windinator.Shapes
     {
         RenderTexture m_finalBuffer;
 
-        Material m_canvas_material, m_clearCircle, m_blend;
+        Material m_canvas_material, m_clearCircle, m_blend, m_add;
 
         [SerializeField] float m_margin;
 
@@ -29,12 +30,14 @@ namespace Riten.Windinator.Shapes
             return layer ?? m_mainLayer;
         }
 
-        public override float Margin => m_margin;
+        public override float Margin => m_margin + 1.5f;
 
         public float Quality {
             get => m_quality;
-            set {m_quality = value;}
+            set { m_quality = value;}
         }
+
+        public float GetMargin() => m_margin;
 
         public void SetMargin(float margin)
         {
@@ -72,11 +75,23 @@ namespace Riten.Windinator.Shapes
             }
         }
 
+        Material AddOp
+        {
+            get
+            {
+                if (m_add == null)
+                    m_add = new Material(Shader.Find("UI/Windinator/AddOp"));
+                return m_add;
+            }
+        }
+
         public LineDrawer LineBrush { get; private set; }
 
         public CircleDrawer CircleBrush { get; private set; }
 
         public RectDrawer RectBrush { get; private set; }
+        
+        public PolyDrawer PolyBrush { get; private set; }
 
         public Vector2 Size => m_size;
 
@@ -89,13 +104,14 @@ namespace Riten.Windinator.Shapes
             LineBrush = new LineDrawer(this);
             CircleBrush = new CircleDrawer(this);
             RectBrush = new RectDrawer(this);
+            PolyBrush = new PolyDrawer(this);
         }
 
         #if UNITY_EDITOR
         protected override void OnValidate()
         {
             base.OnValidate();
-            if (LineBrush == null) Awake();
+            if (LineBrush == null || PolyBrush == null || RectBrush == null || CircleBrush == null) Awake();
         }
         #endif
 
@@ -115,10 +131,12 @@ namespace Riten.Windinator.Shapes
         {
             m_size = new Vector2(width, height);
 
-            int w = Mathf.CeilToInt(width * Quality + Margin);
-            int h = Mathf.CeilToInt(height * Quality + Margin);
+            int w = Mathf.CeilToInt((width + Margin) * Quality);
+            int h = Mathf.CeilToInt((height + Margin) * Quality);
 
             if (w <= 0 || h <= 0) return;
+
+            Graphics.SetRenderTarget(null);
 
             if (m_mainLayer == null || !m_mainLayer.IsCreated || m_finalBuffer == null || m_finalBuffer.width != w || m_finalBuffer.height != h)
             {
@@ -127,12 +145,15 @@ namespace Riten.Windinator.Shapes
                 
                 m_mainLayer?.Dispose();
 
-                m_finalBuffer = new RenderTexture(w, h, 0, RenderTextureFormat.R16);
+                m_finalBuffer = new RenderTexture(w, h, 0, RenderTextureFormat.RG32);
+                m_finalBuffer.name = "SDF";
                 m_finalBuffer.useMipMap = false;
                 m_finalBuffer.Create();
 
                 m_mainLayer = new LayerGraphic(w, h);
-                Texture = m_finalBuffer;
+
+                Clear(m_mainLayer);
+                Apply(m_mainLayer);
             }
         }
 
@@ -142,8 +163,8 @@ namespace Riten.Windinator.Shapes
         /// <returns></returns>
         public LayerGraphic GetNewLayer()
         {
-            int w = Mathf.CeilToInt(m_size.x * Quality + Margin);
-            int h = Mathf.CeilToInt(m_size.y * Quality + Margin);
+            int w = Mathf.CeilToInt((m_size.x + Margin) * Quality);
+            int h = Mathf.CeilToInt((m_size.y + Margin) * Quality);
 
             var layer = new LayerGraphic(w, h);
 
@@ -155,21 +176,15 @@ namespace Riten.Windinator.Shapes
         public void Clear(LayerGraphic layer = null)
         {
             var selectedLayer = GetLayer(layer);
-
             selectedLayer.Blit(ClearCircleOp);
-
-            if (Texture != m_finalBuffer)
-                Texture = m_finalBuffer;
         }
 
         public void Apply(LayerGraphic layer = null)
         {
             var selectedLayer = GetLayer(layer);
-
             selectedLayer.Copy(m_finalBuffer);
 
-            if (Texture != m_finalBuffer)
-                Texture = m_finalBuffer;
+            Texture = m_finalBuffer;
         }
 
         public void Copy(LayerGraphic source, LayerGraphic dest)
@@ -212,6 +227,17 @@ namespace Riten.Windinator.Shapes
 
             rect.position = rectTransform.TransformPoint(p);
             rect.sizeDelta = size;
+        }
+
+        public void Add(LayerGraphic a, LayerGraphic b)
+        {
+            AddOp.SetTexture("_TextureA", a.Texture);
+            b.Blit(AddOp);
+        }
+
+        public Vector2 GetMousePosition()
+        {
+            return WindinatorUtils.ScreenToCanvasPosition(canvas, rectTransform, Input.mousePosition);
         }
     }
 }

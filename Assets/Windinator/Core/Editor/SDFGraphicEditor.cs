@@ -35,7 +35,8 @@ public class SDFGraphicEditor : Editor
     {
         EditorGUI.BeginChangeCheck();
 
-        graphic.Texture = EditorGUILayout.ObjectField("Texture", graphic.Texture, typeof(Texture), allowSceneObjects: true) as Texture;
+        // if (!(graphic is CanvasGraphic))
+            graphic.Texture = EditorGUILayout.ObjectField("Texture", graphic.Texture, typeof(Texture), allowSceneObjects: true) as Texture;
         graphic.color = EditorGUILayout.ColorField("Base Color", graphic.color);
         graphic.Alpha = EditorGUILayout.Slider("Alpha Multiplier", graphic.Alpha, 0, 1);
         graphic.raycastTarget = EditorGUILayout.Toggle("Raycast Target", graphic.raycastTarget);
@@ -251,8 +252,8 @@ public class CanvasGraphicEditor : Editor
 
         SDFGraphicEditor.DrawSDFGUI(target as SignedDistanceFieldGraphic);
 
-        g.SetMargin(EditorGUILayout.FloatField("Expand Borders", g.Margin));
-        g.Quality = EditorGUILayout.Slider("Quality", g.Quality, 0.001f, 1f);
+        g.SetMargin(EditorGUILayout.FloatField("Expand Borders", g.GetMargin()));
+        g.Quality = EditorGUILayout.Slider("Quality", g.Quality, 0.0001f, 1f);
     }
 }
 

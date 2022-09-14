@@ -59,7 +59,11 @@ public class GoogleResultsContent : LayoutBaker
 
     public void UpdateCell(int index, GoogleResultEntry element, string data)
     {
-        element.Label.Value.LabelText = data;
+        var label = element.Label.Value;
+
+        label.LabelText = data;
+        label.ForceUpdate();
+
         var delete = element.DeleteButton.Value;
 
         delete.onClick.RemoveAllListeners();

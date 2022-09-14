@@ -78,6 +78,7 @@ public class InheritLayoutElement : UIBehaviour, ILayoutElement
         UpdateBeingControlled();
     }
 
+#if UNITY_EDITOR
     protected override void OnValidate()
     {
         base.OnValidate();
@@ -86,6 +87,7 @@ public class InheritLayoutElement : UIBehaviour, ILayoutElement
         CalculateLayoutInputVertical();
         SetDirty();
     }
+#endif
 
     public void SetDirty()
     {

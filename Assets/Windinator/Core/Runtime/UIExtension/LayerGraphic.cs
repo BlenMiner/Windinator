@@ -15,8 +15,8 @@ namespace Riten.Windinator.Shapes
         {
             m_useBackbuffer = false;
 
-            m_buffer = new RenderTexture(width, height, 0, RenderTextureFormat.R16);
-            m_backBuffer = new RenderTexture(m_buffer);
+            m_buffer = new RenderTexture(width, height, 0, RenderTextureFormat.RG32);
+            m_backBuffer = new RenderTexture(width, height, 0, RenderTextureFormat.RG32);
 
             m_buffer.useMipMap = false;
             m_backBuffer.useMipMap = false;

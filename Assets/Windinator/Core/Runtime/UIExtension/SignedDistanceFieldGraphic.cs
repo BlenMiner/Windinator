@@ -320,7 +320,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         var uv3 = new Vector4(
             DecodeFloatRGBA(m_outlineColor),
             DecodeFloatRGBA(m_shadowColor),
-            DecodeFloatRGBA(new Color32(m_circleColor.r, m_circleColor.g, m_circleColor.b, (byte)(m_circleColor.a * m_circleAlpha))),
+            DecodeFloatRGBA(new Color32(m_circleColor.r, m_circleColor.g, m_circleColor.b, (byte)(m_circleAlpha * 255f))),
             m_circleRadius
         );
 
@@ -381,15 +381,17 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     public override void SetMaterialDirty()
     {
+        if (m_material == null) LoadMaterial();
+
         base.SetMaterialDirty();
 
         UpdateInstanciable();
         UpdateShaderDimensions();
 
-        defaultMaterial.SetTexture("_MainTex", mainTexture);
+        m_material.SetTexture("_MainTex", mainTexture);
 
-        defaultMaterial.SetVector("_MaskRect", MaskRect);
-        defaultMaterial.SetVector("_MaskOffset", MaskOffset);
+        m_material.SetVector("_MaskRect", MaskRect);
+        m_material.SetVector("_MaskOffset", MaskOffset);
     }
 
     void UpdateInstanciable()

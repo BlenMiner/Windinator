@@ -94,8 +94,6 @@ Shader "UI/Windinator/PolygonRenderer"
                 float2 dpos = position;
 
                 // Signed distance field calculation
-
-                float multiplier = 1 - (roundness / maxSize);
                 halfSize -= roundness;
                 
                 float dist = sdPolygon(dpos, 1, halfSize) - roundness;

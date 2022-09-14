@@ -50,7 +50,7 @@ Shader "UI/Windinator/ClearOp"
             
             float4 frag (v2f IN) : SV_Target
             {
-                return float4(16384, 1, 1, 1);
+                return float4(1, Encode01(float4(1, 1, 1, 1)), 1, 1);
             }
             ENDCG
         }

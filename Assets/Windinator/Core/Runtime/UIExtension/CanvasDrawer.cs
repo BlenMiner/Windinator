@@ -28,6 +28,11 @@ namespace Riten.Windinator.Shapes
 
         bool m_dirty = false;
 
+        private void Awake()
+        {
+            m_canvas = GetComponent<CanvasGraphic>();
+        }
+
         public void SetDirty()
         {
             m_dirty = true;

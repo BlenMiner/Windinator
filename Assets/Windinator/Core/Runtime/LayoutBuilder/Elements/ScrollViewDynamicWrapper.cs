@@ -5,6 +5,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UI;
+using WindinatorTools;
+using static Riten.Windinator.LayoutBuilder.Layout;
 
 namespace Riten.Windinator
 {
@@ -24,11 +26,9 @@ namespace Riten.Windinator
 
         IList<D> m_data;
 
-        GameObjectPool<T> m_pool;
+        UIPool m_pool;
 
         float m_itemSize;
-
-        List<T> m_instances = new List<T>();
 
         float m_spacing;
 
@@ -58,7 +58,12 @@ namespace Riten.Windinator
 
             m_scrollView.onValueChanged.AddListener(ScrollChanged);
 
-            m_pool = new GameObjectPool<T>(Windinator.GetElementPrefab<T>());
+            m_pool = new UIPool(Windinator.GetElementPrefab<T>(), m_scrollView.content);
+            m_pool.OnInstantiated = go =>
+            {
+                var fitter = go.GetComponent<ContentSizeFitter>();
+                if (fitter != null) GameObject.Destroy(fitter);
+            };
             Update();
         }
 
@@ -73,7 +78,12 @@ namespace Riten.Windinator
 
             m_scrollView.onValueChanged.AddListener(ScrollChanged);
 
-            m_pool = new GameObjectPool<T>(prefab);
+            m_pool = new UIPool(prefab, m_scrollView.content);
+            m_pool.OnInstantiated = go =>
+            {
+                var fitter = go.GetComponent<ContentSizeFitter>();
+                if (fitter != null) GameObject.Destroy(fitter);
+            };
             Update();
         }
 
@@ -85,7 +95,7 @@ namespace Riten.Windinator
         public void Dispose()
         {
             m_scrollView.onValueChanged.RemoveListener(ScrollChanged);
-            m_pool.DestroyAll();
+            m_pool.Dispose();
         }
 
         public void Update()
@@ -122,20 +132,23 @@ namespace Riten.Windinator
 
             int indexOffset = Mathf.FloorToInt(scrollPos / itemSize);
 
-            int count = indexOffset + itemsCountThatFit;
-            int diff = count - m_data.Count;
-
-            if (diff > 0) itemsCountThatFit -= diff;
-
             ResizeContent(totalSize, contentSize, minAnchor, maxAnchor);
-            AllocateNecessaryInstances(itemsCountThatFit, minAnchor, maxAnchor);
 
-            for (int i = 0; i < m_instances.Count; ++i)
+            m_pool.ResetCounter();
+
+            for (int i = 0; i < itemsCountThatFit; ++i)
             {
                 int idx = indexOffset + i;
-                T element = m_instances[i];
+
+                if (idx >= m_data.Count) break;
+
+                T element = m_pool.GetInstance<T>();
 
                 RectTransform tr = element.transform as RectTransform;
+
+                if (tr.anchorMin != minAnchor) tr.anchorMin = minAnchor;
+                if (tr.anchorMax != maxAnchor) tr.anchorMax = maxAnchor;
+                if (tr.pivot != Vector2.up) tr.pivot = Vector2.up;
 
                 var newPos = dirVector * idx * itemSize;
                 var newSize = scaleVector * m_itemSize;
@@ -146,34 +159,10 @@ namespace Riten.Windinator
                 if (tr.sizeDelta != newSize)
                     tr.sizeDelta = newSize;
 
-                if (idx < m_data.Count) m_requestElement(idx, element, m_data[idx]);
-            }
-        }
-
-        private void AllocateNecessaryInstances(int itemsCountThatFit, Vector2 minAnchor, Vector2 maxAnchor)
-        {
-            while (m_instances.Count < itemsCountThatFit)
-            {
-                var prefab = m_pool.Allocate(m_scrollView.content);
-                var tr = prefab.transform as RectTransform;
-
-                var sizeFitter = prefab.gameObject.GetComponent<ContentSizeFitter>();
-                if (sizeFitter != null) GameObject.Destroy(sizeFitter);
-
-                if (tr.anchorMin != minAnchor) tr.anchorMin = minAnchor;
-                if (tr.anchorMax != maxAnchor) tr.anchorMax = maxAnchor;
-                tr.pivot = Vector2.up;
-
-                m_instances.Add(prefab);
+                m_requestElement(idx, element, m_data[idx]);
             }
 
-            while (m_instances.Count > itemsCountThatFit)
-            {
-                int last = m_instances.Count - 1;
-                var instance = m_instances[last];
-                m_instances.RemoveAt(last);
-                m_pool.Free(instance);
-            }
+            m_pool.DiscardRest();
         }
 
         private void ResizeContent(float totalSize, Vector2 contentSize, Vector2 minAnchor, Vector2 maxAnchor)

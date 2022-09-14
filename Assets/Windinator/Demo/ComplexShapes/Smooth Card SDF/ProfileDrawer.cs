@@ -17,7 +17,7 @@ public class ProfileDrawer : CanvasDrawer
         canvas.CircleBrush.Draw(
             new Vector2(0, (YOffset * size.y - size.y) * (1 - Hidden)),
             radius, radius * Blend,
-            DrawOperation.Substract
+            operation: DrawOperation.Substract
         );
     }
 }

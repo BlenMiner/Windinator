@@ -48,6 +48,10 @@ Shader "UI/Windinator/CanvasProceduralRenderer"
             CGPROGRAM
             #include "shared.cginc"
 
+            static const float RMAGIC = 0;
+            static const float GMAGIC = 1 / 3;
+            static const float BMAGIC = 2 / 3;
+
             fixed4 frag (v2f IN) : SV_Target
             {
                 float2 position;
