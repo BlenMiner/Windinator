@@ -38,6 +38,12 @@ namespace Riten.Windinator.Shapes
             m_dirty = true;
         }
 
+        public void ForceRedraw()
+        {
+            SetDirty();
+            Update();
+        }
+
         private void OnValidate()
         {
             SetDirty();

@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -285.40765, y: -143.01956}
-  m_SizeDelta: {x: 52.3215, y: 50.8397}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &492002095149360657
 CanvasRenderer:
@@ -70,15 +70,22 @@ MonoBehaviour:
   m_graphicAlphaMult: 1
   m_circleAlpha: 0
   m_circlePos: {x: 0, y: 0}
-  m_circleColor: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 0}
+  m_circleColor:
+    serializedVersion: 2
+    rgba: 0
   m_circleRadius: 0
   m_outlineSize: 0
-  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_outlineColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_shadowSize: 0
   m_shadowBlur: 80
   m_shadowPower: 1
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadowColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
   m_rightUpColor: {r: 1, g: 1, b: 1, a: 1}
   m_rightDownColor: {r: 1, g: 1, b: 1, a: 1}
@@ -86,9 +93,9 @@ MonoBehaviour:
   m_roudness: 0
   points:
     Array:
-    - {x: 0, y: 0, z: 0, w: 0}
     - {x: 1, y: 0, z: 0, w: 0}
-    - {x: 0.5, y: 1, z: 0, w: 0}
+    - {x: 0, y: 1, z: 0, w: 0}
+    - {x: 1, y: 1, z: 0, w: 0}
     - {x: 1, y: 0.5, z: 0, w: 0}
     - {x: 0, y: 0.5, z: 0, w: 0}
     - {x: 0, y: 0, z: 0, w: 0}
@@ -186,4 +193,5 @@ MonoBehaviour:
     - {x: 0, y: 0, z: 0, w: 0}
     - {x: 0, y: 0, z: 0, w: 0}
     - {x: 0, y: 0, z: 0, w: 0}
-    len: 3
+    Capacity: 1023
+    Length: 3

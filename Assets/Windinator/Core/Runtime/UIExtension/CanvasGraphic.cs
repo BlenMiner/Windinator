@@ -1,6 +1,5 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 namespace Riten.Windinator.Shapes
 {
@@ -34,7 +33,10 @@ namespace Riten.Windinator.Shapes
 
         public float Quality {
             get => m_quality;
-            set { m_quality = value;}
+            set {
+                m_quality = value;
+                SetAllDirty();
+            }
         }
 
         public float GetMargin() => m_margin;
@@ -111,9 +113,29 @@ namespace Riten.Windinator.Shapes
         protected override void OnValidate()
         {
             base.OnValidate();
-            if (LineBrush == null || PolyBrush == null || RectBrush == null || CircleBrush == null) Awake();
+
+            if (LineBrush == null || PolyBrush == null || RectBrush == null || CircleBrush == null)
+            {
+                Awake();
+            }
+
+            var size = rectTransform.rect.size;
+
+            UpdateShader(size.x, size.y);
+            UpdateDrawers();
         }
-        #endif
+#endif
+
+        List<CanvasDrawer> m_drawers = new List<CanvasDrawer>();
+
+        void UpdateDrawers()
+        {
+            m_drawers.Clear();
+            GetComponentsInChildren(m_drawers);
+
+            foreach (var d in m_drawers)
+                d.ForceRedraw();
+        }
 
         override protected void OnEnable()
         {
@@ -154,6 +176,8 @@ namespace Riten.Windinator.Shapes
 
                 Clear(m_mainLayer);
                 Apply(m_mainLayer);
+
+                UpdateDrawers();
             }
         }
 
