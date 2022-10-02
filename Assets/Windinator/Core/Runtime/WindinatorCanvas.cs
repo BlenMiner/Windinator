@@ -16,6 +16,13 @@ public class WindinatorCanvas : MonoBehaviour
 
     void UpdateCanvas()
     {
-        Windinator.SetupCanvas(GetComponent<Canvas>(), GetComponent<CanvasScaler>());
+        var canvas = GetComponent<Canvas>();
+
+        canvas.additionalShaderChannels =
+                AdditionalCanvasShaderChannels.Normal |
+                AdditionalCanvasShaderChannels.Tangent |
+                AdditionalCanvasShaderChannels.TexCoord1 |
+                AdditionalCanvasShaderChannels.TexCoord2 |
+                AdditionalCanvasShaderChannels.TexCoord3;
     }
 }

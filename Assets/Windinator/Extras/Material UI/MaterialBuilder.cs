@@ -736,7 +736,7 @@ namespace Riten.Windinator.LayoutBuilder
             }
 #else
             public KeyButton(UnityEngine.InputSystem.Key defaultKey, MaterialIcons icon = MaterialIcons.none,
-                MaterialButtonType type = MaterialButtonType.Text,
+                MaterialButtonStylePresets type = MaterialButtonStylePresets.Text,
                 Vector4 padding = default) : base(LayoutMaterialPrefabs.MaterialKeyButton)
             {
                 m_defaultKey = defaultKey;

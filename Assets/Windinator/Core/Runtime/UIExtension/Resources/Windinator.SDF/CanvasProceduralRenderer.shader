@@ -48,9 +48,35 @@ Shader "UI/Windinator/CanvasProceduralRenderer"
             CGPROGRAM
             #include "shared.cginc"
 
-            static const float RMAGIC = 0;
-            static const float GMAGIC = 1 / 3;
-            static const float BMAGIC = 2 / 3;
+            float GETSDF(in float2 p)
+            {
+                float2 fullsize = (_Size.xy + _Padding * 2);
+                float2 textUV = (p + (fullsize) * 0.5) / fullsize;
+                float4 color = tex2D(_MainTex, textUV);
+                return Decode(color.r);
+            }
+
+            float2 getNormal(in float2 p)
+            {
+                float x = p.x;
+                float y = p.y;
+
+                float d = GETSDF(p);
+                float sign = d >= 0 ? 1.0f : -1.0f;
+
+                //read neighbour distances, ignoring border pixels
+                float x0 = GETSDF(p + float2(-1, 0));
+                float x1 = GETSDF(p + float2(+1, 0));
+                float y0 = GETSDF(p + float2(0, -1));
+                float y1 = GETSDF(p + float2(0, +1));
+
+                //use the smallest neighbour in each direction to calculate the partial deriviates
+                float xgrad = sign * x0 < sign* x1 ? -(x0 - d) : (x1 - d);
+                float ygrad = sign * y0 < sign* y1 ? -(y0 - d) : (y1 - d);
+
+                //combine partial derivatives to get gradient
+                return float2(xgrad, ygrad);
+            }
 
             fixed4 frag (v2f IN) : SV_Target
             {
@@ -59,13 +85,13 @@ Shader "UI/Windinator/CanvasProceduralRenderer"
                 float2 worldPos;
 
                 LoadData(IN, worldPos);
+
                 GetRect(IN.texcoord, position, halfSize, 1);
 
-                float4 color = tex2D(_MainTex, IN.texcoord);
+                float dist = GETSDF(position);
+                float2 norm = getNormal(position);
 
-                float dist = Decode(color.r);
-
-                return fragFunctionRaw(IN.texcoord, worldPos, IN.color, dist, position, halfSize);
+                return fragFunctionRaw(IN.texcoord, worldPos, IN.color, dist, position, halfSize, norm);
             }
             ENDCG
         }

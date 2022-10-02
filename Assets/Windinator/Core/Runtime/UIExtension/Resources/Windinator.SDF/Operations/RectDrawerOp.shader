@@ -64,14 +64,6 @@ Shader "UI/Windinator/DrawRect"
                 return min(max(q.x,q.y),0.0) + length(max(q,0.0)) - r.x;
             }
 
-            float2 rotate(float2 pos, float angle)
-            {
-                float sinX = sin(angle);
-                float cosX = cos(angle);
-                float2x2 rotationMatrix = float2x2(cosX, -sinX, sinX, cosX);
-                return mul(pos, rotationMatrix);
-            }
-
             float4 frag (v2f IN) : SV_Target
             {
                 float2 position;

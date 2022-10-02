@@ -185,14 +185,25 @@ MonoBehaviour:
   m_graphicAlphaMult: 1
   m_circleAlpha: 0
   m_circlePos: {x: 0, y: 0}
-  m_circleColor: {r: 1, g: 1, b: 1, a: 1}
+  m_circleColor:
+    serializedVersion: 2
+    rgba: 0
   m_circleRadius: 0
+  m_embossDirection: 0
+  m_embossBlurTop: 0
+  m_embossBlurBottom: 0
+  m_embossDistance: 0
+  m_embossSize: 0
   m_outlineSize: 0
-  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_outlineColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_shadowSize: 50
   m_shadowBlur: 100
   m_shadowPower: 1
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadowColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
@@ -428,18 +439,29 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_texture: {fileID: 1410530839}
+  m_texture: {fileID: 1953571912}
   m_graphicAlphaMult: 1
   m_circleAlpha: 0.2
   m_circlePos: {x: 0, y: 0}
-  m_circleColor: {r: 0, g: 0, b: 0, a: 0}
+  m_circleColor:
+    serializedVersion: 2
+    rgba: 0
   m_circleRadius: 0
+  m_embossDirection: 0
+  m_embossBlurTop: 0
+  m_embossBlurBottom: 0
+  m_embossDistance: 0
+  m_embossSize: 0
   m_outlineSize: 0
-  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_outlineColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_shadowSize: 0
   m_shadowBlur: 0
   m_shadowPower: 1
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadowColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
@@ -518,14 +540,25 @@ MonoBehaviour:
   m_graphicAlphaMult: 1
   m_circleAlpha: 0
   m_circlePos: {x: 0, y: 0}
-  m_circleColor: {r: 1, g: 1, b: 1, a: 1}
+  m_circleColor:
+    serializedVersion: 2
+    rgba: 0
   m_circleRadius: 0
+  m_embossDirection: 0
+  m_embossBlurTop: 0
+  m_embossBlurBottom: 0
+  m_embossDistance: 0
+  m_embossSize: 0
   m_outlineSize: 0
-  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_outlineColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_shadowSize: 0
   m_shadowBlur: 100
   m_shadowPower: 1
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadowColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
@@ -543,43 +576,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 833174264}
   m_CullTransparentMesh: 0
---- !u!84 &1256061480
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 5
-  m_Width: 43
-  m_Height: 43
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 21
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1 &1391313739
 GameObject:
   m_ObjectHideFlags: 0
@@ -664,43 +660,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!84 &1410530839
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 5
-  m_Width: 247
-  m_Height: 119
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 21
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1 &1779419085
 GameObject:
   m_ObjectHideFlags: 0
@@ -827,18 +786,29 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_texture: {fileID: 1256061480}
+  m_texture: {fileID: 2095443897}
   m_graphicAlphaMult: 1
   m_circleAlpha: 0.321
   m_circlePos: {x: 0, y: 0}
-  m_circleColor: {r: 0, g: 0, b: 0, a: 0}
+  m_circleColor:
+    serializedVersion: 2
+    rgba: 0
   m_circleRadius: 0
+  m_embossDirection: 0
+  m_embossBlurTop: 0
+  m_embossBlurBottom: 0
+  m_embossDistance: 0
+  m_embossSize: 0
   m_outlineSize: 0
-  m_outlineColor: {r: 0.4056604, g: 0.3233802, b: 0.3233802, a: 1}
+  m_outlineColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_shadowSize: 0
   m_shadowBlur: 0
   m_shadowPower: 1
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadowColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_maskRect: {x: -0.00012207031, y: 0, z: 0, w: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}
@@ -871,6 +841,80 @@ MonoBehaviour:
   YOffset: -0.3
   Blend: 0.5
   Hidden: 0
+--- !u!84 &1953571912
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SDF
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 5
+  m_Width: 252
+  m_Height: 124
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 22
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
+--- !u!84 &2095443897
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SDF
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 5
+  m_Width: 48
+  m_Height: 48
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 22
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1 &2140195188
 GameObject:
   m_ObjectHideFlags: 0
@@ -934,14 +978,25 @@ MonoBehaviour:
   m_graphicAlphaMult: 1
   m_circleAlpha: 0
   m_circlePos: {x: 0, y: 0}
-  m_circleColor: {r: 1, g: 1, b: 1, a: 1}
+  m_circleColor:
+    serializedVersion: 2
+    rgba: 0
   m_circleRadius: 0
+  m_embossDirection: 0
+  m_embossBlurTop: 0
+  m_embossBlurBottom: 0
+  m_embossDistance: 0
+  m_embossSize: 0
   m_outlineSize: 0
-  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_outlineColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_shadowSize: 0
   m_shadowBlur: 0
   m_shadowPower: 1
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadowColor:
+    serializedVersion: 2
+    rgba: 4278190080
   m_maskRect: {x: 0, y: 0, z: 0, w: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   m_leftUpColor: {r: 1, g: 1, b: 1, a: 1}

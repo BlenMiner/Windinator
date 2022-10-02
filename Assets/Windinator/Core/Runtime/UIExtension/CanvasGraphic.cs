@@ -118,12 +118,7 @@ namespace Riten.Windinator.Shapes
             {
                 Awake();
             }
-
-            var size = rectTransform.rect.size;
-
-            UpdateShader(size.x, size.y);
-            UpdateDrawers();
-        }
+        } 
 #endif
 
         List<CanvasDrawer> m_drawers = new List<CanvasDrawer>();
@@ -134,9 +129,9 @@ namespace Riten.Windinator.Shapes
             GetComponentsInChildren(m_drawers);
 
             foreach (var d in m_drawers)
-                d.ForceRedraw();
+                d.SetDirty();
         }
-
+         
         override protected void OnEnable()
         {
             onMaterialUpdate += UpdateShader;
@@ -239,7 +234,9 @@ namespace Riten.Windinator.Shapes
         {
             Vector2 size = transform.rect.size;
 
-            Vector2 center = (Vector2)rectTransform.InverseTransformPoint((Vector2)transform.position - (size * transform.pivot))
+            var pivot = transform.pivot;
+
+            Vector2 center = (Vector2)rectTransform.InverseTransformPoint((Vector2)transform.position - (size * pivot))
                     + (rectTransform.pivot - Vector2.one * 0.5f) * rectTransform.rect.size;
 
             return new Rect(center, size);

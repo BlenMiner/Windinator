@@ -52,6 +52,21 @@ public static class UndoUtils
         return newVal;
     }
 
+    public static int IntField(this Object target, string label, int value)
+    {
+        EditorGUI.BeginChangeCheck();
+
+        var newVal = EditorGUILayout.IntField(label, value);
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            Undo.RecordObject(target, $"{label} Changed");
+            EditorUtility.SetDirty(target);
+        }
+
+        return newVal;
+    }
+
     public static Rect RectField(this Object target, string label, Rect value)
     {
         EditorGUI.BeginChangeCheck();
@@ -165,11 +180,25 @@ public class SDFGraphicEditor : Editor
         graphic.ShadowColor = graphic.ColorField("Shadow Color", graphic.ShadowColor);
         graphic.ShadowSize = graphic.FloatField("Shadow Size", graphic.ShadowSize);
         graphic.ShadowBlur = graphic.FloatField("Shadow Blur", graphic.ShadowBlur);
-        graphic.ShadowPower = graphic.FloatField("Shadow Power", graphic.ShadowPower);
 
-        if (graphic.ShadowPower < 1) graphic.ShadowPower = 1f;
-        if (graphic.ShadowBlur < 0) graphic.ShadowBlur = 0f;
-        if (graphic.ShadowSize < 0) graphic.ShadowSize = 0f;
+        EndGroup();
+
+        BeginGroup("Emboss Settings");
+
+        graphic.EmbossDirection = graphic.Slider("Emboss Direction", graphic.EmbossDirection, 0, 1);
+
+        GUILayout.Space(10f);
+
+        graphic.EmbossHighlightColor = graphic.ColorField("Emboss Highlight", graphic.EmbossHighlightColor, true, true, false);
+        graphic.EmbossLowlightColor = graphic.ColorField("Emboss Lowlight", graphic.EmbossLowlightColor, true, true, false);
+
+        GUILayout.Space(10f);
+
+        graphic.EmbossBlurTop = graphic.Slider("Emboss Blur Top", graphic.EmbossBlurTop, -1, 1);
+        graphic.EmbossBlurBottom = graphic.Slider("Emboss Blur Bottom", graphic.EmbossBlurBottom, -1, 1);
+        graphic.EmbossDistance = graphic.FloatField("Emboss Distance", graphic.EmbossDistance);
+        graphic.EmbossSize = graphic.FloatField("Emboss Size", graphic.EmbossSize);
+        graphic.EmbossPower = graphic.Slider("Emboss Power", graphic.EmbossPower, 0, 1);
 
         EndGroup();
 
@@ -532,7 +561,6 @@ public class LineGraphicEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        EditorGUI.BeginChangeCheck();
         SDFGraphicEditor.DrawSDFGUI(target as SignedDistanceFieldGraphic);
 
         LineGraphic graphic = target as LineGraphic;
@@ -556,7 +584,7 @@ public class LineGraphicEditor : Editor
         if (m_showPoints)
         {
             GUI.SetNextControlName("MyTextField");
-            graphic.Points.Length = EditorGUILayout.IntField("Count", graphic.Points.Length);
+            graphic.Points.Length = graphic.IntField("Count", graphic.Points.Length);
 
             EditorGUI.indentLevel += 1;
             for (int i = 0; i < graphic.Points.Length; ++i)
@@ -570,15 +598,13 @@ public class LineGraphicEditor : Editor
 
             if (GUILayout.Button("Add Point"))
             {
+                Undo.RecordObject(graphic, "Line Point Count Updated");
+                EditorUtility.SetDirty(graphic);
+
                 graphic.Points.Add(graphic.Points.Length == 0 ? default : graphic.Points[graphic.Points.Length - 1]);
             }
         }
         EditorGUI.indentLevel -= 1;
-
-        if (EditorGUI.EndChangeCheck())
-        {
-            Undo.RecordObject(graphic, "Line Point Updated");
-        }
 
         SDFGraphicEditor.EndGroup();
     }
@@ -593,7 +619,6 @@ public class LineGraphicEditor : Editor
 
     public void OnSceneGUI()
     {
-        EditorGUI.BeginChangeCheck();
         LineGraphic graphic = target as LineGraphic;
         SDFGraphicEditor.DrawSDFScene(target as SignedDistanceFieldGraphic);
 
@@ -616,6 +641,8 @@ public class LineGraphicEditor : Editor
                 float pivotX = (-rectTransform.pivot.x) * rectTransform.rect.width;
                 float pivotY = (-rectTransform.pivot.y) * rectTransform.rect.height;
 
+                var pivot = graphic.transform.TransformVector(new Vector2(pivotX, pivotY));
+
                 Vector3 actualPos = graphic.transform.TransformPoint(new Vector3(
                     pivotX + localPoint.x,
                     pivotY + localPoint.y
@@ -628,18 +655,21 @@ public class LineGraphicEditor : Editor
                     Handles.color = Color.HSVToRGB(H % 1f, 1f, 1f);
                 }
 
+                EditorGUI.BeginChangeCheck();
+
                 actualPos = Handles.FreeMoveHandle(actualPos, Quaternion.identity, 5f, Vector3.zero, Handles.SphereHandleCap);
+
                 var p = Vector2.Scale(graphic.transform.InverseTransformPoint(new Vector2(
-                    actualPos.x - pivotX,
-                    actualPos.y - pivotY
+                    actualPos.x - pivot.x,
+                    actualPos.y - pivot.y
                 )), new Vector2(1f / rectTransform.rect.size.x, 1f / rectTransform.rect.size.y));
 
                 p = Vector4.Max(p, default);
                 p = Vector4.Min(p, Vector4.one);
 
-                if (p != point)
+                if (EditorGUI.EndChangeCheck())
                 {
-                    Undo.RecordObject(graphic, "Line Updated From Scene");
+                    Undo.RecordObject(graphic, $"Line {i} Updated From Scene");
                     graphic.Points[i] = p;
                 }
             }
@@ -654,7 +684,7 @@ public class LineGraphicEditor : Editor
             }
         }
 
-        if (Event.current.type == EventType.MouseUp || EditorGUI.EndChangeCheck())
+        if (Event.current.type == EventType.MouseUp)
         {
             EditorUtility.SetDirty(graphic);
         }

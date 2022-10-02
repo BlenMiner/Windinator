@@ -80,6 +80,30 @@ Shader "UI/Windinator/LineRenderer"
 
                 return d;
             }
+
+            #define GETSDF sdPolygon
+
+            float2 getNormal(in float2 p, float r, float2 size, float roundness)
+            {
+                float x = p.x;
+                float y = p.y;
+
+                float d = GETSDF(p, r, size) - roundness;
+                float sign = d >= 0 ? 1.0f : -1.0f;
+
+                //read neighbour distances, ignoring border pixels
+                float x0 = GETSDF(p + float2(-1, 0), r, size) - roundness;
+                float x1 = GETSDF(p + float2(+1, 0), r, size) - roundness;
+                float y0 = GETSDF(p + float2(0, -1), r, size) - roundness;
+                float y1 = GETSDF(p + float2(0, +1), r, size) - roundness;
+
+                //use the smallest neighbour in each direction to calculate the partial deriviates
+                float xgrad = sign * x0 < sign* x1 ? -(x0 - d) : (x1 - d);
+                float ygrad = sign * y0 < sign* y1 ? -(y0 - d) : (y1 - d);
+
+                //combine partial derivatives to get gradient
+                return float2(xgrad, ygrad);
+            }
             
             fixed4 frag (v2f IN) : SV_Target
             {
@@ -105,10 +129,11 @@ Shader "UI/Windinator/LineRenderer"
                 halfSize -= roundness;
                 
                 float dist = sdPolygon(dpos, 1, halfSize) - roundness;
+                float2 norm = getNormal(dpos, 1, halfSize, roundness);
 
                 // float dist = sdTriangleIsosceles(dpos, dsize) - roundness;
 
-                return fragFunction(IN.texcoord, worldPos, IN.color, dist, position, halfSize);
+                return fragFunction(IN.texcoord, worldPos, IN.color, dist, position, halfSize, norm);
             }
             ENDCG
         }

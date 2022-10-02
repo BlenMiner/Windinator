@@ -56,6 +56,30 @@ Shader "UI/Windinator/RectangleRenderer"
                 return min(max(q.x,q.y),0.0) + length(max(q,0.0)) - r.x;
             }
 
+            #define GETSDF sdRoundedBox
+
+            float2 getNormal(float2 p, float2 b, float4 r)
+            {
+                float x = p.x;
+                float y = p.y;
+
+                float d = GETSDF(p, b, r);
+                float sign = d >= 0 ? 1.0f : -1.0f;
+
+                //read neighbour distances, ignoring border pixels
+                float x0 = GETSDF(p + float2(-1, 0), b, r);
+                float x1 = GETSDF(p + float2(+1, 0), b, r);
+                float y0 = GETSDF(p + float2(0, -1), b, r);
+                float y1 = GETSDF(p + float2(0, +1), b, r);
+
+                //use the smallest neighbour in each direction to calculate the partial deriviates
+                float xgrad = sign * x0 < sign* x1 ? -(x0 - d) : (x1 - d);
+                float ygrad = sign * y0 < sign* y1 ? -(y0 - d) : (y1 - d);
+
+                //combine partial derivatives to get gradient
+                return float2(xgrad, ygrad);
+            }
+
             fixed4 frag (v2f IN) : SV_Target
             {
                 float2 position;
@@ -71,7 +95,9 @@ Shader "UI/Windinator/RectangleRenderer"
 
                 // Signed distance field calculation
                 float dist = sdRoundedBox(position, halfSize, _Roundness);
-                return fragFunction(IN.texcoord, worldPos, IN.color, dist, position, halfSize);
+                float2 normal = getNormal(position, halfSize, _Roundness);
+
+                return fragFunction(IN.texcoord, worldPos, IN.color, dist, position, halfSize, normal);
 
                 // return IN.color * (1 - dist / length(_Size));
             }

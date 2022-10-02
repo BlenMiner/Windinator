@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,17 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     [SerializeField] float m_circleRadius = 0f;
 
+    [Header("Emboss")]
+
+    [SerializeField] float m_embossDirection = 0f;
+    [SerializeField] float m_embossBlurTop = 0f;
+    [SerializeField] float m_embossBlurBottom = 0f;
+    [SerializeField] float m_embossDistance = 0f;
+    [SerializeField] float m_embossSize = 0f;
+    [SerializeField] float m_embossPow = 0f;
+    [SerializeField] Color m_embossHighlightCol = Color.white;
+    [SerializeField] Color m_embossLowlightCol = Color.black;
+
     [Header("Outline")]
 
     [SerializeField, Min(0f)] float m_outlineSize = 0f;
@@ -31,8 +43,6 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
     [SerializeField, Min(0f)] float m_shadowSize = 0f;
 
     [SerializeField, Min(0f)] float m_shadowBlur = 0f;
-
-    [SerializeField, Min(0f)] float m_shadowPower = 1f;
 
     [SerializeField] Color32 m_shadowColor = Color.black;
 
@@ -58,7 +68,87 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
             SetMaterialDirty();
         }
     }
-     
+
+    public float EmbossDirection
+    {
+        get => m_embossDirection;
+        set
+        {
+            m_embossDirection = Mathf.Min(1, Mathf.Max(0, value));
+            SetVerticesDirty();
+        }
+    }
+
+    public Color EmbossHighlightColor
+    {
+        get => m_embossHighlightCol;
+        set
+        {
+            m_embossHighlightCol = value;
+            SetVerticesDirty();
+        }
+    }
+
+    public Color EmbossLowlightColor
+    {
+        get => m_embossLowlightCol;
+        set
+        {
+            m_embossLowlightCol = value;
+            SetVerticesDirty();
+        }
+    }
+
+    public float EmbossPower
+    {
+        get => m_embossPow;
+        set
+        {
+            m_embossPow = Mathf.Min(1, Mathf.Max(0, value));
+            SetVerticesDirty();
+        }
+    }
+
+    public float EmbossBlurTop
+    {
+        get => m_embossBlurTop;
+        set
+        {
+            m_embossBlurTop = Mathf.Min(1, Mathf.Max(-1, value));
+            SetVerticesDirty();
+        }
+    }
+
+    public float EmbossBlurBottom
+    {
+        get => m_embossBlurBottom;
+        set
+        {
+            m_embossBlurBottom = Mathf.Min(1, Mathf.Max(-1, value));
+            SetVerticesDirty();
+        }
+    }
+
+    public float EmbossDistance
+    {
+        get => m_embossDistance;
+        set
+        {
+            m_embossDistance = Mathf.Max(0, value);
+            SetVerticesDirty();
+        }
+    }
+
+    public float EmbossSize
+    {
+        get => m_embossSize;
+        set
+        {
+            m_embossSize = Mathf.Max(0, value);
+            SetVerticesDirty();
+        }
+    }
+
     public virtual float Margin => Mathf.Max(m_outlineSize, m_shadowSize) + 2 + ExtraMargin;
 
     public virtual float ExtraMargin => 0;
@@ -121,7 +211,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         get => m_circleAlpha;
         set
         {
-            m_circleAlpha = value;
+            m_circleAlpha = Mathf.Clamp01(value);
             SetVerticesDirty();
         }
     }
@@ -131,8 +221,8 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         get => m_circleRadius;
         set
         {
-            m_circleRadius = value;
-            SetVerticesDirty();
+            m_circleRadius = Mathf.Max(0, value);
+            SetMaterialDirty();
         }
     }
 
@@ -151,7 +241,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         get => m_outlineSize;
         set
         {
-            m_outlineSize = value;
+            m_outlineSize = Mathf.Max(0, value);
             SetVerticesDirty();
         }
     }
@@ -171,7 +261,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         get => m_shadowSize;
         set
         {
-            m_shadowSize = value;
+            m_shadowSize = Mathf.Max(0, value);
             SetVerticesDirty();
         }
     }
@@ -186,17 +276,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         }
     }
 
-    public float ShadowPower
-    {
-        get => m_shadowPower;
-        set
-        {
-            m_shadowPower = value;
-            SetVerticesDirty();
-        }
-    }
-
-    public Vector2 CirclePos { get => m_circlePos; set { m_circlePos = value; SetVerticesDirty();} }
+    public Vector2 CirclePos { get => m_circlePos; set { m_circlePos = value; SetMaterialDirty();} }
 
     public Vector4 MaskRect { 
         get => m_maskRect; 
@@ -243,12 +323,11 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         SetAllDirty();
     }
 
-    public void SetShadow(Color color, float size, float blur, float power = 1f)
+    public void SetShadow(Color color, float size, float blur)
     {
         m_shadowColor = color;
         m_shadowSize = size;
         m_shadowBlur = blur;
-        m_shadowPower = power;
 
         SetAllDirty();
     }
@@ -301,34 +380,52 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         return default;
     }
 
-    static readonly Vector2 ZERO = new Vector2(0, 0), UP = new Vector2(0, 1), ONE = new Vector2(1, 1), RIGHT = new Vector2(1, 0);
+    static readonly Vector4 ZERO = new Vector2(0, 0), UP = new Vector4(0, 1), ONE = new Vector4(1, 1), RIGHT = new Vector4(1, 0);
 
     protected override void OnPopulateMesh(VertexHelper vh)
     {
         vh.Clear();
 
-        float width = rectTransform.rect.width;
-        float height = rectTransform.rect.height;
+        Vector2 size = rectTransform.rect.size;
+
+        float width = size.x;
+        float height = size.y;
 
         Vector3 pivot = new Vector3(
             rectTransform.pivot.x * width,
             rectTransform.pivot.y * height, 0);
 
-        // Equal for all
-        var uv1 = new Vector4(m_shadowSize, m_shadowBlur, 0, Margin);
-        var uv2 = new Vector4(m_sizeCached.x, m_sizeCached.y, m_outlineSize, m_graphicAlphaMult);
+        Vector2 extraData = new Vector2(DecodeFloatRGBA(EmbossLowlightColor), Margin);
+
+        var uv1 = new Vector4(
+            m_shadowSize,
+            m_shadowBlur,
+            m_embossSize,
+            m_outlineSize
+        );
+
+        var uv2 = new Vector4(
+            m_sizeCached.x,
+            m_sizeCached.y,
+            m_embossDistance,
+            DecodeFloatRGBA(EmbossHighlightColor)
+        );
+
         var uv3 = new Vector4(
             DecodeFloatRGBA(m_outlineColor),
             DecodeFloatRGBA(m_shadowColor),
-            DecodeFloatRGBA(new Color32(m_circleColor.r, m_circleColor.g, m_circleColor.b, (byte)(m_circleAlpha * 255f))),
-            m_circleRadius
+            0,
+            DecodeFloatRGBA(m_embossDistance, m_graphicAlphaMult, 0, 0)
         );
 
         var normal = new Vector3(
-            CirclePos.x,
-            CirclePos.y,
-            0
+            DecodeFloatRGBA(m_embossDirection, (m_embossBlurTop + 1) * 0.5f, (m_embossBlurBottom + 1) * 0.5f, m_embossPow),
+            0, // Don't touch this
+            0 // Don't touch this
         );
+
+
+        Vector4 extraDataV4 = new Vector4(0, 0, extraData.x, extraData.y);
 
         float marginedWidth = width + Margin - pivot.x;
         float marginedHeight = height + Margin - pivot.y;
@@ -340,37 +437,140 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         vh.AddVert(
             new Vector3(negativeMarginX, negativeMarginY),
             color * LeftDownColor,
-            ZERO,
+            ZERO + extraDataV4,
             uv1, uv2, uv3, normal, tangent);
 
         vh.AddVert(
             new Vector3(negativeMarginX, marginedHeight),
             color * LeftUpColor,
-            UP,
+            UP + extraDataV4,
             uv1, uv2, uv3, normal, tangent);
 
         vh.AddVert(
             new Vector3(marginedWidth, marginedHeight),
             color * RightUpColor,
-            ONE,
+            ONE + extraDataV4,
             uv1, uv2, uv3, normal, tangent);
 
         vh.AddVert(
             new Vector3(marginedWidth, negativeMarginY),
             color * RightDownColor,
-            RIGHT,
+            RIGHT + extraDataV4,
             uv1, uv2, uv3, normal, tangent);
 
         vh.AddTriangle(0, 1, 2);
         vh.AddTriangle(2, 3, 0);
     }
 
+    const int LOSE = 20;
+    const int WIN = (255 - (LOSE * 2));
+    const int WIN_2 = (127 - (LOSE * 2));
+    const int WIN_SHORT = (65535 - (LOSE * 2));
+
+    byte RemapColor(byte chanel)
+    {
+        float f = chanel / 255f;
+        return (byte)((f * WIN) + LOSE);
+    }
+
+    byte RemapColor2(byte chanel)
+    {
+        float f = chanel / 255f;
+        return (byte)((f * WIN_2) + LOSE);
+    }
+
+    byte RemapColor(float f)
+    {
+        return (byte)((f * WIN) + LOSE);
+    }
+
+    ushort RemapColorShort(float f)
+    {
+        return (ushort)((f * WIN_SHORT) + LOSE);
+    }
+
+    byte RemapColor2(float f)
+    {
+        return (byte)((f * WIN_2) + LOSE);
+    }
+
+    float DecodeSizeFloat(float value, float maxLength)
+    {
+        return ((value / maxLength) + 1) * 0.5f;
+    }
+
+    /// <summary>
+    /// Max value = 16383 
+    /// Second axis (y) will lose precision if x is big
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    float DecodeUnsignedVector2(Vector2 value)
+    {
+        return DecodeUnsignedVector2(value.x, value.y);
+    }
+
+    struct DecodePair
+    {
+        public uint Value;
+        public uint MaxValue;
+
+        public DecodePair(uint v, uint max)
+        {
+            Value = v;
+            MaxValue = max;
+        }
+    }
+
+    /// <summary>
+    /// Bigger "MaxValues" should ALWAYS go first in order.
+    /// </summary>
+    float DecodeValues(DecodePair x, DecodePair y, uint z)
+    {
+        return z * x.MaxValue * y.MaxValue + y.Value * x.MaxValue + x.Value;
+    }
+
+    float DecodeValues(DecodePair x, uint y)
+    {
+        return y * x.MaxValue + x.Value;
+    }
+
+    float DecodeUnsignedVector2(float _x, float _y)
+    {
+        float x = Mathf.Round(Mathf.Max(0, Mathf.Min(_x * 4, 16383)));
+        float y = Mathf.Round(Mathf.Max(0, Mathf.Min(_y * 4, 16383)));
+
+        float compiled = x * 16384 + y;
+
+        return compiled;
+    }
+
+    float DecodeFloatRGBA(float r, float g, float b, float a)
+    {
+        int result = RemapColor(r);
+        result |= RemapColor(g) << 8;
+        result |= RemapColor(b) << 16;
+        result |= RemapColor2(a) << 24;
+
+        return Int32BitsToSingle(result);
+    }
+
+    float DecodeFloatRGBA(Color color)
+    {
+        int result = RemapColor(color.r);
+        result |= RemapColor(color.g) << 8;
+        result |= RemapColor(color.b) << 16;
+        result |= RemapColor2(color.a) << 24;
+
+        return Int32BitsToSingle(result);
+    }
+
     float DecodeFloatRGBA(Color32 color)
     {
-        int result = color.r;
-        result |= color.g << 8;
-        result |= color.b << 16;
-        result |= Mathf.Max(0, (color.a / 2) - 1) << 24;
+        int result = RemapColor(color.r);
+        result |= RemapColor(color.g) << 8;
+        result |= RemapColor(color.b) << 16;
+        result |= RemapColor2(color.a) << 24;
 
         return Int32BitsToSingle(result);
     }
@@ -379,27 +579,42 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         return *(float*)(&value);
     }
 
+    public static unsafe float UInt32BitsToSingle(uint value)
+    {
+        return *(float*)(&value);
+    }
+
+    public static unsafe uint SingleBitsToUInt32(float value)
+    {
+        return *(uint*)(&value);
+    }
+
     public override void SetMaterialDirty()
     {
-        if (m_material == null) LoadMaterial();
+        if (defaultMaterial == null) LoadMaterial();
 
         base.SetMaterialDirty();
 
         UpdateInstanciable();
         UpdateShaderDimensions();
 
-        m_material.SetTexture("_MainTex", mainTexture);
+        defaultMaterial.SetTexture("_MainTex", mainTexture);
 
-        m_material.SetVector("_MaskRect", MaskRect);
-        m_material.SetVector("_MaskOffset", MaskOffset);
+        defaultMaterial.SetVector("_MaskRect", MaskRect);
+        defaultMaterial.SetVector("_MaskOffset", MaskOffset);
+
+        defaultMaterial.SetVector("_CirclePos", CirclePos);
+        defaultMaterial.SetVector("_CircleColor", new Color(CircleColor.r, CircleColor.g, CircleColor.b, CircleAlpha));
+        defaultMaterial.SetFloat("_CircleAlpha", CircleAlpha);
+        defaultMaterial.SetFloat("_CircleRadius", CircleSize);
     }
 
     void UpdateInstanciable()
     {
-        if (m_material == null) LoadMaterial();
+        if (defaultMaterial == null) LoadMaterial();
 
-        bool canInstance = mainTexture == null && MaskRect.z == 0 && MaskRect.w == 0 && MaskOffset == default;
-        bool isInstance = m_material == RectangleRendererShader;
+        bool canInstance = mainTexture == null && MaskRect.z == 0 && MaskRect.w == 0 && MaskOffset == default && m_circleRadius == default;
+        bool isInstance = defaultMaterial == RectangleRendererShader;
 
         if (canInstance != isInstance)
         {
