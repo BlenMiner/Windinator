@@ -56,12 +56,32 @@ Shader "UI/Windinator/DrawRect"
 
             int _PointsCount;
 
+            #ifdef TEXTURING
+
+            float4 _PaintColor;
+
+            sampler2D _CanvasTexture;
+            float4 _CanvasTexture_ST;
+
+            sampler2D _PaintTexture;
+            float4 _PaintTexture_ST;
+
+            #endif
+
             float sdRoundedBox(float2 p, float2 b, float4 r )
             {
                 r.xy = (p.x>0.0)?r.xy : r.zw;
                 r.x  = (p.y>0.0)?r.x  : r.y;
                 float2 q = abs(p)-b+r.x;
                 return min(max(q.x,q.y),0.0) + length(max(q,0.0)) - r.x;
+            }
+
+            float2 smin(float a, float b, float k)
+            {
+                float h = max(k - abs(a - b), 0.0) / k;
+                float m = h * h * h * 0.5;
+                float s = m * k * (1.0 / 3.0);
+                return (a < b) ? float2(a - s, m) : float2(b - s, 1.0 - m);
             }
 
             float4 frag (v2f IN) : SV_Target
@@ -71,9 +91,12 @@ Shader "UI/Windinator/DrawRect"
 
                 GetRawRect(IN.texcoord, position, halfSize, 1);
 
-                half4 color = tex2D(_MainTex, IN.texcoord);
+                half4 data = tex2D(_MainTex, IN.texcoord);
+                float dist = Decode(data.r);
 
-                float dist = Decode(color.r);
+#ifdef TEXTURING
+                float4 color = tex2D(_MainCol, IN.texcoord);
+#endif
 
                 for (int i = 0; i < 512; ++i)
                 {
@@ -91,10 +114,28 @@ Shader "UI/Windinator/DrawRect"
                     localPos = rotate(localPos, rotation);
 
                     float d = sdRoundedBox(localPos, size, round);
+
+
+                    #ifdef TEXTURING
+
+                    float delta = fwidth(d);
+                    float alpha = smoothstep(delta, -delta, d);
+
+                    float interpolation = clamp(1 + 0.5 * (dist - d) / blend, 0.0, 1.0);
+
+                    float4 sdfTexture = tex2D(_PaintTexture, IN.texcoord) * _PaintColor;
+                    color = lerp(color, sdfTexture, max(alpha, interpolation));
+
+                    #endif
+                    
                     dist = AddSDF(d, dist, blend);
                 }
 
+                #ifdef TEXTURING
+                return color;
+                #else
                 return float4(Encode(dist), 1, 1, 1);
+                #endif
             }
             ENDCG
         }

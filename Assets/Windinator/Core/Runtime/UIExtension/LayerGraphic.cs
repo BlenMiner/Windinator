@@ -14,15 +14,15 @@ namespace Riten.Windinator.Shapes
 
         public bool IsCreated { get; private set; }
 
-        readonly bool HasColorSupport;
+        public readonly bool HasColorSupport;
 
         public LayerGraphic(int width, int height, bool createColorBuffer = true)
         {
             HasColorSupport = createColorBuffer;
             m_useBackbuffer = false;
 
-            m_buffer = new RenderTexture(width, height, 0, RenderTextureFormat.RG32);
-            m_backBuffer = new RenderTexture(width, height, 0, RenderTextureFormat.RG32);
+            m_buffer = new RenderTexture(width, height, 0, RenderTextureFormat.R16);
+            m_backBuffer = new RenderTexture(width, height, 0, RenderTextureFormat.R16);
 
             m_buffer.useMipMap = false;
             m_backBuffer.useMipMap = false;
@@ -54,12 +54,12 @@ namespace Riten.Windinator.Shapes
 
         public RenderTexture ColorBackTexture => m_useColorBackbuffer ? m_colorBuffer : m_backColorBuffer;
 
-        void SwitchBuffers()
+        public void SwitchBuffers()
         {
             m_useBackbuffer = !m_useBackbuffer;
         }
 
-        void SwitchColorBuffers()
+        public void SwitchColorBuffers()
         {
             m_useColorBackbuffer = !m_useColorBackbuffer;
         }
@@ -95,7 +95,7 @@ namespace Riten.Windinator.Shapes
                 return;
             }
 #endif
-            Graphics.Blit(ColorTexture, ColorBackTexture, mat);
+            Graphics.Blit(Texture, ColorBackTexture, mat);
             SwitchColorBuffers();
         }
 

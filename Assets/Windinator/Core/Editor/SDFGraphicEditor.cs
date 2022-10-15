@@ -162,6 +162,7 @@ public class SDFGraphicEditor : Editor
             graphic.Texture = graphic.ObjectField("Texture", graphic.Texture);
         graphic.color = graphic.ColorField("Base Color", graphic.color);
         graphic.Alpha = graphic.Slider("Alpha Multiplier", graphic.Alpha, 0, 1);
+        graphic.Blur = graphic.FloatField("Graphic Blur", graphic.Blur);
         graphic.raycastTarget = graphic.Toggle("Raycast Target", graphic.raycastTarget);
 
         GUILayout.Space(10f);

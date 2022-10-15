@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Riten.Windinator.Shapes
 {
@@ -13,6 +14,8 @@ namespace Riten.Windinator.Shapes
     public class CanvasGraphic : SignedDistanceFieldGraphic
     {
         RenderTexture m_finalBuffer;
+
+        RenderTexture m_finalColorBuffer;
 
         Material m_canvas_material, m_clearCircle, m_blend, m_add;
 
@@ -159,13 +162,21 @@ namespace Riten.Windinator.Shapes
             {
                 if (m_finalBuffer != null && m_finalBuffer.IsCreated())
                     m_finalBuffer.Release();
-                
+
+                if (m_finalColorBuffer != null && m_finalColorBuffer.IsCreated())
+                    m_finalColorBuffer.Release();
+
                 m_mainLayer?.Dispose();
 
-                m_finalBuffer = new RenderTexture(w, h, 0, RenderTextureFormat.RG32);
+                m_finalBuffer = new RenderTexture(w, h, 0, RenderTextureFormat.R16);
                 m_finalBuffer.name = "SDF";
                 m_finalBuffer.useMipMap = false;
                 m_finalBuffer.Create();
+
+                m_finalColorBuffer = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32);
+                m_finalColorBuffer.name = "SDF-Color";
+                m_finalColorBuffer.useMipMap = false;
+                m_finalColorBuffer.Create();
 
                 m_mainLayer = new LayerGraphic(w, h);
 
@@ -196,6 +207,16 @@ namespace Riten.Windinator.Shapes
         {
             var selectedLayer = GetLayer(layer);
             selectedLayer.Blit(ClearCircleOp);
+
+            if (selectedLayer.HasColorSupport)
+            {
+                RenderTexture rt = RenderTexture.active;
+                RenderTexture.active = selectedLayer.ColorTexture;
+                GL.Clear(true, true, Color.white);
+                RenderTexture.active = selectedLayer.ColorBackTexture;
+                GL.Clear(true, true, Color.white);
+                RenderTexture.active = rt;
+            }
         }
 
         public void Apply(LayerGraphic layer = null)
@@ -204,6 +225,17 @@ namespace Riten.Windinator.Shapes
             selectedLayer.Copy(m_finalBuffer);
 
             Texture = m_finalBuffer;
+
+            if (MainLayer.HasColorSupport)
+            {
+                m_canvas_material.EnableKeyword("COLOR_LAYER");
+                selectedLayer.CopyColor(m_finalColorBuffer);
+                m_canvas_material.SetTexture("_MainCol", m_finalColorBuffer);
+            }
+            else
+            {
+                m_canvas_material.DisableKeyword("COLOR_LAYER");
+            }
         }
 
         public void Copy(LayerGraphic source, LayerGraphic dest)
@@ -212,6 +244,11 @@ namespace Riten.Windinator.Shapes
             var b = GetLayer(dest);
 
             a.Copy(b.Texture);
+
+            if (a.HasColorSupport && b.HasColorSupport)
+            {
+                a.CopyColor(b.ColorTexture);
+            }
         }
 
         public void Blend(LayerGraphic a, LayerGraphic b, float v, LayerGraphic target)

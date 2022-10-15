@@ -8,6 +8,9 @@
 #pragma multi_compile_local _ UNITY_UI_CLIP_RECT
 #pragma multi_compile_local _ UNITY_UI_ALPHACLIP
 
+#pragma multi_compile_local _ TEXTURING
+#pragma multi_compile_local _ COLOR_LAYER
+
 struct appdata
 {
     float4 vertex   : POSITION;
@@ -37,6 +40,9 @@ struct v2f
 
 sampler2D _MainTex;
 float4 _MainTex_ST;
+
+sampler2D _MainCol;
+float4 _MainCol_ST;
 
 v2f vert (appdata v)
 {
@@ -79,6 +85,7 @@ float4 _MaskRect;
 float4 _MaskOffset;
 
 float _Alpha;
+float _Blur;
 float2 _Size;
 
 float _Union;
@@ -267,6 +274,8 @@ void LoadData(v2f v, out float2 worldPos)
     float4 uv1 = v.uv1;
     float4 uv3Data = DecodeColor(v.uv3.w);
 
+    _Blur = v.uv3.z;
+
     _Size = uv2.xy;
 
     float4 emData = DecodeColor(v.normals.x);
@@ -309,6 +318,9 @@ void LoadData(v2f v, out float2 worldPos)
 
 fixed4 fragFunctionRaw(float2 uv, float2 worldPosition, float4 color, float dist, float2 position, float2 halfSize, float2 normal)
 {
+#ifdef COLOR_LAYER
+    color *= tex2D(_MainCol, uv);
+#endif
     float4 effects;
 
     float embossDist = dist + _EmbossDistance;
@@ -324,12 +336,12 @@ fixed4 fragFunctionRaw(float2 uv, float2 worldPosition, float4 color, float dist
     float embossSizeDelta = fwidth(embossSizeDist);
 
     // Calculate the different masks based on the SDF
-    float graphicAlpha = smoothstep(delta, -delta, dist);
-    float outlineAlpha = smoothstep(outlineDelta, -outlineDelta, outlineDist);
-    float shadowAlpha = smoothstep(shadowDelta, -shadowDelta - _ShadowBlur, shadowDist);
+    float graphicAlpha = smoothstep(delta, -delta - _Blur, dist);
+    float outlineAlpha = smoothstep(outlineDelta, -outlineDelta - _Blur, outlineDist);
+    float shadowAlpha = smoothstep(shadowDelta, -shadowDelta - _ShadowBlur - _Blur, shadowDist);
 
-    float embossStartAlpha = smoothstep(embossDelta - min(0, _EmbossBlurTop), -embossDelta - max(0, _EmbossBlurTop), embossDist);
-    float embossEndAlpha = smoothstep(embossSizeDelta - min(0, _EmbossBlurBottom), -embossSizeDelta - max(0, _EmbossBlurBottom), embossSizeDist);
+    float embossStartAlpha = smoothstep(embossDelta - min(0, _EmbossBlurTop), -embossDelta - max(0, _EmbossBlurTop), embossDist) * graphicAlpha;
+    float embossEndAlpha = smoothstep(embossSizeDelta - min(0, _EmbossBlurBottom), -embossSizeDelta - max(0, _EmbossBlurBottom), embossSizeDist) * graphicAlpha;
 
     float4 graphic = float4(color.rgb, color.a);
     float4 outline = float4(_OutlineColor.rgb, _OutlineColor.a);
