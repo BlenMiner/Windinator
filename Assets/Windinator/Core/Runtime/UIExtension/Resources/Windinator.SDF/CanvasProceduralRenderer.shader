@@ -15,7 +15,7 @@ Shader "UI/Windinator/CanvasProceduralRenderer"
 
         [Toggle(UNITY_UI_ALPHACLIP)] _UseUIAlphaClip ("Use Alpha Clip", Float) = 0
     }
-
+         
     SubShader
     {
         Tags

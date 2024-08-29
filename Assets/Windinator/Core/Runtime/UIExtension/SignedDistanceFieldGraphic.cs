@@ -11,6 +11,8 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     [SerializeField, Range(0f, 1f)] float m_graphicAlphaMult = 1f;
 
+    [SerializeField] float m_graphicBlur = 0f;
+
     [Header("Circle")]
 
     [SerializeField, Range(0f, 1f)] float m_circleAlpha = 0.2f;
@@ -66,6 +68,16 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         set {
             m_texture = value; 
             SetMaterialDirty();
+        }
+    }
+
+    public float Blur
+    {
+        get => m_graphicBlur;
+        set
+        {
+            m_graphicBlur = Mathf.Max(0, value);
+            SetVerticesDirty();
         }
     }
 
@@ -414,7 +426,7 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
         var uv3 = new Vector4(
             DecodeFloatRGBA(m_outlineColor),
             DecodeFloatRGBA(m_shadowColor),
-            0,
+            Blur,
             DecodeFloatRGBA(m_embossDistance, m_graphicAlphaMult, 0, 0)
         );
 
@@ -611,10 +623,10 @@ public class SignedDistanceFieldGraphic : MaskableGraphic
 
     void UpdateInstanciable()
     {
-        if (defaultMaterial == null) LoadMaterial();
+        if (m_material == null) LoadMaterial();
 
         bool canInstance = mainTexture == null && MaskRect.z == 0 && MaskRect.w == 0 && MaskOffset == default && m_circleRadius == default;
-        bool isInstance = defaultMaterial == RectangleRendererShader;
+        bool isInstance = m_material == RectangleRendererShader;
 
         if (canInstance != isInstance)
         {

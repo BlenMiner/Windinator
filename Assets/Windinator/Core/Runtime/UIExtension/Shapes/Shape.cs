@@ -1,7 +1,22 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Riten.Windinator.Shapes
 {
+    public struct ColorProperties
+    {
+        public Texture2D Texture;
+        public Color Color;
+        public Image.Type Type;
+
+        public ColorProperties(Texture2D texture)
+        {
+            Texture = texture;
+            Color = Color.white;
+            Type = Image.Type.Filled;
+        }
+    }
+
     [System.Serializable]
     public abstract class ShapeDrawer
     {
@@ -40,6 +55,11 @@ namespace Riten.Windinator.Shapes
         protected void Dispatch(LayerGraphic layer = null)
         {
             Canvas.GetLayer(layer).Blit(Material);
+        }
+
+        protected void DispatchColor(LayerGraphic layer = null)
+        {
+            Canvas.GetLayer(layer).BlitColor(Material);
         }
 
         protected abstract void DrawBatches(LayerGraphic layer = null);

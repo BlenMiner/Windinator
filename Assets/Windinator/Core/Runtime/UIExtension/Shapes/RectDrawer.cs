@@ -59,7 +59,7 @@ namespace Riten.Windinator.Shapes
             m_batchedDataExtra2.Clear();
         }
 
-        public void Draw(Vector2 center, Vector2 size, Vector4 roundness = default, float blend = default, float rotationInRadian = 0f, DrawOperation operation = DrawOperation.Union, LayerGraphic layer = null)
+        public void Draw(Vector2 center, Vector2 size, Vector4 roundness = default, float blend = default, float rotationInRadian = 0f, DrawOperation operation = DrawOperation.Union, ColorProperties? color = null, LayerGraphic layer = null)
         {
             m_tmp.x = center.x;
             m_tmp.y = center.y;
@@ -88,6 +88,22 @@ namespace Riten.Windinator.Shapes
             Material.SetVectorArray("_PointsExtra2", extra2.Array);
             Material.SetInt("_PointsCount", array.Length);
 
+            var colorLayer = Canvas.GetLayer(layer);
+
+            if (color.HasValue && colorLayer.HasColorSupport)
+            {
+                var colorData = color.Value;
+                Material.EnableKeyword("TEXTURING");
+                Material.SetTexture("_MainCol", colorLayer.ColorTexture);
+                Material.SetColor("_PaintColor", colorData.Color);
+                Material.SetTexture("_PaintTexture", colorData.Texture);
+                DispatchColor(layer);
+            }
+
+            Material.DisableKeyword("TEXTURING");
+
+            Dispatch(layer);
+
             transform.Length = 0;
             array.Length = 0;
             extra.Length = 0;
@@ -97,8 +113,6 @@ namespace Riten.Windinator.Shapes
             ArrayPool.Free(array);
             ArrayPool.Free(extra);
             ArrayPool.Free(extra2);
-
-            Dispatch(layer);
         }
 
         Vector4 m_tmp;
