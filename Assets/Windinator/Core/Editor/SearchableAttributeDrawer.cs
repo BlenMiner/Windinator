@@ -9,7 +9,7 @@ using System.Reflection;
 
 public class SearchableAttributeDrawer : PropertyDrawer
 {
-    struct EnumStringValuePair : IComparable<EnumStringValuePair>
+    private struct EnumStringValuePair : IComparable<EnumStringValuePair>
     {
         public string strValue;
         public int intValue;
