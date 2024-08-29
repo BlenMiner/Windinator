@@ -32,7 +32,7 @@ public class SearchableAttributeDrawer : PropertyDrawer
     string SearchField(SerializedProperty property, GUIContent label, string id, string glabel, string value, Rect position)
     {
         if (m_searchStyle == null)
-            m_searchStyle = GUI.skin.FindStyle("ToolbarSeachTextField");
+            m_searchStyle = GUI.skin.FindStyle("ToolbarSearchTextField");
 
         GUI.SetNextControlName(id);
         return EditorGUI.TextField(new Rect(position.position, new Vector2(position.width, base.GetPropertyHeight(property, label))), glabel, value, m_searchStyle);

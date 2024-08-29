@@ -301,7 +301,7 @@ public class SDFGraphicEditor : Editor
             float transformedSize = graphic.transform.TransformVector(new Vector3(graphic.CircleSize, 0, 0)).x;
 
             transformedSize = Handles.RadiusHandle(Quaternion.identity, actualPos, transformedSize, true);
-            actualPos = Handles.FreeMoveHandle(actualPos, Quaternion.identity, 3f, Vector3.one, Handles.SphereHandleCap);
+            var fmh_304_59_638592731021405060 = Quaternion.identity; actualPos = Handles.FreeMoveHandle(actualPos, 3f, Vector3.one, Handles.SphereHandleCap);
 
             graphic.CirclePos = graphic.transform.InverseTransformPoint(new Vector3(
                 actualPos.x - pivotX * rt.rect.width,
@@ -326,7 +326,7 @@ public class SDFGraphicEditor : Editor
             if (boxBounds == null) boxBounds = new BoxBoundsHandle();
 
             maskPos += maskSize * 0.5f;
-            maskPos = Handles.FreeMoveHandle(maskPos, Quaternion.identity, 3f, Vector3.one, Handles.SphereHandleCap);
+            var fmh_329_55_638592731021446910 = Quaternion.identity; maskPos = Handles.FreeMoveHandle(maskPos, 3f, Vector3.one, Handles.SphereHandleCap);
 
             boxBounds.center = maskPos;// + maskSize * 0.5f;
             boxBounds.size = maskSize;
@@ -519,7 +519,7 @@ public class PolygonGraphicEditor : Editor
 
                 EditorGUI.BeginChangeCheck();
 
-                actualPos = Handles.FreeMoveHandle(actualPos, Quaternion.identity, 5f, Vector3.zero, Handles.SphereHandleCap);
+                var fmh_522_63_638592731021454640 = Quaternion.identity; actualPos = Handles.FreeMoveHandle(actualPos, 5f, Vector3.zero, Handles.SphereHandleCap);
 
                 var p = Vector2.Scale(graphic.transform.InverseTransformPoint(new Vector2(
                     actualPos.x - pivot.x,
@@ -657,7 +657,7 @@ public class LineGraphicEditor : Editor
 
                 EditorGUI.BeginChangeCheck();
 
-                actualPos = Handles.FreeMoveHandle(actualPos, Quaternion.identity, 5f, Vector3.zero, Handles.SphereHandleCap);
+                var fmh_660_63_638592731021460910 = Quaternion.identity; actualPos = Handles.FreeMoveHandle(actualPos, 5f, Vector3.zero, Handles.SphereHandleCap);
 
                 var p = Vector2.Scale(graphic.transform.InverseTransformPoint(new Vector2(
                     actualPos.x - pivot.x,
