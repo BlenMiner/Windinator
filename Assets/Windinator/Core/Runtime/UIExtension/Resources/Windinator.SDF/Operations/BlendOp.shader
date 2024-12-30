@@ -46,7 +46,7 @@ Shader "UI/Windinator/BlendOp"
         Pass
         {
             CGPROGRAM
-            #include "../shared.cginc"
+            #include_with_pragmas "../shared.cginc"
 
             sampler2D _TextureA;
             sampler2D _TextureB;

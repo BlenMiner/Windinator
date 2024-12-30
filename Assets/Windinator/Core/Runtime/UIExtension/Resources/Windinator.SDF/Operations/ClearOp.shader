@@ -46,7 +46,7 @@ Shader "UI/Windinator/ClearOp"
         Pass
         {
             CGPROGRAM
-            #include "../shared.cginc"
+            #include_with_pragmas "../shared.cginc"
             
             float4 frag (v2f IN) : SV_Target
             {

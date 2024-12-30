@@ -46,7 +46,7 @@ Shader "UI/Windinator/AddOp"
         Pass
         {
             CGPROGRAM
-            #include "../shared.cginc"
+            #include_with_pragmas "../shared.cginc"
 
             sampler2D _TextureA;
 

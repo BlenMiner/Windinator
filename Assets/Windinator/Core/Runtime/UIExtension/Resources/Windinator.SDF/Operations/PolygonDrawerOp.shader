@@ -47,7 +47,7 @@ Shader "UI/Windinator/DrawPoly"
         {
             CGPROGRAM
 
-            #include "../shared.cginc"
+            #include_with_pragmas "../shared.cginc"
 
             uniform float2 _Points[2048];
 

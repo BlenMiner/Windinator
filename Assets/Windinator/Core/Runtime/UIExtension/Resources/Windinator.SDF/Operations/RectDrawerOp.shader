@@ -47,7 +47,7 @@ Shader "UI/Windinator/DrawRect"
         {
             CGPROGRAM
 
-            #include "../shared.cginc"
+            #include_with_pragmas "../shared.cginc"
 
             uniform float4 _Points[512];
             uniform float4 _PointsExtra[512];
