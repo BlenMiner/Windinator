@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,5 +18,24 @@ public static class WindinatorUtils
         RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screenPosition, camera, out var tempVector);
 
         return tempVector;
+    }
+
+
+    public static bool Create(ref RenderTexture texture, int width, int height, RenderTextureFormat format) {
+        texture = new RenderTexture(width, height, 0, format) { useMipMap = false };
+        return texture.Create();
+    }
+
+    public static void Destroy(ref RenderTexture texture) {
+        if (texture != null) {
+            texture.Release();
+            if (Application.isPlaying) {
+                RenderTexture.Destroy(texture);
+            }
+            else {
+                RenderTexture.DestroyImmediate(texture);
+            }
+        }
+        texture = null;
     }
 }

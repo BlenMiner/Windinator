@@ -5,8 +5,8 @@ namespace Riten.Windinator.Shapes
 {
     public class LayerGraphic : IDisposable
     {
-        readonly RenderTexture m_buffer, m_backBuffer;
-        readonly RenderTexture m_colorBuffer, m_backColorBuffer;
+        RenderTexture m_buffer, m_backBuffer;
+        RenderTexture m_colorBuffer, m_backColorBuffer;
 
         bool m_useBackbuffer;
 
@@ -21,27 +21,14 @@ namespace Riten.Windinator.Shapes
             HasColorSupport = createColorBuffer;
             m_useBackbuffer = false;
 
-            m_buffer = new RenderTexture(width, height, 0, RenderTextureFormat.RG32);
-            m_backBuffer = new RenderTexture(width, height, 0, RenderTextureFormat.RG32);
-
-            m_buffer.useMipMap = false;
-            m_backBuffer.useMipMap = false;
-
-            m_buffer.Create();
-            m_backBuffer.Create();
+            WindinatorUtils.Create(ref m_buffer, width, height, RenderTextureFormat.RG32);
+            WindinatorUtils.Create(ref m_backBuffer, width, height, RenderTextureFormat.RG32);
 
             if (createColorBuffer)
             {
-                m_colorBuffer = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32);
-                m_backColorBuffer = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32);
-
-                m_colorBuffer.useMipMap = false;
-                m_backColorBuffer.useMipMap = false;
-
-                m_colorBuffer.Create();
-                m_backColorBuffer.Create();
+                WindinatorUtils.Create(ref m_colorBuffer, width, height, RenderTextureFormat.ARGB32);
+                WindinatorUtils.Create(ref m_backColorBuffer, width, height, RenderTextureFormat.ARGB32);
             }
-
 
             IsCreated = true;
         }
@@ -68,14 +55,14 @@ namespace Riten.Windinator.Shapes
         {
             if (IsCreated)
             {
-                m_buffer.Release();
-                m_backBuffer.Release();
+                WindinatorUtils.Destroy(ref m_buffer);
+                WindinatorUtils.Destroy(ref m_backBuffer);
                 IsCreated = false;
 
                 if (HasColorSupport)
                 {
-                    m_colorBuffer.Release();
-                    m_backColorBuffer.Release();
+                    WindinatorUtils.Destroy(ref m_colorBuffer);
+                    WindinatorUtils.Destroy(ref m_backColorBuffer);
                 }
             }
         }
