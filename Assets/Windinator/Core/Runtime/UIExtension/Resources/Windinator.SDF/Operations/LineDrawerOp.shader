@@ -20,7 +20,7 @@ Shader "UI/Windinator/DrawLine"
     {
         CGINCLUDE
 
-        #include "../shared.cginc"
+        #include_with_pragmas "../shared.cginc"
 
         uniform float4 _Points[512];
         int _PointsCount;

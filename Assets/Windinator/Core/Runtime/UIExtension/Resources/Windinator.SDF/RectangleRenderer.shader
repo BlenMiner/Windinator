@@ -46,7 +46,7 @@ Shader "UI/Windinator/RectangleRenderer"
         Pass
         {
             CGPROGRAM
-            #include "shared.cginc"
+            #include_with_pragmas "shared.cginc"
 
             float sdRoundedBox(float2 p, float2 b, float4 r )
             {

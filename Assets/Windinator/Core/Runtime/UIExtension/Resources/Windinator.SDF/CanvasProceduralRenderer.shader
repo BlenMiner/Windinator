@@ -46,7 +46,7 @@ Shader "UI/Windinator/CanvasProceduralRenderer"
         Pass
         {
             CGPROGRAM
-            #include "shared.cginc"
+            #include_with_pragmas "shared.cginc"
 
             float GETSDF(in float2 p)
             {
