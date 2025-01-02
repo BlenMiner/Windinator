@@ -157,15 +157,12 @@ namespace Riten.Windinator.Shapes
 
             if (m_mainLayer == null || !m_mainLayer.IsCreated || m_finalBuffer == null || m_finalBuffer.width != w || m_finalBuffer.height != h)
             {
-                if (m_finalBuffer != null && m_finalBuffer.IsCreated())
-                    m_finalBuffer.Release();
+                WindinatorUtils.Destroy(ref m_finalBuffer);
                 
                 m_mainLayer?.Dispose();
 
-                m_finalBuffer = new RenderTexture(w, h, 0, RenderTextureFormat.RG32);
+                WindinatorUtils.Create(ref m_finalBuffer, w, h, RenderTextureFormat.RG32);
                 m_finalBuffer.name = "SDF";
-                m_finalBuffer.useMipMap = false;
-                m_finalBuffer.Create();
 
                 m_mainLayer = new LayerGraphic(w, h);
 
